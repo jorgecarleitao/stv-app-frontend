@@ -4,6 +4,7 @@
   "Introduction": "Introdução",
   "Methodology": "Metodologia",
   "STV election runner": "Processador de eleições",
+  "Elected candidates": "Candidatos eleitos",
   "Number of seats to elect": "Número de lugares a eleger",
   "numberOfSeatsInstructions": "Número de lugares\n\nDefina quantos candidatos serão eleitos neste concurso.\nO valor não pode ser inferior a 1 nem superior ao número total de candidatos.",
   "Candidate": "Candidato",

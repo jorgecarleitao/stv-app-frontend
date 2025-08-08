@@ -1,5 +1,5 @@
 module.exports = {
-    locales: ['en', 'pt'],
+    locales: ['en-US', 'pt-PT'],
     input: [
         'src/**/*.{ts,tsx}',
     ],

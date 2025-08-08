@@ -4,6 +4,7 @@
   "Introduction": "Introduction",
   "Methodology": "Methodology",
   "STV election runner": "STV election runner",
+  "Elected candidates": "Elected candidates",
   "Number of seats to elect": "Number of seats to elect",
   "numberOfSeatsInstructions": "Number of seats\n\nSet how many candidates will be elected in this contest.\nThe value cannot be less than 1 or more than the total number of candidates.",
   "Candidate": "Candidate",

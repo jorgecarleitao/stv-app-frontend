@@ -49,10 +49,12 @@ const defaultElection: Election = {
 const HEADER = "h5"
 
 function ElectedList({ elected }: { elected: Elected[] }) {
+    const { t, i18n } = useTranslation();
+
     return (
         <Paper elevation={2} sx={{ p: 3, my: 2 }}>
             <Typography variant={HEADER} gutterBottom>
-                Elected candidates
+                {t("Elected candidates")}
             </Typography>
             <List>
                 {elected.map((e, idx) => (

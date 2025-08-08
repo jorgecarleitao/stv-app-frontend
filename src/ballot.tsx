@@ -1,4 +1,5 @@
-import React, { Fragment } from 'react';
+import { useTranslation } from 'react-i18next';
+
 import {
     Box,
     Button,
@@ -28,6 +29,7 @@ export function BallotsEditor({
     onAddBallot: () => void;
     onRemoveBallot: (ballotIdx: number) => void;
 }) {
+    const { t, i18n } = useTranslation();
     const maxCandidates = candidates.length;
     const rankOptions = [null, ...Array.from({ length: maxCandidates }, (_, i) => i + 1)];
 
@@ -35,7 +37,7 @@ export function BallotsEditor({
         {ballots.map((b, ballotIdx) => (
             <Paper variant="outlined" sx={{ p: 2 }} key={ballotIdx}>
                 <Box display="flex" alignItems="center" gap={2}>
-                    <Typography fontWeight="bold">Ballot group {ballotIdx + 1}</Typography>
+                    <Typography fontWeight="bold">{t('Ballot group')} {ballotIdx + 1}</Typography>
                     <TextField
                         label="Votes"
                         size="small"
@@ -81,7 +83,7 @@ export function BallotsEditor({
             </Paper>
         ))}
         <Button variant="contained" onClick={onAddBallot}>
-            Add Ballot group
+            {t('Add Ballot group')}
         </Button>
     </Stack>
 }

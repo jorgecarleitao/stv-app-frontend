@@ -1,4 +1,6 @@
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+
 import { Box, Button, Container, Alert, Paper, Stack, TextField, Typography, List, ListItem, ListItemAvatar, Avatar, ListItemText } from '@mui/material';
 import { InputAdornment, IconButton, Tooltip } from "@mui/material";
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
@@ -59,22 +61,18 @@ interface ElectionBasicsProps {
 }
 
 function Seats({ election, setElection }: ElectionBasicsProps) {
+    const { t, i18n } = useTranslation();
+
     return <Stack spacing={2}>
         <TextField
-            label="Number of seats to elect"
+            label={t("Number of seats to elect")}
             type="number"
             InputProps={{
                 inputProps: { min: 1, max: Math.max(1, election.candidates.length) },
                 endAdornment: (
                     <InputAdornment position="end">
                         <Tooltip
-                            title={
-                                <>
-                                    <strong>Number of seats</strong><br />
-                                    Set how many candidates will be elected in this contest.<br />
-                                    The value cannot be less than 1 or more than the total number of candidates.
-                                </>
-                            }
+                            title={t('numberOfSeatsInstructions')}
                             placement="top"
                             arrow
                         >
@@ -100,6 +98,8 @@ function Seats({ election, setElection }: ElectionBasicsProps) {
 }
 
 export default function Home() {
+    const { t, i18n } = useTranslation();
+
     const [election, setElection] = useState<Election>(defaultElection);
 
     const [yamlText, setYamlText] = useState("");
@@ -142,7 +142,7 @@ export default function Home() {
     const handleAddCandidate = () => {
         setElection(e => ({
             ...e,
-            candidates: [...e.candidates, `Candidate ${e.candidates.length + 1}`],
+            candidates: [...e.candidates, `${t("Candidate")} ${e.candidates.length + 1}`],
             ballots: e.ballots.map(b => ({
                 ...b,
                 ranks: [...b.ranks, null]
@@ -276,7 +276,7 @@ export default function Home() {
         <Container>
             <Paper elevation={4} sx={{ p: 3, mb: 4 }}>
                 <Typography variant={HEADER} gutterBottom>
-                    Number of seats to elect
+                    {t('Number of seats to elect')}
                 </Typography>
                 <Seats election={election} setElection={setElection} />
             </Paper>
@@ -284,19 +284,10 @@ export default function Home() {
             <Paper elevation={4} sx={{ p: 3, mb: 4 }}>
                 <Box display="flex" alignItems="center" mb={2}>
                     <Typography variant={HEADER} gutterBottom sx={{ flexGrow: 1 }}>
-                        Candidates
+                        {t('Candidates')}
                     </Typography>
                     <Tooltip
-                        title={
-                            <>
-                                <strong>Add your candidates</strong>
-                                <br />
-                                Enter candidate names below.<br />
-                                - Click <strong>Add Candidate</strong> to add more.<br />
-                                - Click <strong>Remove</strong> to delete a candidate.<br />
-                                - You can rename candidates at any time.
-                            </>
-                        }
+                        title={t('addCandidatesInstructions')}
                         arrow
                         placement="right"
                     >
@@ -318,7 +309,7 @@ export default function Home() {
                                     endAdornment: (
                                         <InputAdornment position="end">
                                             <Tooltip
-                                                title="You can change the candidate's name here."
+                                                title={t("You can change the candidate's name here.")}
                                                 arrow
                                                 placement="top"
                                             >
@@ -330,8 +321,8 @@ export default function Home() {
                             />
                             <Tooltip
                                 title={election.candidates.length <= 1
-                                    ? "At least one candidate is required"
-                                    : "Remove this candidate"}
+                                    ? t("At least one candidate is required")
+                                    : t("Remove this candidate")}
                                 arrow
                             >
                                 <span>
@@ -341,18 +332,18 @@ export default function Home() {
                                         onClick={() => handleRemoveCandidate(idx)}
                                         disabled={election.candidates.length <= 1}
                                     >
-                                        Remove
+                                        {t('Remove')}
                                     </Button>
                                 </span>
                             </Tooltip>
                         </Box>
                     ))}
                     <Tooltip
-                        title="Click to add a new candidate to the list"
+                        title={t("Click to add a new candidate to the list")}
                         arrow
                     >
                         <Button variant="contained" onClick={handleAddCandidate}>
-                            Add Candidate
+                            {t('Add Candidate')}
                         </Button>
                     </Tooltip>
                 </Stack>
@@ -360,21 +351,12 @@ export default function Home() {
             <Paper elevation={2} sx={{ p: 3, mb: 4 }}>
                 <Box display="flex" alignItems="center" gap={1} mb={1}>
                     <Typography variant={HEADER} gutterBottom>
-                        Ballot groups
+                        {t('Ballot groups')}
                     </Typography>
                     <Tooltip
                         arrow
                         placement="right"
-                        title={
-                            <>
-                                <strong>How to edit ballots:</strong><br />
-                                - Enter the number of voters represented by each ballot.<br />
-                                - Rank the candidates (1 = first choice, 2 = second, ...); leave blank for "no preference".<br />
-                                - Candidates ranked equally are counted equally.<br />
-                                - Use <strong>Add Ballot group</strong> for new voting groups.<br />
-                                - Remove ballots you don't need.<br />
-                            </>
-                        }
+                        title={t('editBallotsInstructions')}
                     >
                         <IconButton size="small" sx={{ ml: 1 }}>
                             <InfoOutlinedIcon fontSize="small" />
@@ -399,15 +381,18 @@ export default function Home() {
                     onClick={handleRunElection}
                     disabled={loading}
                 >
-                    {loading ? "Running..." : "Run Election"}
+                    {loading ? t("Running...") : t("Run Election")}
                 </Button>
             </Box>
 
             {error && <Alert severity="error" sx={{ my: 2 }}>{error}</Alert>}
-            {result && (
-                <ElectedList elected={result.elected} />
-            )}
-            {result &&
+            {
+                result && (
+                    <ElectedList elected={result.elected} />
+                )
+            }
+            {
+                result &&
                 <Accordion elevation={4} sx={{ p: 2, my: 2 }}>
                     <AccordionSummary
                         expandIcon={<ExpandMoreIcon />}
@@ -415,7 +400,7 @@ export default function Home() {
                         id="steps-header"
                     >
                         <Typography variant={HEADER}>
-                            Detailed STV log
+                            {t('Detailed STV log')}
                         </Typography>
                     </AccordionSummary>
                     <AccordionDetails>
@@ -426,7 +411,7 @@ export default function Home() {
 
             <Paper elevation={4} sx={{ p: 2, my: 2 }}>
                 <Typography variant={HEADER} gutterBottom>
-                    Load/Save election
+                    {t('Load/Save election')}
                 </Typography>
                 <TextField
                     label="YAML"
@@ -436,21 +421,14 @@ export default function Home() {
                     fullWidth
                     value={yamlText}
                     onChange={e => setPendingYaml(e.target.value)}
-                    placeholder="Edit election YAML here..."
+                    placeholder={t("Edit election YAML here...")}
                     sx={{ mb: 1 }}
                     error={!!yamlError}
                     InputProps={{
                         endAdornment: (
                             <InputAdornment position="end">
                                 <Tooltip
-                                    title={
-                                        <>
-                                            <strong>Load/Save election YAML</strong><br />
-                                            Paste valid YAML to update the election setup.<br />
-                                            Copy this field to export the current configuration.<br />
-                                            Changes will apply automatically if the YAML is valid.
-                                        </>
-                                    }
+                                    title={t('loadSaveYamlInstructions')}
                                     placement="top"
                                     arrow
                                 >
@@ -468,6 +446,6 @@ export default function Home() {
                     </Alert>
                 )}
             </Paper>
-        </Container>
+        </Container >
     );
 }

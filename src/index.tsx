@@ -1,5 +1,7 @@
 import { render } from 'preact';
 import { useMemo, useState } from 'preact/hooks';
+import { useTranslation } from 'react-i18next';
+import locale from 'locale-code';
 
 import { createTheme } from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
@@ -22,26 +24,20 @@ import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemText from '@mui/material/ListItemText';
 import Drawer from '@mui/material/Drawer';
+import Select from '@mui/material/Select';
+import MenuItem from '@mui/material/MenuItem';
 
+import './i18n';
 import Home from './pages/home'
 import Footer from './footer';
 import Methodology from './pages/methodology';
 
 type Tab = "introduction"
 
-const NAMES = {
-	"introduction": "Introduction",
-	"methodology": "Methodology"
-}
-
-const DESCRIPTIONS = {
-	"introduction": "Introduction",
-	"methodology": "Methodology",
-}
-
 const drawerWidth = 240;
 
 export default function App() {
+	const { t, i18n } = useTranslation();
 	const prefersDarkMode = useMediaQuery('(prefers-color-scheme: dark)');
 	const [mobileOpen, setMobileOpen] = useState(false);
 
@@ -59,6 +55,16 @@ export default function App() {
 		[mode],
 	);
 
+	const NAMES = {
+		"introduction": t("Introduction"),
+		"methodology": t("Methodology"),
+	}
+
+	const DESCRIPTIONS = {
+		"introduction": t("Introduction"),
+		"methodology": t("Methodology"),
+	}
+
 	const handleDrawerToggle = () => {
 		setMobileOpen(prevState => !prevState);
 	};
@@ -66,7 +72,7 @@ export default function App() {
 	const drawer = (
 		<Box onClick={handleDrawerToggle} sx={{ textAlign: 'center' }}>
 			<Typography variant="h6" sx={{ my: 2 }}>
-				SVT run
+				{t("STV election runner")}
 			</Typography>
 			<Divider />
 			<List>
@@ -104,7 +110,7 @@ export default function App() {
 							component="div"
 							sx={{ flexGrow: 1, display: { xs: 'none', sm: 'block' } }}
 						>
-							STV election run
+							{t("STV election runner")}
 						</Typography>
 						<Box sx={{ display: { xs: 'none', sm: 'block' } }}>
 							{Object.entries(NAMES).map(([page, title]) => (
@@ -123,6 +129,18 @@ export default function App() {
 						<IconButton sx={{ ml: 1 }} onClick={() => setMode(theme.palette.mode == 'dark' ? 'light' : 'dark')} color="inherit">
 							{theme.palette.mode === 'dark' ? <Brightness7Icon /> : <Brightness4Icon />}
 						</IconButton>
+						<Select
+							variant="standard"
+							value={i18n.language}
+							onChange={(e) => i18n.changeLanguage(e.target.value)}
+							sx={{ ml: 2, color: 'inherit' }}
+						>
+							{Object.keys(i18n.options.resources).map(lang => (
+								<MenuItem key={lang} value={lang}>
+									{locale.getLanguageNativeName(lang)}
+								</MenuItem>
+							))}
+						</Select>
 					</Toolbar>
 				</AppBar>
 				<nav>
@@ -131,7 +149,7 @@ export default function App() {
 						open={mobileOpen}
 						onClose={handleDrawerToggle}
 						ModalProps={{
-							keepMounted: true, // Better open performance on mobile.
+							keepMounted: true,
 						}}
 						sx={{
 							display: { xs: 'block', sm: 'none' },

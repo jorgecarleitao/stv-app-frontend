@@ -1,15 +1,14 @@
 import { useTranslation } from 'react-i18next';
 
-import {
-    Box,
-    Button,
-    IconButton,
-    MenuItem,
-    Paper,
-    Stack,
-    TextField,
-    Typography
-} from '@mui/material';
+import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
+import Paper from '@mui/material/Paper';
+import Stack from '@mui/material/Stack';
+import TextField from '@mui/material/TextField';
+import Typography from '@mui/material/Typography';
+import IconButton from '@mui/material/IconButton';
+import MenuItem from '@mui/material/MenuItem';
+
 import DeleteIcon from '@mui/icons-material/Delete';
 
 import { Ballot } from './data/frontend'

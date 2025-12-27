@@ -17,9 +17,7 @@ import ListItemText from '@mui/material/ListItemText';
 import Chip from '@mui/material/Chip';
 import Stack from '@mui/material/Stack';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import ContentCopyIcon from '@mui/icons-material/ContentCopy';
-import OpenInNewIcon from '@mui/icons-material/OpenInNew';
-import Snackbar from '@mui/material/Snackbar';
+import ListItemButton from '@mui/material/ListItemButton';
 
 import { getElection, ElectionState } from '../data/api';
 
@@ -32,7 +30,6 @@ export default function ElectionDetail({ electionId }: ElectionDetailProps) {
     const [electionState, setElectionState] = useState<ElectionState | null>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
-    const [copied, setCopied] = useState(false);
 
     useEffect(() => {
         if (electionId) {
@@ -183,36 +180,13 @@ export default function ElectionDetail({ electionId }: ElectionDetailProps) {
                         </Typography>
                         <List>
                             {election.ballots.map((uuid) => (
-                                <ListItem key={uuid} secondaryAction={
-                                    <Box sx={{ display: 'flex', gap: 1 }}>
-                                        <Button
-                                            variant="outlined"
-                                            size="small"
-                                            startIcon={<ContentCopyIcon />}
-                                            onClick={async () => {
-                                                const url = `${window.location.origin}/elections/${election.id}/ballot/${uuid}`;
-                                                try {
-                                                    await navigator.clipboard.writeText(url);
-                                                    setCopied(true);
-                                                } catch { }
-                                            }}
-                                        >
-                                            {t('Copy Link')}
-                                        </Button>
-                                        <Button
-                                            variant="contained"
-                                            size="small"
-                                            startIcon={<OpenInNewIcon />}
-                                            onClick={() => route(`/elections/${election.id}/ballot/${uuid}`)}
-                                        >
-                                            {t('Open Ballot')}
-                                        </Button>
-                                    </Box>
-                                }>
-                                    <ListItemAvatar>
-                                        <Avatar>{uuid.substring(0, 2).toUpperCase()}</Avatar>
-                                    </ListItemAvatar>
-                                    <ListItemText primary={uuid} />
+                                <ListItem key={uuid} disablePadding>
+                                    <ListItemButton onClick={() => route(`/elections/${election.id}/ballot/${uuid}`)}>
+                                        <ListItemAvatar>
+                                            <Avatar>{uuid.substring(0, 2).toUpperCase()}</Avatar>
+                                        </ListItemAvatar>
+                                        <ListItemText primary={uuid} />
+                                    </ListItemButton>
                                 </ListItem>
                             ))}
                         </List>
@@ -270,14 +244,6 @@ export default function ElectionDetail({ electionId }: ElectionDetailProps) {
                         {t('Results will be available after voting is complete')}
                     </Alert>
                 )}
-
-                <Snackbar
-                    open={copied}
-                    autoHideDuration={2000}
-                    onClose={() => setCopied(false)}
-                    message={t('Link copied')}
-                    anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
-                />
             </Box>
         </Container>
     );

@@ -86,7 +86,13 @@ export default function ElectionList() {
                                             </ListItemAvatar>
                                             <ListItemText
                                                 primary={election.name}
-                                                secondary={`${election.candidates.length} ${t('candidates')} • ${election.seats} ${t('seats')}`}
+                                                secondary={(() => {
+                                                    const start = new Date(election.start_time);
+                                                    const end = new Date(election.end_time);
+                                                    const period = `${t('Voting Period')}: ${start.toLocaleDateString()} — ${end.toLocaleDateString()}`;
+                                                    const basics = `${election.candidates.length} ${t('candidates')} • ${election.seats} ${t('seats')} • ${election.number_of_ballots} ${t('voters')}`;
+                                                    return [basics, period].join(' • ');
+                                                })()}
                                             />
                                         </ListItemButton>
                                     </ListItem>

@@ -11,7 +11,7 @@ import CircularProgress from '@mui/material/CircularProgress';
 import Stack from '@mui/material/Stack';
 import SaveIcon from '@mui/icons-material/Save';
 
-import { getBallot, putBallot, getElection, Ballot as ApiBallot } from '../data/api';
+import { getBallot, putBallot, getElection, Ballot as ApiBallot, ElectionState } from '../data/api';
 
 interface BallotPageProps {
     electionId?: string;
@@ -21,8 +21,7 @@ interface BallotPageProps {
 export default function BallotPage({ electionId, ballotUuid }: BallotPageProps) {
     const { t } = useTranslation();
     const [ballot, setBallot] = useState<ApiBallot | null>(null);
-    const [candidates, setCandidates] = useState<string[]>([]);
-    const [electionName, setElectionName] = useState<string>('');
+    const [electionData, setElectionData] = useState<ElectionState | null>(null);
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
     const [error, setError] = useState<string | null>(null);
@@ -41,10 +40,9 @@ export default function BallotPage({ electionId, ballotUuid }: BallotPageProps) 
             setLoading(true);
             setError(null);
 
-            // Load election info to get candidates
-            const electionData = await getElection(electionId);
-            setCandidates(electionData.election.candidates);
-            setElectionName(electionData.election.name);
+            // Load election info to get candidates and period
+            const electionDataResp = await getElection(electionId);
+            setElectionData(electionDataResp);
 
             // Try to load existing ballot
             const ballotData = await getBallot(electionId, ballotUuid);
@@ -55,7 +53,7 @@ export default function BallotPage({ electionId, ballotUuid }: BallotPageProps) 
                 // Initialize empty ballot
                 setBallot({
                     votes: 1,
-                    ranks: Array(electionData.election.candidates.length).fill(null)
+                    ranks: Array(electionDataResp.election.candidates.length).fill(null)
                 });
                 setSuccess(false); // New ballot, not yet saved
             }
@@ -90,6 +88,11 @@ export default function BallotPage({ electionId, ballotUuid }: BallotPageProps) 
 
     const handleRankChange = (candidateIdx: number, rank: number | null) => {
         if (!ballot) return;
+        const start = electionData ? new Date(electionData.election.start_time) : null;
+        const end = electionData ? new Date(electionData.election.end_time) : null;
+        const now = new Date();
+        const readOnly = !!(start && end) && (now < start || now >= end);
+        if (readOnly) return;
         const newRanks = [...ballot.ranks];
         newRanks[candidateIdx] = rank;
         setBallot({ ...ballot, ranks: newRanks });
@@ -142,8 +145,13 @@ export default function BallotPage({ electionId, ballotUuid }: BallotPageProps) 
         );
     }
 
+    const candidates = electionData?.election.candidates ?? [];
     const maxRank = candidates.length;
     const rankOptions = Array.from({ length: maxRank }, (_, i) => i + 1);
+    const startTime = electionData ? new Date(electionData.election.start_time) : null;
+    const endTime = electionData ? new Date(electionData.election.end_time) : null;
+    const now = new Date();
+    const readOnly = !!(startTime && endTime) && (now < startTime || now >= endTime);
 
     return (
         <Container maxWidth="md">
@@ -153,8 +161,14 @@ export default function BallotPage({ electionId, ballotUuid }: BallotPageProps) 
                 </Typography>
 
                 <Typography variant="h5" color="text.secondary" gutterBottom>
-                    {electionName}
+                    {electionData?.election.name}
                 </Typography>
+
+                {electionData && startTime && endTime && (
+                    <Alert severity={readOnly ? 'warning' : 'info'} sx={{ my: 2 }}>
+                        {t('Voting Period')}: {startTime.toLocaleString()} — {endTime.toLocaleString()} {readOnly ? `• ${t('Voting is closed')}` : `• ${t('Voting is open')}`}
+                    </Alert>
+                )}
 
                 {success && (
                     <Alert severity="success" sx={{ my: 2 }}>
@@ -198,6 +212,7 @@ export default function BallotPage({ electionId, ballotUuid }: BallotPageProps) 
                                         variant={ballot.ranks[idx] === null ? 'contained' : 'outlined'}
                                         size="small"
                                         onClick={() => handleRankChange(idx, null)}
+                                        disabled={readOnly}
                                     >
                                         {t('No preference')}
                                     </Button>
@@ -207,6 +222,7 @@ export default function BallotPage({ electionId, ballotUuid }: BallotPageProps) 
                                             variant={ballot.ranks[idx] === rank ? 'contained' : 'outlined'}
                                             size="small"
                                             onClick={() => handleRankChange(idx, rank)}
+                                            disabled={readOnly}
                                         >
                                             {rank}
                                         </Button>
@@ -223,9 +239,9 @@ export default function BallotPage({ electionId, ballotUuid }: BallotPageProps) 
                         size="large"
                         startIcon={saving ? <CircularProgress size={20} /> : <SaveIcon />}
                         onClick={handleSave}
-                        disabled={saving}
+                        disabled={saving || readOnly}
                     >
-                        {saving ? t('Saving...') : t('Submit Ballot')}
+                        {saving ? t('Saving...') : readOnly ? t('Voting is closed') : t('Submit Ballot')}
                     </Button>
                 </Box>
             </Box>

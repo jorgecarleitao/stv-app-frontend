@@ -51,5 +51,9 @@
   "No preference": "No preference",
   "Saving...": "Saving...",
   "Submit Ballot": "Submit Ballot",
-  "This ballot id does not exist": "This ballot id does not exist"
+  "This ballot id does not exist": "This ballot id does not exist",
+  "Voting Period": "Voting Period",
+  "Voting is open": "Voting is open",
+  "Voting is closed": "Voting is closed",
+  "voters": "voters"
 }

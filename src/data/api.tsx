@@ -30,6 +30,10 @@ export interface ElectionConfig {
     name: string;
     candidates: string[];
     seats: number;
+    start_time: string;
+    end_time: string;
+    number_of_ballots: number;
+    ballots?: string[];
 }
 
 export interface ElectionState {

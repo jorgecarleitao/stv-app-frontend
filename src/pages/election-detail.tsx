@@ -104,6 +104,10 @@ export default function ElectionDetail({ electionId }: ElectionDetailProps) {
     }
 
     const { election, potential_voters, casted, results } = electionState;
+    const start = new Date(election.start_time);
+    const end = new Date(election.end_time);
+    const now = new Date();
+    const votingClosed = now < start || now >= end;
     const votingProgress = potential_voters > 0 ? (casted / potential_voters) * 100 : 0;
 
     return (
@@ -132,12 +136,20 @@ export default function ElectionDetail({ electionId }: ElectionDetailProps) {
                             color="primary"
                         />
                         <Chip
+                            label={`${election.number_of_ballots} ${t('voters')}`}
+                            color="default"
+                        />
+                        <Chip
                             label={`${casted} / ${potential_voters} ${t('votes cast')}`}
                             color={casted >= potential_voters ? 'success' : 'default'}
                         />
                         <Chip
                             label={`${votingProgress.toFixed(1)}% ${t('turnout')}`}
                             color={votingProgress >= 50 ? 'success' : 'warning'}
+                        />
+                        <Chip
+                            label={`${t('Voting Period')}: ${start.toLocaleString()} — ${end.toLocaleString()}`}
+                            color={votingClosed ? 'default' : 'info'}
                         />
                     </Stack>
                 </Paper>

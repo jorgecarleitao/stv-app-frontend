@@ -85,5 +85,19 @@
   "View Source Code": "View Source Code",
   "readyToStartTitle": "Ready to get started?",
   "readyToStartDesc": "Browse active elections to cast your vote, or try the simulator to explore how STV works with your own scenarios.",
-  "Browse Elections": "Browse Elections"
+  "Browse Elections": "Browse Elections",
+  "cast": "cast",
+  "Election Results": "Election Results",
+  "Open in Simulator": "Open in Simulator",
+  "Ballot Groups": "Ballot Groups",
+  "unique patterns": "unique patterns",
+  "total votes": "total votes",
+  "Individual Ballots": "Individual Ballots",
+  "Click to view ballot details": "Click to view ballot details",
+  "Detailed Counting Log": "Detailed Counting Log",
+  "vote": "vote",
+  "votes": "votes",
+  "ballot": "ballot",
+  "ballots": "ballots",
+  "Votes": "Votes"
 }

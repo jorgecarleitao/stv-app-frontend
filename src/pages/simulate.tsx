@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import Box from '@mui/material/Box';
@@ -123,22 +123,63 @@ export default function Simulate({ path }: SimulateProps = {}) {
     const { t } = useTranslation();
 
     const [election, setElection] = useState<Election>(defaultElection);
-
     const [yamlText, setYamlText] = useState("");
     const [yamlError, setYamlError] = useState<string | null>(null);
-
-    useEffect(() => {
-        setYamlText(yaml.dump(election, { noRefs: true, sortKeys: false }));
-        setYamlError(null);
-        setResult(null);
-        setError(null);
-    }, [election]);
-
     const [result, setResult] = useState<ElectionResult | null>(null);
     const [error, setError] = useState<string | null>(null);
     const [loading, setLoading] = useState(false);
-
     const [pendingYaml, setPendingYaml] = useState(""); // used for debounce
+
+    // Track if we've loaded from URL to avoid overwriting it
+    const initializedFromUrl = useRef(false);
+
+    // Load from URL on mount
+    useEffect(() => {
+        const params = new URLSearchParams(window.location.search);
+        const encoded = params.get("data");
+        if (encoded) {
+            try {
+                const yamlText = LZString.decompressFromEncodedURIComponent(encoded);
+                if (yamlText) {
+                    const loaded = yaml.load(yamlText) as Election;
+                    setElection(loaded);
+                    setYamlText(yamlText);
+                    setYamlError(null);
+                }
+            } catch (e) {
+                console.error('Failed to load data from URL:', e);
+            }
+        }
+        // Mark as initialized after checking URL (whether we loaded from it or not)
+        initializedFromUrl.current = true;
+    }, []);
+
+    // Sync election to URL (but only after initial load from URL)
+    useEffect(() => {
+        if (initializedFromUrl.current) {
+            const yamlText = yaml.dump(election, { noRefs: true, sortKeys: false });
+            const compressed = LZString.compressToEncodedURIComponent(yamlText);
+
+            const params = new URLSearchParams(window.location.search);
+            params.set("data", compressed);
+
+            window.history.replaceState(
+                {},
+                "",
+                `${window.location.pathname}?${params.toString()}`
+            );
+        }
+    }, [election]);
+
+    // Update YAML text when election changes (but not on initial URL load to avoid overwriting)
+    useEffect(() => {
+        if (initializedFromUrl.current) {
+            setYamlText(yaml.dump(election, { noRefs: true, sortKeys: false }));
+            setYamlError(null);
+            setResult(null);
+            setError(null);
+        }
+    }, [election]);
 
     // Debounce: update yamlText to pendingYaml after user stops typing for 400ms
     useEffect(() => {
@@ -259,37 +300,6 @@ export default function Simulate({ path }: SimulateProps = {}) {
             setYamlError("YAML parse error: " + err.message);
         }
     };
-
-    useEffect(() => {
-        const yamlText = yaml.dump(election, { noRefs: true, sortKeys: false });
-        const compressed = LZString.compressToEncodedURIComponent(yamlText);
-
-        const params = new URLSearchParams(window.location.search);
-        params.set("data", compressed);
-
-        window.history.replaceState(
-            {},
-            "",
-            `${window.location.pathname}?${params.toString()}`
-        );
-    }, [election]);
-
-    useEffect(() => {
-        const params = new URLSearchParams(window.location.search);
-        const encoded = params.get("data");
-        if (encoded) {
-            try {
-                const yamlText = LZString.decompressFromEncodedURIComponent(encoded);
-                if (yamlText) {
-                    const loaded = yaml.load(yamlText) as Election;
-                    setElection(loaded);
-                }
-                setYamlText(yamlText || "");
-            } catch (e) {
-                // ignore
-            }
-        }
-    }, []);
 
     return (
         <Container>

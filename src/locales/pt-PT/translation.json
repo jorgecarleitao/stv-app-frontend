@@ -85,5 +85,19 @@
   "View Source Code": "Ver Código Fonte",
   "readyToStartTitle": "Pronto para começar?",
   "readyToStartDesc": "Navegue pelas eleições ativas para emitir o seu voto, ou experimente o simulador para explorar como o STV funciona com os seus próprios cenários.",
-  "Browse Elections": "Explorar Eleições"
+  "Browse Elections": "Explorar Eleições",
+  "cast": "expressos",
+  "Election Results": "Resultados da Eleição",
+  "Open in Simulator": "Abrir no Simulador",
+  "Ballot Groups": "Grupos de Boletins",
+  "unique patterns": "padrões únicos",
+  "total votes": "votos totais",
+  "Individual Ballots": "Boletins Individuais",
+  "Click to view ballot details": "Clique para ver detalhes do boletim",
+  "Detailed Counting Log": "Registo Detalhado de Contagem",
+  "vote": "voto",
+  "votes": "votos",
+  "ballot": "boletim",
+  "ballots": "boletins",
+  "Votes": "Votos"
 }

@@ -48,6 +48,10 @@ const defaultElection: Election = {
 
 const HEADER = "h5"
 
+interface HomeProps {
+    path?: string;
+}
+
 function ElectedList({ elected }: { elected: Elected[] }) {
     const { t, i18n } = useTranslation();
 
@@ -115,7 +119,7 @@ function Seats({ election, setElection }: ElectionBasicsProps) {
     </Stack>
 }
 
-export default function Home() {
+export default function Home({ path }: HomeProps = {}) {
     const { t, i18n } = useTranslation();
 
     const [election, setElection] = useState<Election>(defaultElection);

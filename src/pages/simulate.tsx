@@ -26,10 +26,19 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import LZString from "lz-string";
 import * as yaml from "js-yaml";
 
-import { Election } from '../data/frontend';
-import { ElectionResult, Elected, simulateElection } from '../data/api';
-import { convertToApiElection } from '../data/frontend_to_api';
+import { Election, ElectionResult, Elected, simulateElection, Ballot } from '../data/api';
 import { BallotsEditor } from '../ballot';
+import { BallotGroupDisplay } from '../components/BallotGroupDisplay';
+
+// Convert UI ranks (1-based) to API ranks (0-based)
+function toApiRanks(ranks: (number | null)[]): (number | null)[] {
+    return ranks.map(r => r === null ? null : r - 1);
+}
+
+// Convert API ranks (0-based) to UI ranks (1-based)
+function fromApiRanks(ranks: (number | null)[]): (number | null)[] {
+    return ranks.map(r => r === null ? null : r + 1);
+}
 
 const defaultElection: Election = {
     candidates: ["Ana", "Rodrigo", "Sara", "Tiago"],
@@ -37,11 +46,11 @@ const defaultElection: Election = {
     ballots: [
         {
             votes: 10,
-            ranks: [3, 2, null, 1],
+            ranks: [2, 1, null, 0],  // 0-based ranks (API format)
         },
         {
             votes: 5,
-            ranks: [4, 2, 1, 3],
+            ranks: [3, 1, 0, 2],  // 0-based ranks (API format)
         }
     ],
 };
@@ -192,8 +201,7 @@ export default function Simulate({ path }: SimulateProps = {}) {
         setError(null);
         setResult(null);
         try {
-            const apiElection = convertToApiElection(election);
-            const res = await simulateElection(apiElection);
+            const res = await simulateElection(election);
             setResult(res);
         } catch (e: any) {
             setError(e.message);
@@ -394,9 +402,13 @@ export default function Simulate({ path }: SimulateProps = {}) {
                 </Box>
                 <BallotsEditor
                     candidates={election.candidates}
-                    ballots={election.ballots}
+                    ballots={election.ballots.map(b => ({ ...b, ranks: fromApiRanks(b.ranks) }))}
                     onChangeBallotVotes={handleChangeBallotVotes}
-                    onChangeBallotRank={handleChangeBallotRank}
+                    onChangeBallotRank={(ballotIdx, candIdx, rank) => {
+                        // Convert 1-based UI rank to 0-based API rank
+                        const apiRank = rank === null ? null : rank - 1;
+                        handleChangeBallotRank(ballotIdx, candIdx, apiRank);
+                    }}
                     onAddBallot={handleAddBallot}
                     onRemoveBallot={handleRemoveBallot}
                 />
@@ -416,6 +428,28 @@ export default function Simulate({ path }: SimulateProps = {}) {
 
             {error && <Alert severity="error" sx={{ my: 2 }}>{error}</Alert>}
             {result && <ElectedList elected={result.elected} />}
+            {result && result.election.ballots.length > 0 && (
+                <Paper elevation={2} sx={{ p: 3, my: 2 }}>
+                    <Typography variant={HEADER} gutterBottom>
+                        {t('Combined Ballots')}
+                    </Typography>
+                    <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+                        {result.election.ballots.length} {t('unique patterns')} • {result.election.ballots.reduce((sum, b) => sum + b.votes, 0)} {t('total votes')}
+                    </Typography>
+                    <Stack spacing={2}>
+                        {result.election.ballots.map((ballot, idx) => (
+                            <BallotGroupDisplay
+                                key={idx}
+                                candidates={result.election.candidates}
+                                ballot={{ ...ballot, ranks: fromApiRanks(ballot.ranks) }}
+                                groupNumber={idx + 1}
+                                readOnly={true}
+                                subtitle={`${ballot.votes} ${ballot.votes === 1 ? t('vote') : t('votes')}`}
+                            />
+                        ))}
+                    </Stack>
+                </Paper>
+            )}
             {result && (
                 <Accordion elevation={4} sx={{ p: 2, my: 2 }}>
                     <AccordionSummary

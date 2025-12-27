@@ -34,8 +34,13 @@ import EmojiEventsIcon from '@mui/icons-material/EmojiEvents';
 import LZString from "lz-string";
 import * as yaml from "js-yaml";
 
-import { getElection, ElectionState, Ballot, getBallot } from '../data/api';
+import { getElection, ElectionState, Ballot } from '../data/api';
 import { BallotGroupDisplay } from '../components/BallotGroupDisplay';
+
+// Convert API ranks (0-based) to UI ranks (1-based)
+function fromApiRanks(ranks: (number | null)[]): (number | null)[] {
+    return ranks.map(r => r === null ? null : r + 1);
+}
 
 interface ElectionDetailProps {
     electionId?: string;
@@ -46,8 +51,6 @@ export default function ElectionDetail({ electionId }: ElectionDetailProps) {
     const [electionState, setElectionState] = useState<ElectionState | null>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
-    const [ballotGroups, setBallotGroups] = useState<Array<{ ballot: Ballot, count: number, uuids: string[] }>>([]);
-    const [loadingBallots, setLoadingBallots] = useState(false);
 
     useEffect(() => {
         if (electionId) {
@@ -63,11 +66,6 @@ export default function ElectionDetail({ electionId }: ElectionDetailProps) {
             setError(null);
             const data = await getElection(electionId);
             setElectionState(data);
-
-            // Load and group ballots if available
-            if (data.election.ballots && data.election.ballots.length > 0) {
-                await loadAndGroupBallots(electionId, data.election.ballots);
-            }
         } catch (err) {
             setError(err instanceof Error ? err.message : String(err));
         } finally {
@@ -75,70 +73,13 @@ export default function ElectionDetail({ electionId }: ElectionDetailProps) {
         }
     };
 
-    const loadAndGroupBallots = async (electionId: string, ballotUuids: string[]) => {
-        setLoadingBallots(true);
-        try {
-            // Fetch all ballots
-            const ballots = await Promise.all(
-                ballotUuids.map(uuid =>
-                    getBallot(electionId, uuid).then(ballot => ({ uuid, ballot }))
-                )
-            );
 
-            // Group ballots by identical rank patterns
-            const groups = new Map<string, { ballot: Ballot, count: number, uuids: string[] }>();
-
-            for (const { uuid, ballot } of ballots) {
-                if (!ballot) continue;
-
-                const key = JSON.stringify(ballot.ranks);
-                const existing = groups.get(key);
-                const ballotVotes = ballot.votes || 1; // Default to 1 if votes is undefined
-
-                if (existing) {
-                    existing.count += ballotVotes;
-                    existing.uuids.push(uuid);
-                } else {
-                    groups.set(key, {
-                        ballot: { ...ballot, votes: ballotVotes },
-                        count: ballotVotes,
-                        uuids: [uuid]
-                    });
-                }
-            }
-
-            // Sort by count descending and update ballot votes
-            const sorted = Array.from(groups.values())
-                .sort((a, b) => b.count - a.count)
-                .map(group => ({
-                    ...group,
-                    ballot: { ...group.ballot, votes: group.count }
-                }));
-
-            setBallotGroups(sorted);
-        } catch (err) {
-            console.error('Failed to load ballots:', err);
-        } finally {
-            setLoadingBallots(false);
-        }
-    };
 
     const handleSimulate = () => {
-        if (!electionState) return;
+        if (!electionState?.results?.election) return;
 
-        const { election } = electionState;
-
-        // Convert ballot groups to simulation format
-        const simulationData = {
-            candidates: election.candidates,
-            seats: election.seats,
-            ballots: ballotGroups.map(g => ({
-                votes: g.count,
-                ranks: g.ballot.ranks
-            }))
-        };
-
-        const yamlText = yaml.dump(simulationData, { noRefs: true, sortKeys: false });
+        // Use election data directly from results
+        const yamlText = yaml.dump(electionState.results.election, { noRefs: true, sortKeys: false });
         const compressed = LZString.compressToEncodedURIComponent(yamlText);
 
         route(`/simulate?data=${compressed}`);
@@ -291,7 +232,7 @@ export default function ElectionDetail({ electionId }: ElectionDetailProps) {
                                 </Grid>
                             ))}
                         </Grid>
-                        {ballotGroups.length > 0 && (
+                        {results.election.ballots.length > 0 && (
                             <Box sx={{ mt: 3, textAlign: 'center' }}>
                                 <Button
                                     variant="outlined"
@@ -333,34 +274,28 @@ export default function ElectionDetail({ electionId }: ElectionDetailProps) {
                 </Paper>
 
                 {/* Ballot Groups */}
-                {ballotGroups.length > 0 && (
+                {results && results.election.ballots.length > 0 && (
                     <Paper elevation={2} sx={{ p: 3, mb: 3 }}>
                         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
                             <Typography variant="h5" sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                                 <HowToVoteIcon /> {t('Ballot Groups')}
                             </Typography>
                             <Typography variant="body2" color="text.secondary">
-                                {ballotGroups.length} {t('unique patterns')} • {ballotGroups.reduce((sum, g) => sum + g.count, 0)} {t('total votes')}
+                                {results.election.ballots.length} {t('unique patterns')} • {results.election.ballots.reduce((sum, b) => sum + b.votes, 0)} {t('total votes')}
                             </Typography>
                         </Box>
-                        {loadingBallots ? (
-                            <Box sx={{ display: 'flex', justifyContent: 'center', p: 4 }}>
-                                <CircularProgress />
-                            </Box>
-                        ) : (
-                            <Stack spacing={2}>
-                                {ballotGroups.map((group, groupIdx) => (
-                                    <BallotGroupDisplay
-                                        key={groupIdx}
-                                        candidates={election.candidates}
-                                        ballot={group.ballot}
-                                        groupNumber={groupIdx + 1}
-                                        readOnly={true}
-                                        subtitle={`${group.uuids.length} ${group.uuids.length === 1 ? t('ballot') : t('ballots')}`}
-                                    />
-                                ))}
-                            </Stack>
-                        )}
+                        <Stack spacing={2}>
+                            {results.election.ballots.map((ballot, idx) => (
+                                <BallotGroupDisplay
+                                    key={idx}
+                                    candidates={results.election.candidates}
+                                    ballot={{ ...ballot, ranks: fromApiRanks(ballot.ranks) }}
+                                    groupNumber={idx + 1}
+                                    readOnly={true}
+                                    subtitle={`${ballot.votes} ${ballot.votes === 1 ? t('vote') : t('votes')}`}
+                                />
+                            ))}
+                        </Stack>
                     </Paper>
                 )}
 

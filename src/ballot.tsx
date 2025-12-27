@@ -4,7 +4,7 @@ import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Stack from '@mui/material/Stack';
 
-import { Ballot } from './data/frontend'
+import { Ballot } from './data/api'
 import { BallotGroupDisplay } from './components/BallotGroupDisplay';
 
 export function BallotsEditor({

@@ -19,6 +19,7 @@ export interface Elected {
 }
 
 export interface ElectionResult {
+    election: Election;
     log: string;
     elected: Elected[];
 }

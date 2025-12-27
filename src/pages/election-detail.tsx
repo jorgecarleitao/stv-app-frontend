@@ -111,6 +111,71 @@ export default function ElectionDetail({ electionId }: ElectionDetailProps) {
     const votingClosed = now < start || now >= end;
     const votingProgress = potential_voters > 0 ? (casted / potential_voters) * 100 : 0;
 
+    const ballotsSection = election.ballots && election.ballots.length > 0 ? (
+        <Paper elevation={2} sx={{ p: 3, my: 3 }}>
+            <Typography variant="h5" gutterBottom>
+                {t('Public Ballots')}
+            </Typography>
+            <List>
+                {election.ballots.map((uuid) => (
+                    <ListItem key={uuid} disablePadding>
+                        <ListItemButton onClick={() => route(`/elections/${election.id}/ballot/${uuid}`)}>
+                            <ListItemAvatar>
+                                <Avatar>{uuid.substring(0, 2).toUpperCase()}</Avatar>
+                            </ListItemAvatar>
+                            <ListItemText primary={uuid} />
+                        </ListItemButton>
+                    </ListItem>
+                ))}
+            </List>
+        </Paper>
+    ) : null;
+
+    const electedSection = results ? (
+        <Paper elevation={2} sx={{ p: 3, my: 3 }}>
+            <Typography variant="h5" gutterBottom>
+                {t('Elected Candidates')}
+            </Typography>
+            <List>
+                {results.elected.map((e, idx) => (
+                    <ListItem key={e.id}>
+                        <ListItemAvatar>
+                            <Avatar sx={{ bgcolor: 'success.main' }}>
+                                {idx + 1}
+                            </Avatar>
+                        </ListItemAvatar>
+                        <ListItemText
+                            primary={e.candidate}
+                            secondary={`${t('Position')}: ${idx + 1}`}
+                        />
+                    </ListItem>
+                ))}
+            </List>
+        </Paper>
+    ) : null;
+
+    const logSection = results ? (
+        <Paper elevation={2} sx={{ p: 3, my: 3 }}>
+            <Typography variant="h5" gutterBottom>
+                {t('Election Log')}
+            </Typography>
+            <Box
+                component="pre"
+                sx={{
+                    whiteSpace: 'pre-wrap',
+                    wordBreak: 'break-word',
+                    fontSize: '0.875rem',
+                    fontFamily: 'monospace',
+                    p: 2,
+                    bgcolor: 'background.default',
+                    borderRadius: 1
+                }}
+            >
+                {results.log}
+            </Box>
+        </Paper>
+    ) : null;
+
     return (
         <Container maxWidth="lg">
             <Box sx={{ my: 4 }}>
@@ -155,6 +220,8 @@ export default function ElectionDetail({ electionId }: ElectionDetailProps) {
                     </Stack>
                 </Paper>
 
+                {electedSection}
+
                 {/* Candidates */}
                 <Paper elevation={2} sx={{ p: 3, my: 3 }}>
                     <Typography variant="h5" gutterBottom>
@@ -172,72 +239,9 @@ export default function ElectionDetail({ electionId }: ElectionDetailProps) {
                     </List>
                 </Paper>
 
-                {/* Public Ballots (after election ends) */}
-                {election.ballots && election.ballots.length > 0 && (
-                    <Paper elevation={2} sx={{ p: 3, my: 3 }}>
-                        <Typography variant="h5" gutterBottom>
-                            {t('Public Ballots')}
-                        </Typography>
-                        <List>
-                            {election.ballots.map((uuid) => (
-                                <ListItem key={uuid} disablePadding>
-                                    <ListItemButton onClick={() => route(`/elections/${election.id}/ballot/${uuid}`)}>
-                                        <ListItemAvatar>
-                                            <Avatar>{uuid.substring(0, 2).toUpperCase()}</Avatar>
-                                        </ListItemAvatar>
-                                        <ListItemText primary={uuid} />
-                                    </ListItemButton>
-                                </ListItem>
-                            ))}
-                        </List>
-                    </Paper>
-                )}
+                {ballotsSection}
 
-                {/* Results */}
-                {results && (
-                    <>
-                        <Paper elevation={2} sx={{ p: 3, my: 3 }}>
-                            <Typography variant="h5" gutterBottom>
-                                {t('Elected Candidates')}
-                            </Typography>
-                            <List>
-                                {results.elected.map((e, idx) => (
-                                    <ListItem key={e.id}>
-                                        <ListItemAvatar>
-                                            <Avatar sx={{ bgcolor: 'success.main' }}>
-                                                {idx + 1}
-                                            </Avatar>
-                                        </ListItemAvatar>
-                                        <ListItemText
-                                            primary={e.candidate}
-                                            secondary={`${t('Position')}: ${idx + 1}`}
-                                        />
-                                    </ListItem>
-                                ))}
-                            </List>
-                        </Paper>
-
-                        <Paper elevation={2} sx={{ p: 3, my: 3 }}>
-                            <Typography variant="h5" gutterBottom>
-                                {t('Election Log')}
-                            </Typography>
-                            <Box
-                                component="pre"
-                                sx={{
-                                    whiteSpace: 'pre-wrap',
-                                    wordBreak: 'break-word',
-                                    fontSize: '0.875rem',
-                                    fontFamily: 'monospace',
-                                    p: 2,
-                                    bgcolor: 'background.default',
-                                    borderRadius: 1
-                                }}
-                            >
-                                {results.log}
-                            </Box>
-                        </Paper>
-                    </>
-                )}
+                {logSection}
 
                 {!results && (
                     <Alert severity="info" sx={{ my: 3 }}>

@@ -27,7 +27,7 @@ import LZString from "lz-string";
 import * as yaml from "js-yaml";
 
 import { Election } from '../data/frontend';
-import { ElectionResult, Elected, fetchResult } from '../data/api';
+import { ElectionResult, Elected, simulateElection } from '../data/api';
 import { convertToApiElection } from '../data/frontend_to_api';
 import { BallotsEditor } from '../ballot';
 
@@ -47,6 +47,10 @@ const defaultElection: Election = {
 };
 
 const HEADER = "h5"
+
+interface HomeProps {
+    path?: string;
+}
 
 function ElectedList({ elected }: { elected: Elected[] }) {
     const { t, i18n } = useTranslation();
@@ -115,7 +119,7 @@ function Seats({ election, setElection }: ElectionBasicsProps) {
     </Stack>
 }
 
-export default function Home() {
+export default function Home({ path }: HomeProps = {}) {
     const { t, i18n } = useTranslation();
 
     const [election, setElection] = useState<Election>(defaultElection);
@@ -148,7 +152,7 @@ export default function Home() {
         setResult(null);
         try {
             const apiElection = convertToApiElection(election);
-            const res = await fetchResult(apiElection);
+            const res = await simulateElection(apiElection);
             setResult(res);
         } catch (e: any) {
             setError(e.message);

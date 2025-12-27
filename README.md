@@ -6,7 +6,7 @@ How to use:
 
 ```bash
 pnpm install
-npm run dev -- --open
+pnpm run dev -- --open
 ```
 
 If new translations are added, use

@@ -89,9 +89,12 @@ export default function ElectionList() {
                                                 secondary={(() => {
                                                     const start = new Date(election.start_time);
                                                     const end = new Date(election.end_time);
+                                                    const now = new Date();
+                                                    const isOpen = now >= start && now < end;
+                                                    const status = isOpen ? t('Voting is open') : t('Voting is closed');
                                                     const period = `${t('Voting Period')}: ${start.toLocaleDateString()} — ${end.toLocaleDateString()}`;
                                                     const basics = `${election.candidates.length} ${t('candidates')} • ${election.seats} ${t('seats')} • ${election.number_of_ballots} ${t('voters')}`;
-                                                    return [basics, period].join(' • ');
+                                                    return [basics, status, period].join(' • ');
                                                 })()}
                                             />
                                         </ListItemButton>

@@ -38,7 +38,7 @@ export default function Navigation({ mode, toggleTheme }: NavigationProps) {
 
     const navItems = [
         { path: '/', label: t('Home') },
-        { path: '/methodology', label: t('Methodology') },
+        { path: '/simulate', label: t('Simulate') },
         { path: '/elections', label: t('Elections') },
     ];
 

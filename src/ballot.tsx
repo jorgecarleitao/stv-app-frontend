@@ -7,11 +7,11 @@ import Stack from '@mui/material/Stack';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
-import MenuItem from '@mui/material/MenuItem';
 
 import DeleteIcon from '@mui/icons-material/Delete';
 
 import { Ballot } from './data/frontend'
+import { CandidateRankSelector } from './components/CandidateRankSelector';
 
 export function BallotsEditor({
     candidates,
@@ -28,9 +28,8 @@ export function BallotsEditor({
     onAddBallot: () => void;
     onRemoveBallot: (ballotIdx: number) => void;
 }) {
-    const { t, i18n } = useTranslation();
+    const { t } = useTranslation();
     const maxCandidates = candidates.length;
-    const rankOptions = [null, ...Array.from({ length: maxCandidates }, (_, i) => i + 1)];
 
     return <Stack spacing={2}>
         {ballots.map((b, ballotIdx) => (
@@ -51,31 +50,15 @@ export function BallotsEditor({
                     </IconButton>
                 </Box>
                 <Box sx={{ mt: 2, pl: 2 }}>
-                    <Stack direction="row" gap={2} flexWrap="wrap">
+                    <Stack spacing={1.5}>
                         {candidates.map((cand, candIdx) => (
-                            <TextField
+                            <CandidateRankSelector
                                 key={candIdx}
-                                select
-                                label={cand}
-                                size="small"
-                                sx={{ width: 120 }}
-                                value={
-                                    b.ranks[candIdx] === null || b.ranks[candIdx] === undefined
-                                        ? ''
-                                        : b.ranks[candIdx]
-                                }
-                                onChange={e => {
-                                    const val =
-                                        e.target.value === '' ? null : Number(e.target.value);
-                                    onChangeBallotRank(ballotIdx, candIdx, val);
-                                }}
-                            >
-                                {rankOptions.map(rank => (
-                                    <MenuItem value={rank} key={rank}>
-                                        {rank || ""}
-                                    </MenuItem>
-                                ))}
-                            </TextField>
+                                candidate={cand}
+                                rank={b.ranks[candIdx]}
+                                maxRank={maxCandidates}
+                                onChange={(rank) => onChangeBallotRank(ballotIdx, candIdx, rank)}
+                            />
                         ))}
                     </Stack>
                 </Box>

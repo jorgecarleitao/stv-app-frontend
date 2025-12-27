@@ -12,6 +12,7 @@ import Stack from '@mui/material/Stack';
 import SaveIcon from '@mui/icons-material/Save';
 
 import { getBallot, putBallot, getElection, Ballot as ApiBallot, ElectionState } from '../data/api';
+import { CandidateRankSelector } from '../components/CandidateRankSelector';
 
 interface BallotPageProps {
     electionId?: string;
@@ -147,7 +148,6 @@ export default function BallotPage({ electionId, ballotUuid }: BallotPageProps) 
 
     const candidates = electionData?.election.candidates ?? [];
     const maxRank = candidates.length;
-    const rankOptions = Array.from({ length: maxRank }, (_, i) => i + 1);
     const startTime = electionData ? new Date(electionData.election.start_time) : null;
     const endTime = electionData ? new Date(electionData.election.end_time) : null;
     const now = new Date();
@@ -192,43 +192,14 @@ export default function BallotPage({ electionId, ballotUuid }: BallotPageProps) 
 
                     <Stack spacing={2}>
                         {candidates.map((candidate, idx) => (
-                            <Box
+                            <CandidateRankSelector
                                 key={idx}
-                                sx={{
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    gap: 2,
-                                    p: 2,
-                                    border: '1px solid',
-                                    borderColor: 'divider',
-                                    borderRadius: 1
-                                }}
-                            >
-                                <Typography sx={{ flexGrow: 1, fontWeight: 'medium' }}>
-                                    {candidate}
-                                </Typography>
-                                <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
-                                    <Button
-                                        variant={ballot.ranks[idx] === null ? 'contained' : 'outlined'}
-                                        size="small"
-                                        onClick={() => handleRankChange(idx, null)}
-                                        disabled={readOnly}
-                                    >
-                                        {t('No preference')}
-                                    </Button>
-                                    {rankOptions.map(rank => (
-                                        <Button
-                                            key={rank}
-                                            variant={ballot.ranks[idx] === rank ? 'contained' : 'outlined'}
-                                            size="small"
-                                            onClick={() => handleRankChange(idx, rank)}
-                                            disabled={readOnly}
-                                        >
-                                            {rank}
-                                        </Button>
-                                    ))}
-                                </Box>
-                            </Box>
+                                candidate={candidate}
+                                rank={ballot.ranks[idx]}
+                                maxRank={maxRank}
+                                readOnly={readOnly}
+                                onChange={(rank) => handleRankChange(idx, rank)}
+                            />
                         ))}
                     </Stack>
                 </Paper>

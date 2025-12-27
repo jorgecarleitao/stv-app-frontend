@@ -26,6 +26,7 @@
   "loadSaveYamlInstructions": "Carregar/Guardar eleição YAML\nCole YAML válido para atualizar a configuração da eleição.\nCopie este campo para exportar a configuração atual.\nAs alterações serão aplicadas automaticamente se o YAML for válido.",
   "methodology": "\nEste site executa o Voto Único Transferível (STV) utilizando o método de Meek com quota de Droop, um algoritmo preciso e amplamente reconhecido para eleições proporcionais por voto preferencial.\nÉ o mesmo tipo de método utilizado em várias eleições governamentais e organizacionais no mundo real.\n\nO algoritmo subjacente está implementado em código aberto por Guillaume Endignoux, engenheiro na Google.\nPode ser encontrado [aqui](https://github.com/gendx/stv-rs) e explicado [aqui](https://gendignoux.com/blog/2023/03/27/single-transferable-vote.html).\n\nPor predefinição, o STV seleciona um conjunto de vencedores, mas não fornece uma classificação estrita dos eleitos.\nPara apresentar uma ordem estilo pódio, este site complementa os resultados do STV classificando os candidatos eleitos usando o [método de Copeland](https://pt.wikipedia.org/wiki/M%C3%A9todo_de_Copeland),\numa abordagem bem conhecida baseada na comparação par a par das preferências em todos os boletins.\nEspecificamente, os candidatos são primeiro selecionados pelo STV e depois a sua ordem é determinada de acordo com as preferências dos eleitores utilizando o método de Copeland.\n",
   "Home": "Início",
+  "Simulate": "Simular",
   "Elections": "Eleições",
   "candidates": "candidatos",
   "seats": "lugares",

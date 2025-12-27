@@ -12,8 +12,8 @@ import useMediaQuery from '@mui/material/useMediaQuery';
 
 import './i18n';
 import Home from './pages/home';
+import Simulate from './pages/simulate';
 import Footer from './footer';
-import Methodology from './pages/methodology';
 import ElectionList from './pages/elections';
 import ElectionDetail from './pages/election-detail';
 import BallotPage from './pages/ballot';
@@ -47,7 +47,7 @@ export default function App() {
 					<Toolbar />
 					<Router>
 						<Home path="/" />
-						<Methodology path="/methodology" />
+						<Simulate path="/simulate" />
 						<ElectionList path="/elections" />
 						<ElectionDetail path="/elections/:electionId" />
 						<BallotPage path="/elections/:electionId/ballot/:ballotUuid" />

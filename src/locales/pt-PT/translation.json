@@ -40,15 +40,16 @@
   "Position": "Posição",
   "Election Log": "Registo da Eleição",
   "Results will be available after voting is complete": "Os resultados estarão disponíveis após a conclusão da votação",
-  "Cast Your Ballot": "Emita o Seu Voto",
-  "Ballot saved successfully!": "Voto guardado com sucesso!",
-  "Error saving ballot": "Erro ao guardar voto",
-  "Invalid ballot URL": "URL de voto inválido",
-  "Error loading ballot": "Erro ao carregar voto",
-  "Ballot not found": "Voto não encontrado",
+  "Cast Your Ballot": "Emita o Seu Boletim de Voto",
+  "Ballot saved successfully!": "Boletim de Voto guardado com sucesso!",
+  "Error saving ballot": "Erro ao guardar boletim de voto",
+  "Invalid ballot URL": "URL de boletim de voto inválido",
+  "Error loading ballot": "Erro ao carregar boletim de voto",
+  "Ballot not found": "Boletim de Voto não encontrado",
   "Rank the candidates": "Classifique os candidatos",
   "Select your preferred rank for each candidate. 1 is most preferred.": "Selecione a classificação preferida para cada candidato. 1 é o mais preferido.",
   "No preference": "Sem preferência",
   "Saving...": "A guardar...",
-  "Submit Ballot": "Submeter Voto"
+  "Submit Ballot": "Submeter Boletim de Voto",
+  "This ballot id does not exist": "Este ID de boletim de voto não existe"
 }

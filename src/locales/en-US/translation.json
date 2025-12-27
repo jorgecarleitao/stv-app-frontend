@@ -50,5 +50,6 @@
   "Select your preferred rank for each candidate. 1 is most preferred.": "Select your preferred rank for each candidate. 1 is most preferred.",
   "No preference": "No preference",
   "Saving...": "Saving...",
-  "Submit Ballot": "Submit Ballot"
+  "Submit Ballot": "Submit Ballot",
+  "This ballot id does not exist": "This ballot id does not exist"
 }

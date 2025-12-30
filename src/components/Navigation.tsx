@@ -38,6 +38,7 @@ export default function Navigation({ mode, toggleTheme }: NavigationProps) {
     const navItems = [
         { path: '/simulate', label: t('Simulate') },
         { path: '/elections', label: t('Elections') },
+        { path: '/admin-guide', label: t('Admin Guide') },
     ];
 
     const drawer = (

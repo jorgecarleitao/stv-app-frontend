@@ -373,32 +373,6 @@ export default function ElectionDetail({ electionId }: ElectionDetailProps) {
                     </Paper>
                 )}
 
-                {/* Candidates List */}
-                <Paper elevation={2} sx={{ p: 3, mb: 3 }}>
-                    <Typography variant="h5" gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                        <PeopleIcon /> {t('Candidates')}
-                    </Typography>
-                    <Grid container spacing={2} sx={{ mt: 1 }}>
-                        {election.candidates.map((candidate, idx) => (
-                            <Grid item xs={12} sm={6} md={4} key={idx}>
-                                <Box sx={{
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    gap: 2,
-                                    p: 2,
-                                    border: '1px solid',
-                                    borderColor: 'divider',
-                                    borderRadius: 1,
-                                    bgcolor: 'background.paper'
-                                }}>
-                                    <Avatar>{candidate.charAt(0).toUpperCase()}</Avatar>
-                                    <Typography variant="body1">{candidate}</Typography>
-                                </Box>
-                            </Grid>
-                        ))}
-                    </Grid>
-                </Paper>
-
                 {/* Ballot Groups (Accordion) */}
                 {results && results.election.ballots.length > 0 && (
                     <Accordion elevation={2} sx={{ mb: 3 }}>

@@ -20,6 +20,7 @@ import ElectionAdmin from './pages/election-admin';
 import BallotPage from './pages/ballot';
 import TokenRedeem from './pages/token-redeem';
 import Navigation from './components/Navigation';
+import AdminUserGuide from './pages/admin-guide';
 
 export default function App() {
 	const { t, i18n } = useTranslation();
@@ -56,6 +57,7 @@ export default function App() {
 						<ElectionAdmin path="/elections/:electionId/admin/:adminUuid" />
 						<TokenRedeem path="/elections/:electionId/tokens/:tokenId" />
 						<BallotPage path="/elections/:electionId/ballot/:ballotUuid" />
+						<AdminUserGuide path="/admin-guide" />
 					</Router>
 				</Box>
 				<Footer />

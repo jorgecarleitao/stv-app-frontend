@@ -28,7 +28,7 @@ export interface ElectionResult {
 
 export interface ElectionConfig {
     id: string;
-    name: string;
+    title: string;
     description?: string;
     candidates: string[];
     seats: number;

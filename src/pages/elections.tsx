@@ -102,7 +102,7 @@ export default function ElectionList({ path }: ElectionListProps) {
                                                 </Avatar>
                                             </ListItemAvatar>
                                             <ListItemText
-                                                primary={election.name}
+                                                primary={election.title}
                                                 secondary={
                                                     election.description ? (
                                                         <>

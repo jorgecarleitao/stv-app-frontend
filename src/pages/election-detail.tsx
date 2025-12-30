@@ -60,7 +60,7 @@ export default function ElectionDetail({ electionId }: ElectionDetailProps) {
 
     useEffect(() => {
         if (electionState) {
-            document.title = `${electionState.title} - ${t('STV election runner')}`;
+            document.title = `${electionState.election.title} - ${t('STV election runner')}`;
         }
     }, [electionState, t]);
 
@@ -164,7 +164,7 @@ export default function ElectionDetail({ electionId }: ElectionDetailProps) {
                 {/* Hero Section */}
                 <Box sx={{ mb: 4 }}>
                     <Typography variant="h3" component="h1" gutterBottom sx={{ fontWeight: 'bold' }}>
-                        {election.name}
+                        {election.title}
                     </Typography>
                     {election.description && (
                         <Typography variant="body1" color="text.secondary" paragraph sx={{ mb: 2 }}>

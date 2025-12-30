@@ -12,7 +12,6 @@ import CardActions from '@mui/material/CardActions';
 import Divider from '@mui/material/Divider';
 import HowToVoteIcon from '@mui/icons-material/HowToVote';
 import ScienceIcon from '@mui/icons-material/Science';
-import VerifiedIcon from '@mui/icons-material/Verified';
 import TrendingUpIcon from '@mui/icons-material/TrendingUp';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 

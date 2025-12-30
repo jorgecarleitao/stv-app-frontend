@@ -31,7 +31,7 @@ export default function BallotPage({ electionId, ballotUuid }: BallotPageProps) 
 
     useEffect(() => {
         if (electionData) {
-            document.title = `${electionData.title} - ${t('STV election runner')}`;
+            document.title = `${electionData.election.title} - ${t('STV election runner')}`;
         }
     }, [electionData, t]);
 
@@ -174,7 +174,7 @@ export default function BallotPage({ electionId, ballotUuid }: BallotPageProps) 
                 </Typography>
 
                 <Typography variant="h5" color="text.secondary" gutterBottom>
-                    {electionData?.election.name}
+                    {electionData?.election.title}
                 </Typography>
 
                 {electionData && startTime && endTime && (

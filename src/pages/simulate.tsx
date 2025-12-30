@@ -115,7 +115,7 @@ function Seats({ election, setElection }: ElectionBasicsProps) {
                 )
             }}
             value={election.seats}
-            onChange={e => {
+            onChange={(e: any) => {
                 let val = Number(e.target.value);
                 if (val < 1) val = 1;
                 if (val > election.candidates.length) val = election.candidates.length;
@@ -341,7 +341,7 @@ export default function Simulate({ path }: SimulateProps = {}) {
                                 value={name}
                                 label={`Candidate ${idx + 1}`}
                                 sx={{ flex: 1, mr: 1 }}
-                                onChange={e => handleRenameCandidate(idx, e.target.value)}
+                                onChange={(e: any) => handleRenameCandidate(idx, e.target.value)}
                                 InputProps={{
                                     endAdornment: (
                                         <InputAdornment position="end">
@@ -478,7 +478,7 @@ export default function Simulate({ path }: SimulateProps = {}) {
                     maxRows={20}
                     fullWidth
                     value={yamlText}
-                    onChange={e => setPendingYaml(e.target.value)}
+                    onChange={(e: any) => setPendingYaml(e.target.value)}
                     placeholder={t("Edit election YAML here...")}
                     sx={{ mb: 1 }}
                     error={!!yamlError}

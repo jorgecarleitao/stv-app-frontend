@@ -3,7 +3,7 @@
   "Add Ballot group": "Add Ballot group",
   "Introduction": "Introduction",
   "Methodology": "Methodology",
-  "STV election runner": "STV election runner",
+  "STV election runner": "ElectionHub",
   "Elected candidates": "Elected candidates",
   "Number of seats to elect": "Number of seats to elect",
   "numberOfSeatsInstructions": "Number of seats\n\nSet how many candidates will be elected in this contest.\nThe value cannot be less than 1 or more than the total number of candidates.",
@@ -64,6 +64,8 @@
   "heroSubtitle": "Fair, transparent, and proportional ranked-choice voting",
   "View Elections": "View Elections",
   "Try Simulator": "Try Simulator",
+  "createElectionTitle": "Create",
+  "createElectionDesc": "Set up your own STV election. Define candidates, voting periods, and distribute secure ballot tokens to voters. Perfect for clubs, organizations, and communities.",
   "participateTitle": "Participate",
   "participateDesc": "Cast your vote in active elections using secure ballot links. Your choices are private and counted accurately using the STV algorithm.",
   "Go to Elections": "Go to Elections",
@@ -144,5 +146,14 @@
   "Number of tokens": "Number of tokens",
   "Create Tokens": "Create Tokens",
   "Token count must be at least 1": "Token count must be at least 1",
-  "Important: Each token should be shared with exactly one person. Tokens are unique to each voter and should not be reused or shared publicly.": "Important: Each token should be shared with exactly one person. Tokens are unique to each voter and should not be reused or shared publicly."
+  "Important: Each token should be shared with exactly one person. Tokens are unique to each voter and should not be reused or shared publicly.": "Important: Each token should be shared with exactly one person. Tokens are unique to each voter and should not be reused or shared publicly.",
+  "Vote": "Vote",
+  "Token Already Redeemed": "Token Already Redeemed",
+  "This token has already been redeemed. Each token can only be used once. If you previously redeemed this token, you should have received a ballot link.": "This token has already been redeemed. Each token can only be used once. If you previously redeemed this token, you should have received a ballot link.",
+  "You have been invited to vote in this election. Click the button below to access your ballot.": "You have been invited to vote in this election. Click the button below to access your ballot.",
+  "Important: After continuing, you will receive a unique link to your ballot. This current link will no longer work. Do not share the ballot link with anyone, as it allows direct access to your vote.": "Important: After continuing, you will receive a unique link to your ballot. This current link will no longer work. Do not share the ballot link with anyone, as it allows direct access to your vote.",
+  "Loading...": "Loading...",
+  "Continue to Vote": "Continue to Vote",
+  "Private Ballot: Do not share this page URL with anyone. This link is unique to your vote and should be kept confidential.": "Private Ballot: Do not share this page URL with anyone. This link is unique to your vote and should be kept confidential.",
+  "Title, description, and candidates are locked because voting tokens have been redeemed.": "Title, description, and candidates are locked because voting tokens have been redeemed."
 }

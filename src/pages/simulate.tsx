@@ -131,6 +131,10 @@ function Seats({ election, setElection }: ElectionBasicsProps) {
 export default function Simulate({ path }: SimulateProps = {}) {
     const { t } = useTranslation();
 
+    useEffect(() => {
+        document.title = `${t('Simulate')} - ${t('STV election runner')}`;
+    }, [t]);
+
     const [election, setElection] = useState<Election>(defaultElection);
     const [yamlText, setYamlText] = useState("");
     const [yamlError, setYamlError] = useState<string | null>(null);

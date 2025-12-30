@@ -4,7 +4,7 @@ const BASE_URL = '/api';
 
 export interface Ballot {
     votes: number;
-    ranks: (number | null)[];
+    ranks: (number | null)[] | null;
 }
 
 export interface Election {
@@ -63,6 +63,7 @@ export interface ElectionResponse {
     num_seats: number;
     start_time: string;
     end_time: string;
+    is_locked: boolean;
 }
 
 /**
@@ -207,6 +208,50 @@ export async function createBallotTokens(
 
     if (!response.ok) {
         throw new Error(`Failed to create ballot tokens: ${await response.text()}`);
+    }
+
+    return response.json();
+}
+
+/**
+ * Redeem a token to get a ballot UUID
+ */
+export async function redeemToken(
+    electionId: string,
+    tokenId: string
+): Promise<string> {
+    const response = await fetch(
+        `${BASE_URL}/elections/${electionId}/tokens/${tokenId}/redeem`,
+        {
+            method: 'POST',
+            mode: 'cors',
+        }
+    );
+
+    if (!response.ok) {
+        throw new Error(`Failed to redeem token: ${await response.text()}`);
+    }
+
+    return response.json();
+}
+
+/**
+ * Get token info (check if already redeemed)
+ */
+export async function getTokenInfo(
+    electionId: string,
+    tokenId: string
+): Promise<BallotToken> {
+    const response = await fetch(
+        `${BASE_URL}/elections/${electionId}/tokens/${tokenId}`,
+        {
+            method: 'GET',
+            mode: 'cors',
+        }
+    );
+
+    if (!response.ok) {
+        throw new Error(`Failed to get token info: ${await response.text()}`);
     }
 
     return response.json();

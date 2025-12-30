@@ -30,6 +30,12 @@ export default function BallotPage({ electionId, ballotUuid }: BallotPageProps) 
     const [success, setSuccess] = useState(false);
 
     useEffect(() => {
+        if (electionData) {
+            document.title = `${electionData.title} - ${t('STV election runner')}`;
+        }
+    }, [electionData, t]);
+
+    useEffect(() => {
         if (electionId && ballotUuid) {
             loadData();
         }
@@ -49,15 +55,17 @@ export default function BallotPage({ electionId, ballotUuid }: BallotPageProps) 
             // Try to load existing ballot
             const ballotData = await getBallot(electionId, ballotUuid);
             if (ballotData) {
+                // If ranks is null, initialize it with empty array
+                if (ballotData.ranks === null) {
+                    ballotData.ranks = Array(electionDataResp.election.candidates.length).fill(null);
+                }
                 setBallot(ballotData);
-                setSuccess(true); // Mark as saved since it was loaded from API
             } else {
                 // Initialize empty ballot
                 setBallot({
                     votes: 1,
                     ranks: Array(electionDataResp.election.candidates.length).fill(null)
                 });
-                setSuccess(false); // New ballot, not yet saved
             }
         } catch (err) {
             // Check if it's a "not found" error (ballot UUID is invalid)
@@ -157,6 +165,10 @@ export default function BallotPage({ electionId, ballotUuid }: BallotPageProps) 
     return (
         <Container maxWidth="md">
             <Box sx={{ my: 4 }}>
+                <Alert severity="warning" sx={{ mb: 3 }}>
+                    {t('Private Ballot: Do not share this page URL with anyone. This link is unique to your vote and should be kept confidential.')}
+                </Alert>
+
                 <Typography variant="h3" component="h1" gutterBottom>
                     {t('Cast Your Ballot')}
                 </Typography>

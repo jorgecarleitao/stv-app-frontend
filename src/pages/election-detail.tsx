@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'preact/hooks';
 import { useTranslation } from 'react-i18next';
-import { route } from 'preact-router';
 
 import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
@@ -59,6 +58,12 @@ export default function ElectionDetail({ electionId }: ElectionDetailProps) {
         }
     }, [electionId]);
 
+    useEffect(() => {
+        if (electionState) {
+            document.title = `${electionState.title} - ${t('STV election runner')}`;
+        }
+    }, [electionState, t]);
+
     const loadElection = async () => {
         if (!electionId) return;
 
@@ -83,11 +88,11 @@ export default function ElectionDetail({ electionId }: ElectionDetailProps) {
         const yamlText = yaml.dump(electionState.results.election, { noRefs: true, sortKeys: false });
         const compressed = LZString.compressToEncodedURIComponent(yamlText);
 
-        route(`/simulate?data=${compressed}`);
+        window.location.href = `/simulate?data=${compressed}`;
     };
 
     const handleBack = () => {
-        route('/elections');
+        window.location.href = '/elections';
     };
 
     if (loading) {
@@ -301,7 +306,10 @@ export default function ElectionDetail({ electionId }: ElectionDetailProps) {
                             <List>
                                 {election.ballots.map((uuid) => (
                                     <ListItem key={uuid} disablePadding>
-                                        <ListItemButton onClick={() => route(`/elections/${election.id}/ballot/${uuid}`)}>
+                                        <ListItemButton 
+                                            component="a" 
+                                            href={`/elections/${election.id}/ballot/${uuid}`}
+                                        >
                                             <ListItemAvatar>
                                                 <Avatar sx={{ bgcolor: 'primary.main' }}>
                                                     {uuid.substring(0, 2).toUpperCase()}

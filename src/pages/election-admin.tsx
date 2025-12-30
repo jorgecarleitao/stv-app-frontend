@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'preact/hooks';
 import { useTranslation } from 'react-i18next';
-import { route } from 'preact-router';
 
 import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
@@ -39,6 +38,14 @@ export default function ElectionAdmin({ electionId, adminUuid }: ElectionAdminPr
     
     // Determine if we're in create mode (no electionId) or edit mode
     const isCreateMode = !electionId;
+
+    useEffect(() => {
+        if (isCreateMode) {
+            document.title = `${t('Create Election')} - ${t('STV election runner')}`;
+        } else if (election) {
+            document.title = `${election.title} (Admin) - ${t('STV election runner')}`;
+        }
+    }, [isCreateMode, election, t]);
     
     // Edit form state
     const [editTitle, setEditTitle] = useState('');
@@ -101,7 +108,7 @@ export default function ElectionAdmin({ electionId, adminUuid }: ElectionAdminPr
 
     const handleCancelEdit = () => {
         if (isCreateMode) {
-            route('/elections');
+            window.location.href = '/elections';
         } else if (election) {
             initializeEditForm(election);
         }
@@ -178,7 +185,7 @@ export default function ElectionAdmin({ electionId, adminUuid }: ElectionAdminPr
                 // Create new election
                 const created = await createElection(request);
                 // Redirect to the admin page for the newly created election
-                route(`/elections/${created.uuid}/admin/${created.admin_uuid}`);
+                window.location.href = `/elections/${created.uuid}/admin/${created.admin_uuid}`;
             } else {
                 // Update existing election
                 const updated = await updateElectionByAdmin(electionId!, adminUuid!, request);
@@ -377,6 +384,13 @@ export default function ElectionAdmin({ electionId, adminUuid }: ElectionAdminPr
                         <Typography variant="h5" gutterBottom>
                             {isCreateMode ? t('Create New Election') : t('Edit Election Details')}
                         </Typography>
+                        
+                        {election?.is_locked && (
+                            <Alert severity="info" sx={{ mb: 2 }}>
+                                {t('Title, description, and candidates are locked because voting tokens have been redeemed.')}
+                            </Alert>
+                        )}
+                        
                         <Box sx={{ mt: 2 }}>
                             <TextField
                                 label={t('Election Title')}
@@ -388,7 +402,7 @@ export default function ElectionAdmin({ electionId, adminUuid }: ElectionAdminPr
                                 fullWidth
                                 required
                                 sx={{ mb: 2 }}
-                                disabled={saving}
+                                disabled={saving || election?.is_locked}
                                 error={!!titleError}
                                 helperText={titleError}
                             />
@@ -401,7 +415,7 @@ export default function ElectionAdmin({ electionId, adminUuid }: ElectionAdminPr
                                 multiline
                                 rows={3}
                                 sx={{ mb: 2 }}
-                                disabled={saving}
+                                disabled={saving || election?.is_locked}
                             />
 
                             <TextField
@@ -428,7 +442,7 @@ export default function ElectionAdmin({ electionId, adminUuid }: ElectionAdminPr
                                         startIcon={<AddIcon />}
                                         size="small"
                                         onClick={handleAddCandidate}
-                                        disabled={saving}
+                                        disabled={saving || election?.is_locked}
                                     >
                                         {t('Add Candidate')}
                                     </Button>
@@ -446,11 +460,11 @@ export default function ElectionAdmin({ electionId, adminUuid }: ElectionAdminPr
                                                 }}
                                                 fullWidth
                                                 size="small"
-                                                disabled={saving}
+                                                disabled={saving || election?.is_locked}
                                             />
                                             <IconButton
                                                 onClick={() => handleRemoveCandidate(index)}
-                                                disabled={saving || editCandidates.length <= 1}
+                                                disabled={saving || editCandidates.length <= 1 || election?.is_locked}
                                                 color="error"
                                             >
                                                 <DeleteIcon />

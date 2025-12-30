@@ -3,7 +3,7 @@
   "Add Ballot group": "Adicionar grupo de boletins",
   "Introduction": "Introdução",
   "Methodology": "Metodologia",
-  "STV election runner": "Processador de eleições",
+  "STV election runner": "Hub Eleitoral",
   "Elected candidates": "Candidatos eleitos",
   "Number of seats to elect": "Número de lugares a eleger",
   "numberOfSeatsInstructions": "Número de lugares\n\nDefina quantos candidatos serão eleitos neste concurso.\nO valor não pode ser inferior a 1 nem superior ao número total de candidatos.",
@@ -64,6 +64,8 @@
   "heroSubtitle": "Votação justa, transparente e proporcional por escolha preferencial",
   "View Elections": "Ver Eleições",
   "Try Simulator": "Experimentar Simulador",
+  "createElectionTitle": "Criar",
+  "createElectionDesc": "Configure a sua própria eleição STV. Defina candidatos, períodos de votação e distribua tokens de voto seguros aos eleitores. Perfeito para clubes, organizações e comunidades.",
   "participateTitle": "Participar",
   "participateDesc": "Emita o seu voto em eleições ativas usando ligações de boletim seguras. As suas escolhas são privadas e contadas com precisão usando o algoritmo STV.",
   "Go to Elections": "Ir para Eleições",
@@ -144,5 +146,14 @@
   "Number of tokens": "Número de tokens",
   "Create Tokens": "Criar Tokens",
   "Token count must be at least 1": "O número de tokens deve ser pelo menos 1",
-  "Important: Each token should be shared with exactly one person. Tokens are unique to each voter and should not be reused or shared publicly.": "Importante: Cada token deve ser partilhado com exatamente uma pessoa. Os tokens são únicos para cada eleitor e não devem ser reutilizados ou partilhados publicamente."
+  "Important: Each token should be shared with exactly one person. Tokens are unique to each voter and should not be reused or shared publicly.": "Importante: Cada token deve ser partilhado com exatamente uma pessoa. Os tokens são únicos para cada eleitor e não devem ser reutilizados ou partilhados publicamente.",
+  "Vote": "Votar",
+  "Token Already Redeemed": "Token Já Resgatado",
+  "This token has already been redeemed. Each token can only be used once. If you previously redeemed this token, you should have received a ballot link.": "Este token já foi resgatado. Cada token só pode ser usado uma vez. Se já resgatou este token anteriormente, deverá ter recebido um link de voto.",
+  "You have been invited to vote in this election. Click the button below to access your ballot.": "Foi convidado a votar nesta eleição. Clique no botão abaixo para aceder ao seu voto.",
+  "Important: After continuing, you will receive a unique link to your ballot. This current link will no longer work. Do not share the ballot link with anyone, as it allows direct access to your vote.": "Importante: Após continuar, receberá um link único para o seu voto. Este link atual deixará de funcionar. Não partilhe o link do voto com ninguém, pois permite acesso direto ao seu voto.",
+  "Loading...": "A carregar...",
+  "Continue to Vote": "Continuar para Votar",
+  "Private Ballot: Do not share this page URL with anyone. This link is unique to your vote and should be kept confidential.": "Voto Privado: Não partilhe o URL desta página com ninguém. Este link é único para o seu voto e deve ser mantido confidencial.",
+  "Title, description, and candidates are locked because voting tokens have been redeemed.": "O título, descrição e candidatos estão bloqueados porque os tokens de votação já foram usados."
 }

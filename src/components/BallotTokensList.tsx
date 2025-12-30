@@ -51,7 +51,7 @@ export function BallotTokensList({ electionId, adminUuid }: BallotTokensListProp
     };
 
     const handleCopyTokenLink = (tokenId: string) => {
-        const tokenUrl = `${window.location.origin}/elections/${electionId}/ballot/${tokenId}`;
+        const tokenUrl = `${window.location.origin}/elections/${electionId}/tokens/${tokenId}`;
         navigator.clipboard.writeText(tokenUrl).then(() => {
             setTokenCopySuccess({ ...tokenCopySuccess, [tokenId]: true });
             setTimeout(() => {
@@ -62,7 +62,7 @@ export function BallotTokensList({ electionId, adminUuid }: BallotTokensListProp
 
     const handleCopyAllTokensCSV = () => {
         if (tokens.length > 0) {
-            const baseUrl = `${window.location.origin}/elections/${electionId}/ballot/`;
+            const baseUrl = `${window.location.origin}/elections/${electionId}/tokens/`;
             const csv = tokens.map(token => baseUrl + token.id).join('\n');
             navigator.clipboard.writeText(csv).then(() => {
                 setCsvCopySuccess(true);

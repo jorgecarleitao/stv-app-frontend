@@ -33,8 +33,9 @@ export default function ElectionList({ path }: ElectionListProps) {
     const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
+        document.title = `${t('Elections')} - ${t('STV election runner')}`;
         loadElections();
-    }, []);
+    }, [t]);
 
     const loadElections = async () => {
         try {

@@ -1,6 +1,5 @@
 import { useState } from 'preact/hooks';
 import { useTranslation } from 'react-i18next';
-import { route } from 'preact-router';
 import locale from 'locale-code';
 
 import AppBar from '@mui/material/AppBar';
@@ -37,14 +36,18 @@ export default function Navigation({ mode, toggleTheme }: NavigationProps) {
     };
 
     const navItems = [
-        { path: '/', label: t('Home') },
         { path: '/simulate', label: t('Simulate') },
         { path: '/elections', label: t('Elections') },
     ];
 
     const drawer = (
         <Box onClick={handleDrawerToggle} sx={{ textAlign: 'center' }}>
-            <Typography variant="h6" sx={{ my: 2 }}>
+            <Typography 
+                variant="h6" 
+                component="a"
+                href="/"
+                sx={{ my: 2, cursor: 'pointer', textDecoration: 'none', color: 'inherit', display: 'block' }}
+            >
                 {t("STV election runner")}
             </Typography>
             <Divider />
@@ -52,8 +55,9 @@ export default function Navigation({ mode, toggleTheme }: NavigationProps) {
                 {navItems.map((item) => (
                     <ListItem key={item.path} disablePadding>
                         <ListItemButton
+                            component="a"
+                            href={item.path}
                             sx={{ textAlign: 'center' }}
-                            onClick={() => route(item.path)}
                         >
                             <ListItemText primary={item.label} />
                         </ListItemButton>
@@ -78,8 +82,16 @@ export default function Navigation({ mode, toggleTheme }: NavigationProps) {
                     </IconButton>
                     <Typography
                         variant="h6"
-                        component="div"
-                        sx={{ flexGrow: 1, display: { xs: 'none', sm: 'block' } }}
+                        component="a"
+                        href="/"
+                        sx={{ 
+                            flexGrow: 1, 
+                            display: { xs: 'none', sm: 'block' },
+                            cursor: 'pointer',
+                            textDecoration: 'none',
+                            color: 'inherit',
+                            '&:hover': { opacity: 0.8 }
+                        }}
                     >
                         {t("STV election runner")}
                     </Typography>
@@ -87,9 +99,10 @@ export default function Navigation({ mode, toggleTheme }: NavigationProps) {
                         {navItems.map((item) => (
                             <Button
                                 key={item.path}
+                                component="a"
+                                href={item.path}
                                 sx={{ ml: 1 }}
                                 color="inherit"
-                                onClick={() => route(item.path)}
                             >
                                 {item.label}
                             </Button>

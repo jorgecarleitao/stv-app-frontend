@@ -1,4 +1,5 @@
 import { useTranslation } from 'react-i18next';
+import { useEffect } from 'preact/hooks';
 import Container from '@mui/material/Container';
 import Paper from '@mui/material/Paper';
 import Typography from '@mui/material/Typography';
@@ -13,12 +14,16 @@ import HowToVoteIcon from '@mui/icons-material/HowToVote';
 import ScienceIcon from '@mui/icons-material/Science';
 import VerifiedIcon from '@mui/icons-material/Verified';
 import TrendingUpIcon from '@mui/icons-material/TrendingUp';
-import { route } from 'preact-router';
+import AddCircleIcon from '@mui/icons-material/AddCircle';
 
 interface HomeProps { path?: string }
 
 export default function Home({ }: HomeProps = {}) {
     const { t } = useTranslation();
+
+    useEffect(() => {
+        document.title = t('STV election runner');
+    }, [t]);
 
     return (
         <Container maxWidth="lg">
@@ -34,7 +39,17 @@ export default function Home({ }: HomeProps = {}) {
                     <Button
                         variant="contained"
                         size="large"
-                        onClick={() => route('/elections')}
+                        component="a"
+                        href="/elections/create"
+                        startIcon={<AddCircleIcon />}
+                    >
+                        {t('Create Election')}
+                    </Button>
+                    <Button
+                        variant="outlined"
+                        size="large"
+                        component="a"
+                        href="/elections"
                         startIcon={<HowToVoteIcon />}
                     >
                         {t('View Elections')}
@@ -42,7 +57,8 @@ export default function Home({ }: HomeProps = {}) {
                     <Button
                         variant="outlined"
                         size="large"
-                        onClick={() => route('/simulate')}
+                        component="a"
+                        href="/simulate"
                         startIcon={<ScienceIcon />}
                     >
                         {t('Try Simulator')}
@@ -56,7 +72,28 @@ export default function Home({ }: HomeProps = {}) {
                     <Card elevation={3} sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
                         <CardContent sx={{ flexGrow: 1 }}>
                             <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-                                <HowToVoteIcon sx={{ fontSize: 40, mr: 2, color: 'primary.main' }} />
+                                <AddCircleIcon sx={{ fontSize: 40, mr: 2, color: 'primary.main' }} />
+                                <Typography variant="h5" component="h2">
+                                    {t('createElectionTitle')}
+                                </Typography>
+                            </Box>
+                            <Typography variant="body2" color="text.secondary">
+                                {t('createElectionDesc')}
+                            </Typography>
+                        </CardContent>
+                        <CardActions sx={{ p: 2, pt: 0 }}>
+                            <Button size="small" component="a" href="/elections/create">
+                                {t('Create Election')}
+                            </Button>
+                        </CardActions>
+                    </Card>
+                </Grid>
+
+                <Grid item xs={12} md={4}>
+                    <Card elevation={3} sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
+                        <CardContent sx={{ flexGrow: 1 }}>
+                            <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
+                                <HowToVoteIcon sx={{ fontSize: 40, mr: 2, color: 'secondary.main' }} />
                                 <Typography variant="h5" component="h2">
                                     {t('participateTitle')}
                                 </Typography>
@@ -66,7 +103,7 @@ export default function Home({ }: HomeProps = {}) {
                             </Typography>
                         </CardContent>
                         <CardActions sx={{ p: 2, pt: 0 }}>
-                            <Button size="small" onClick={() => route('/elections')}>
+                            <Button size="small" component="a" href="/elections">
                                 {t('Go to Elections')}
                             </Button>
                         </CardActions>
@@ -77,7 +114,7 @@ export default function Home({ }: HomeProps = {}) {
                     <Card elevation={3} sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
                         <CardContent sx={{ flexGrow: 1 }}>
                             <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-                                <ScienceIcon sx={{ fontSize: 40, mr: 2, color: 'secondary.main' }} />
+                                <ScienceIcon sx={{ fontSize: 40, mr: 2, color: 'success.main' }} />
                                 <Typography variant="h5" component="h2">
                                     {t('experimentTitle')}
                                 </Typography>
@@ -87,29 +124,8 @@ export default function Home({ }: HomeProps = {}) {
                             </Typography>
                         </CardContent>
                         <CardActions sx={{ p: 2, pt: 0 }}>
-                            <Button size="small" onClick={() => route('/simulate')}>
+                            <Button size="small" component="a" href="/simulate">
                                 {t('Try Simulator')}
-                            </Button>
-                        </CardActions>
-                    </Card>
-                </Grid>
-
-                <Grid item xs={12} md={4}>
-                    <Card elevation={3} sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
-                        <CardContent sx={{ flexGrow: 1 }}>
-                            <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-                                <VerifiedIcon sx={{ fontSize: 40, mr: 2, color: 'success.main' }} />
-                                <Typography variant="h5" component="h2">
-                                    {t('transparentTitle')}
-                                </Typography>
-                            </Box>
-                            <Typography variant="body2" color="text.secondary">
-                                {t('transparentDesc')}
-                            </Typography>
-                        </CardContent>
-                        <CardActions sx={{ p: 2, pt: 0 }}>
-                            <Button size="small" onClick={() => route('/elections')}>
-                                {t('See Results')}
                             </Button>
                         </CardActions>
                     </Card>
@@ -133,10 +149,10 @@ export default function Home({ }: HomeProps = {}) {
                     {t('whatIsSTVPara2')}
                 </Typography>
                 <Box sx={{ display: 'flex', gap: 2, mt: 3, flexWrap: 'wrap' }}>
-                    <Button variant="outlined" onClick={() => route('/simulate')}>
+                    <Button variant="outlined" component="a" href="/simulate">
                         {t('Try it yourself')}
                     </Button>
-                    <Button variant="text" onClick={() => route('/elections')}>
+                    <Button variant="text" component="a" href="/elections">
                         {t('View live elections')}
                     </Button>
                 </Box>
@@ -159,7 +175,8 @@ export default function Home({ }: HomeProps = {}) {
                 <Box sx={{ display: 'flex', gap: 2, mt: 3, flexWrap: 'wrap' }}>
                     <Button
                         variant="contained"
-                        onClick={() => route('/elections')}
+                        component="a"
+                        href="/elections"
                     >
                         {t('Participate Now')}
                     </Button>
@@ -184,14 +201,24 @@ export default function Home({ }: HomeProps = {}) {
                     <Button
                         variant="contained"
                         size="large"
-                        onClick={() => route('/elections')}
+                        component="a"
+                        href="/elections/create"
+                    >
+                        {t('Create Election')}
+                    </Button>
+                    <Button
+                        variant="outlined"
+                        size="large"
+                        component="a"
+                        href="/elections"
                     >
                         {t('Browse Elections')}
                     </Button>
                     <Button
                         variant="outlined"
                         size="large"
-                        onClick={() => route('/simulate')}
+                        component="a"
+                        href="/simulate"
                     >
                         {t('Simulate')}
                     </Button>

@@ -15,6 +15,7 @@ import { getBallot, putBallot, getElection, Ballot as ApiBallot, ElectionState }
 import { CandidateRankSelector } from '../components/CandidateRankSelector';
 
 interface BallotPageProps {
+    path?: string;
     electionId?: string;
     ballotUuid?: string;
 }

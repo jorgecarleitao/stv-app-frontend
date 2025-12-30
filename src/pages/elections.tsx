@@ -14,12 +14,19 @@ import ListItemAvatar from '@mui/material/ListItemAvatar';
 import Avatar from '@mui/material/Avatar';
 import Alert from '@mui/material/Alert';
 import CircularProgress from '@mui/material/CircularProgress';
+import Button from '@mui/material/Button';
+import AddIcon from '@mui/icons-material/Add';
 import HowToVoteIcon from '@mui/icons-material/HowToVote';
 import Divider from '@mui/material/Divider';
 
 import { listElections, ElectionConfig } from '../data/api';
+import { ElectionChips } from '../components/ElectionChips';
 
-export default function ElectionList() {
+interface ElectionListProps {
+    path?: string;
+}
+
+export default function ElectionList({ path }: ElectionListProps) {
     const { t } = useTranslation();
     const [elections, setElections] = useState<ElectionConfig[]>([]);
     const [loading, setLoading] = useState(true);
@@ -42,16 +49,22 @@ export default function ElectionList() {
         }
     };
 
-    const handleElectionClick = (electionId: string) => {
-        route(`/elections/${electionId}`);
-    };
-
     return (
         <Container maxWidth="lg">
             <Box sx={{ my: 4 }}>
-                <Typography variant="h3" component="h1" gutterBottom>
-                    {t('Elections')}
-                </Typography>
+                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+                    <Typography variant="h3" component="h1">
+                        {t('Elections')}
+                    </Typography>
+                    <Button
+                        component="a"
+                        href="/elections/create"
+                        variant="contained"
+                        startIcon={<AddIcon />}
+                    >
+                        {t('Create Election')}
+                    </Button>
+                </Box>
 
                 {loading && (
                     <Box sx={{ display: 'flex', justifyContent: 'center', my: 4 }}>
@@ -78,7 +91,10 @@ export default function ElectionList() {
                                 <>
                                     {index > 0 && <Divider />}
                                     <ListItem key={election.id} disablePadding>
-                                        <ListItemButton onClick={() => handleElectionClick(election.id)}>
+                                        <ListItemButton 
+                                            component="a"
+                                            href={`/elections/${election.id}`}
+                                        >
                                             <ListItemAvatar>
                                                 <Avatar>
                                                     <HowToVoteIcon />
@@ -86,16 +102,30 @@ export default function ElectionList() {
                                             </ListItemAvatar>
                                             <ListItemText
                                                 primary={election.name}
-                                                secondary={(() => {
-                                                    const start = new Date(election.start_time);
-                                                    const end = new Date(election.end_time);
-                                                    const now = new Date();
-                                                    const isOpen = now >= start && now < end;
-                                                    const status = isOpen ? t('Voting is open') : t('Voting is closed');
-                                                    const period = `${t('Voting Period')}: ${start.toLocaleDateString()} — ${end.toLocaleDateString()}`;
-                                                    const basics = `${election.candidates.length} ${t('candidates')} • ${election.seats} ${t('seats')} • ${election.number_of_ballots} ${t('voters')}`;
-                                                    return [basics, status, period].join(' • ');
-                                                })()}
+                                                secondary={
+                                                    election.description ? (
+                                                        <>
+                                                            {election.description}
+                                                            <ElectionChips
+                                                                seats={election.seats}
+                                                                candidatesCount={election.candidates.length}
+                                                                votersCount={election.number_of_ballots}
+                                                                startTime={election.start_time}
+                                                                endTime={election.end_time}
+                                                                size="small"
+                                                            />
+                                                        </>
+                                                    ) : (
+                                                        <ElectionChips
+                                                            seats={election.seats}
+                                                            candidatesCount={election.candidates.length}
+                                                            votersCount={election.number_of_ballots}
+                                                            startTime={election.start_time}
+                                                            endTime={election.end_time}
+                                                            size="small"
+                                                        />
+                                                    )
+                                                }
                                             />
                                         </ListItemButton>
                                     </ListItem>

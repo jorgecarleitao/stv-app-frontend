@@ -16,6 +16,7 @@ import Simulate from './pages/simulate';
 import Footer from './footer';
 import ElectionList from './pages/elections';
 import ElectionDetail from './pages/election-detail';
+import ElectionAdmin from './pages/election-admin';
 import BallotPage from './pages/ballot';
 import Navigation from './components/Navigation';
 
@@ -49,7 +50,9 @@ export default function App() {
 						<Home path="/" />
 						<Simulate path="/simulate" />
 						<ElectionList path="/elections" />
+						<ElectionAdmin path="/elections/create" />
 						<ElectionDetail path="/elections/:electionId" />
+						<ElectionAdmin path="/elections/:electionId/admin/:adminUuid" />
 						<BallotPage path="/elections/:electionId/ballot/:ballotUuid" />
 					</Router>
 				</Box>

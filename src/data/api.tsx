@@ -29,6 +29,7 @@ export interface ElectionResult {
 export interface ElectionConfig {
     id: string;
     name: string;
+    description?: string;
     candidates: string[];
     seats: number;
     start_time: string;
@@ -42,6 +43,26 @@ export interface ElectionState {
     potential_voters: number;
     casted: number;
     results?: ElectionResult;
+}
+
+export interface CreateElectionRequest {
+    title: string;
+    description?: string | null;
+    candidates: string[];
+    num_seats: number;
+    start_time: string;
+    end_time: string;
+}
+
+export interface ElectionResponse {
+    uuid: string;
+    admin_uuid: string;
+    title: string;
+    description?: string | null;
+    candidates: string[];
+    num_seats: number;
+    start_time: string;
+    end_time: string;
 }
 
 /**
@@ -61,6 +82,24 @@ export async function listElections(): Promise<ElectionConfig[]> {
 }
 
 /**
+ * Create a new election
+ */
+export async function createElection(request: CreateElectionRequest): Promise<ElectionResponse> {
+    const response = await fetch(`${BASE_URL}/elections`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(request),
+        mode: 'cors',
+    });
+
+    if (!response.ok) {
+        throw new Error(`Failed to create election: ${await response.text()}`);
+    }
+
+    return response.json();
+}
+
+/**
  * Fetch details and results for a specific election
  */
 export async function getElection(electionId: string): Promise<ElectionState> {
@@ -71,6 +110,47 @@ export async function getElection(electionId: string): Promise<ElectionState> {
 
     if (!response.ok) {
         throw new Error(`Failed to fetch election: ${await response.text()}`);
+    }
+
+    return response.json();
+}
+
+/**
+ * Fetch election details for admin (requires admin UUID)
+ */
+export async function getElectionByAdmin(
+    electionId: string,
+    adminUuid: string
+): Promise<ElectionResponse> {
+    const response = await fetch(`${BASE_URL}/elections/${electionId}/admin/${adminUuid}`, {
+        method: 'GET',
+        mode: 'cors',
+    });
+
+    if (!response.ok) {
+        throw new Error(`Failed to fetch election: ${await response.text()}`);
+    }
+
+    return response.json();
+}
+
+/**
+ * Update an election (requires admin UUID)
+ */
+export async function updateElectionByAdmin(
+    electionId: string,
+    adminUuid: string,
+    request: CreateElectionRequest
+): Promise<ElectionResponse> {
+    const response = await fetch(`${BASE_URL}/elections/${electionId}/admin/${adminUuid}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(request),
+        mode: 'cors',
+    });
+
+    if (!response.ok) {
+        throw new Error(`Failed to update election: ${await response.text()}`);
     }
 
     return response.json();

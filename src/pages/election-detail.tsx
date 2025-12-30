@@ -14,27 +14,27 @@ import ListItem from '@mui/material/ListItem';
 import ListItemAvatar from '@mui/material/ListItemAvatar';
 import Avatar from '@mui/material/Avatar';
 import ListItemText from '@mui/material/ListItemText';
-import Chip from '@mui/material/Chip';
-import Stack from '@mui/material/Stack';
 import Grid from '@mui/material/Grid';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
-import Divider from '@mui/material/Divider';
 import Accordion from '@mui/material/Accordion';
 import AccordionSummary from '@mui/material/AccordionSummary';
 import AccordionDetails from '@mui/material/AccordionDetails';
+import Stack from '@mui/material/Stack';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import ListItemButton from '@mui/material/ListItemButton';
 import ScienceIcon from '@mui/icons-material/Science';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import HowToVoteIcon from '@mui/icons-material/HowToVote';
-import PeopleIcon from '@mui/icons-material/People';
 import EmojiEventsIcon from '@mui/icons-material/EmojiEvents';
+import PeopleIcon from '@mui/icons-material/People';
+import HowToVoteIcon from '@mui/icons-material/HowToVote';
 
 import LZString from "lz-string";
 import * as yaml from "js-yaml";
 
-import { getElection, ElectionState, Ballot } from '../data/api';
+import { ElectionChips } from '../components/ElectionChips';
+
+import { getElection, ElectionState } from '../data/api';
 import { BallotGroupDisplay } from '../components/BallotGroupDisplay';
 
 // Convert API ranks (0-based) to UI ranks (1-based)
@@ -43,6 +43,7 @@ function fromApiRanks(ranks: (number | null)[]): (number | null)[] {
 }
 
 interface ElectionDetailProps {
+    path?: string;
     electionId?: string;
 }
 
@@ -160,30 +161,19 @@ export default function ElectionDetail({ electionId }: ElectionDetailProps) {
                     <Typography variant="h3" component="h1" gutterBottom sx={{ fontWeight: 'bold' }}>
                         {election.name}
                     </Typography>
-                    <Stack direction="row" spacing={1} sx={{ mt: 2, flexWrap: 'wrap', gap: 1 }}>
-                        <Chip
-                            icon={<EmojiEventsIcon />}
-                            label={`${election.seats} ${t('seats')}`}
-                            color="primary"
-                            variant="outlined"
-                        />
-                        <Chip
-                            icon={<PeopleIcon />}
-                            label={`${election.number_of_ballots} ${t('voters')}`}
-                            color="default"
-                            variant="outlined"
-                        />
-                        <Chip
-                            icon={<HowToVoteIcon />}
-                            label={`${casted}/${potential_voters} ${t('cast')}`}
-                            color={casted >= potential_voters ? 'success' : 'default'}
-                        />
-                        <Chip
-                            label={votingClosed ? t('Voting is closed') : t('Voting is open')}
-                            color={votingClosed ? 'default' : 'success'}
-                            variant={votingClosed ? 'outlined' : 'filled'}
-                        />
-                    </Stack>
+                    {election.description && (
+                        <Typography variant="body1" color="text.secondary" paragraph sx={{ mb: 2 }}>
+                            {election.description}
+                        </Typography>
+                    )}
+                    <ElectionChips
+                        seats={election.seats}
+                        candidatesCount={election.candidates.length}
+                        votersCount={potential_voters}
+                        castedCount={casted}
+                        startTime={election.start_time}
+                        endTime={election.end_time}
+                    />
                 </Box>
 
                 {/* Voting Period Info */}

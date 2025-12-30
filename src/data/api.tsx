@@ -22,6 +22,8 @@ export interface ElectionResult {
     election: Election;
     log: string;
     elected: Elected[];
+    order: Record<number, number>; // Map from candidate ID to order position
+    pairwise_matrix: number[][]; // n×n matrix of pairwise comparisons
 }
 
 // ===== Elections API =====

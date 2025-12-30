@@ -3,7 +3,7 @@ import Chip from '@mui/material/Chip';
 import Stack from '@mui/material/Stack';
 import HowToVoteIcon from '@mui/icons-material/HowToVote';
 import PeopleIcon from '@mui/icons-material/People';
-import EmojiEventsIcon from '@mui/icons-material/EmojiEvents';
+import WeekendIcon from '@mui/icons-material/Weekend';
 
 interface ElectionChipsProps {
     seats: number;
@@ -34,7 +34,7 @@ export function ElectionChips({
     return (
         <Stack direction="row" spacing={1} sx={{ mt: size === 'small' ? 1 : 2, flexWrap: 'wrap', gap: 1 }}>
             <Chip
-                icon={<EmojiEventsIcon />}
+                icon={<WeekendIcon />}
                 label={`${seats} ${t('seats')}`}
                 color="primary"
                 variant="outlined"

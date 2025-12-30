@@ -192,10 +192,9 @@ export default function ElectionDetail({ electionId }: ElectionDetailProps) {
                 {/* Results Section - Show first if voting closed */}
                 {votingClosed && results && (
                     <Paper elevation={3} sx={{ p: 4, mb: 4, bgcolor: 'success.50' }}>
-                        <Box sx={{ display: 'flex', alignItems: 'center', mb: 3 }}>
-                            <EmojiEventsIcon sx={{ fontSize: 40, mr: 2, color: 'success.main' }} />
+                        <Box sx={{ mb: 3 }}>
                             <Typography variant="h4" component="h2">
-                                {t('Election Results')}
+                                {t('Results')}
                             </Typography>
                         </Box>
                         <Grid container spacing={2}>
@@ -268,30 +267,166 @@ export default function ElectionDetail({ electionId }: ElectionDetailProps) {
                     </Grid>
                 </Paper>
 
-                {/* Ballot Groups */}
-                {results && results.election.ballots.length > 0 && (
+                {/* Pairwise Comparison Matrix */}
+                {votingClosed && results && results.pairwise_matrix && results.order && (
                     <Paper elevation={2} sx={{ p: 3, mb: 3 }}>
-                        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
-                            <Typography variant="h5" sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                                <HowToVoteIcon /> {t('Ballot Groups')}
-                            </Typography>
-                            <Typography variant="body2" color="text.secondary">
-                                {results.election.ballots.length} {t('unique patterns')} • {results.election.ballots.reduce((sum, b) => sum + b.votes, 0)} {t('total votes')}
-                            </Typography>
+                        <Typography variant="h5" gutterBottom>
+                            {t('Pairwise Comparison Matrix')}
+                        </Typography>
+                        <Typography variant="body2" color="text.secondary" paragraph>
+                            {t('Each cell shows how many voters preferred the row candidate over the column candidate')}
+                        </Typography>
+                        <Box sx={{ overflowX: 'auto' }}>
+                            <Box component="table" sx={{ 
+                                width: '100%',
+                                borderCollapse: 'collapse',
+                                '& td, & th': {
+                                    border: '1px solid',
+                                    borderColor: 'divider',
+                                    p: 1.5,
+                                    textAlign: 'center',
+                                    minWidth: '80px'
+                                },
+                                '& th': {
+                                    bgcolor: 'action.hover',
+                                    fontWeight: 'bold',
+                                    position: 'sticky',
+                                    top: 0,
+                                    zIndex: 1
+                                },
+                                '& tbody th': {
+                                    position: 'sticky',
+                                    left: 0,
+                                    bgcolor: 'action.hover',
+                                    zIndex: 1
+                                }
+                            }}>
+                                <Box component="thead">
+                                    <Box component="tr">
+                                        <Box component="th" sx={{ minWidth: '120px !important' }}></Box>
+                                        {election.candidates.map((candidate, idx) => (
+                                            <Box component="th" key={idx}>
+                                                <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 0.5 }}>
+                                                    <Avatar sx={{ 
+                                                        width: 24, 
+                                                        height: 24, 
+                                                        fontSize: '0.75rem',
+                                                        bgcolor: 'primary.main'
+                                                    }}>
+                                                        {results.order[idx] + 1}
+                                                    </Avatar>
+                                                    <Typography variant="caption">{candidate}</Typography>
+                                                </Box>
+                                            </Box>
+                                        ))}
+                                    </Box>
+                                </Box>
+                                <Box component="tbody">
+                                    {election.candidates.map((candidate, rowIdx) => (
+                                        <Box component="tr" key={rowIdx}>
+                                            <Box component="th">
+                                                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, justifyContent: 'flex-start' }}>
+                                                    <Avatar sx={{ 
+                                                        width: 24, 
+                                                        height: 24, 
+                                                        fontSize: '0.75rem',
+                                                        bgcolor: 'primary.main'
+                                                    }}>
+                                                        {results.order[rowIdx] + 1}
+                                                    </Avatar>
+                                                    <Typography variant="body2">{candidate}</Typography>
+                                                </Box>
+                                            </Box>
+                                            {election.candidates.map((_, colIdx) => {
+                                                const value = results.pairwise_matrix[rowIdx][colIdx];
+                                                const opposite = results.pairwise_matrix[colIdx][rowIdx];
+                                                const isWin = rowIdx !== colIdx && value > opposite;
+                                                const isTie = rowIdx !== colIdx && value === opposite;
+                                                
+                                                return (
+                                                    <Box 
+                                                        component="td" 
+                                                        key={colIdx}
+                                                        sx={{
+                                                            bgcolor: rowIdx === colIdx 
+                                                                ? 'action.disabledBackground' 
+                                                                : isWin 
+                                                                ? 'success.50'
+                                                                : isTie
+                                                                ? 'warning.50'
+                                                                : 'inherit',
+                                                            fontWeight: isWin ? 'bold' : 'normal'
+                                                        }}
+                                                    >
+                                                        {rowIdx === colIdx ? '—' : value}
+                                                    </Box>
+                                                );
+                                            })}
+                                        </Box>
+                                    ))}
+                                </Box>
+                            </Box>
                         </Box>
-                        <Stack spacing={2}>
-                            {results.election.ballots.map((ballot, idx) => (
-                                <BallotGroupDisplay
-                                    key={idx}
-                                    candidates={results.election.candidates}
-                                    ballot={{ ...ballot, ranks: fromApiRanks(ballot.ranks) }}
-                                    groupNumber={idx + 1}
-                                    readOnly={true}
-                                    subtitle={`${ballot.votes} ${ballot.votes === 1 ? t('vote') : t('votes')}`}
-                                />
-                            ))}
-                        </Stack>
+                        <Typography variant="caption" color="text.secondary" sx={{ mt: 2, display: 'block' }}>
+                            {t('Candidates are ordered by their final ranking (Copeland method). Green cells indicate wins, yellow indicates ties.')}
+                        </Typography>
                     </Paper>
+                )}
+
+                {/* Candidates List */}
+                <Paper elevation={2} sx={{ p: 3, mb: 3 }}>
+                    <Typography variant="h5" gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                        <PeopleIcon /> {t('Candidates')}
+                    </Typography>
+                    <Grid container spacing={2} sx={{ mt: 1 }}>
+                        {election.candidates.map((candidate, idx) => (
+                            <Grid item xs={12} sm={6} md={4} key={idx}>
+                                <Box sx={{
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    gap: 2,
+                                    p: 2,
+                                    border: '1px solid',
+                                    borderColor: 'divider',
+                                    borderRadius: 1,
+                                    bgcolor: 'background.paper'
+                                }}>
+                                    <Avatar>{candidate.charAt(0).toUpperCase()}</Avatar>
+                                    <Typography variant="body1">{candidate}</Typography>
+                                </Box>
+                            </Grid>
+                        ))}
+                    </Grid>
+                </Paper>
+
+                {/* Ballot Groups (Accordion) */}
+                {results && results.election.ballots.length > 0 && (
+                    <Accordion elevation={2} sx={{ mb: 3 }}>
+                        <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%' }}>
+                                <Typography variant="h5" sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                                    <HowToVoteIcon /> {t('Ballot Groups')}
+                                </Typography>
+                                <Typography variant="body2" color="text.secondary">
+                                    {results.election.ballots.length} {t('unique patterns')} • {results.election.ballots.reduce((sum, b) => sum + b.votes, 0)} {t('total votes')}
+                                </Typography>
+                            </Box>
+                        </AccordionSummary>
+                        <AccordionDetails>
+                            <Stack spacing={2}>
+                                {results.election.ballots.map((ballot, idx) => (
+                                    <BallotGroupDisplay
+                                        key={idx}
+                                        candidates={results.election.candidates}
+                                        ballot={{ ...ballot, ranks: fromApiRanks(ballot.ranks) }}
+                                        groupNumber={idx + 1}
+                                        readOnly={true}
+                                        subtitle={`${ballot.votes} ${ballot.votes === 1 ? t('vote') : t('votes')}`}
+                                    />
+                                ))}
+                            </Stack>
+                        </AccordionDetails>
+                    </Accordion>
                 )}
 
                 {/* Individual Ballots List (Accordion) */}

@@ -156,6 +156,62 @@ export async function updateElectionByAdmin(
     return response.json();
 }
 
+// ===== Ballot Tokens API =====
+
+export interface BallotToken {
+    election_id: string;
+    id: string;
+    created_at: string;
+    converted_at: string | null;
+}
+
+/**
+ * Fetch all ballot tokens for an election (admin only)
+ */
+export async function getBallotTokens(
+    electionId: string,
+    adminUuid: string
+): Promise<BallotToken[]> {
+    const response = await fetch(
+        `${BASE_URL}/elections/${electionId}/admin/${adminUuid}/tokens`,
+        {
+            method: 'GET',
+            mode: 'cors',
+        }
+    );
+
+    if (!response.ok) {
+        throw new Error(`Failed to fetch ballot tokens: ${await response.text()}`);
+    }
+
+    return response.json();
+}
+
+/**
+ * Create ballot tokens for an election (admin only)
+ */
+export async function createBallotTokens(
+    electionId: string,
+    adminUuid: string,
+    count: number
+): Promise<string[]> {
+    const response = await fetch(
+        `${BASE_URL}/elections/${electionId}/admin/${adminUuid}/tokens`,
+        {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(count),
+            mode: 'cors',
+        }
+    );
+
+    if (!response.ok) {
+        throw new Error(`Failed to create ballot tokens: ${await response.text()}`);
+    }
+
+    return response.json();
+}
+
 // ===== Ballot API =====
 
 /**

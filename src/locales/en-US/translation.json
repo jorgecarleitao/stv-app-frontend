@@ -135,6 +135,14 @@
   "View Public Page": "View Public Page",
   "Please provide a valid title and at least 2 candidates": "Please provide a valid title and at least 2 candidates",
   "Ballot Tokens": "Ballot Tokens",
-  "Manage voting tokens for this election. Tokens will be displayed here.": "Manage voting tokens for this election. Tokens will be displayed here.",
-  "Token management feature coming soon": "Token management feature coming soon"
+  "Ballot tokens allow voters to access their unique voting page. Share these links individually or export all as CSV.": "Ballot tokens allow voters to access their unique voting page. Share these links individually or export all as CSV.",
+  "No ballot tokens have been created yet.": "No ballot tokens have been created yet.",
+  "Copy All as CSV": "Copy All as CSV",
+  "Used on {{date}}": "Used on {{date}}",
+  "Not used yet": "Not used yet",
+  "Create New Tokens": "Create New Tokens",
+  "Number of tokens": "Number of tokens",
+  "Create Tokens": "Create Tokens",
+  "Token count must be at least 1": "Token count must be at least 1",
+  "Important: Each token should be shared with exactly one person. Tokens are unique to each voter and should not be reused or shared publicly.": "Important: Each token should be shared with exactly one person. Tokens are unique to each voter and should not be reused or shared publicly."
 }

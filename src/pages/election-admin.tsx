@@ -20,9 +20,9 @@ import VisibilityIcon from '@mui/icons-material/Visibility';
 import AddIcon from '@mui/icons-material/Add';
 import DeleteIcon from '@mui/icons-material/Delete';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
-import ConfirmationNumberIcon from '@mui/icons-material/ConfirmationNumber';
 
 import { getElectionByAdmin, updateElectionByAdmin, createElection, CreateElectionRequest, ElectionResponse } from '../data/api';
+import { BallotTokensList } from '../components/BallotTokensList';
 
 interface ElectionAdminProps {
     path?: string;
@@ -526,18 +526,11 @@ export default function ElectionAdmin({ electionId, adminUuid }: ElectionAdminPr
                 )}
 
                 {/* Tokens Section - only in edit mode */}
-                {!isCreateMode && election && (
-                    <Paper elevation={2} sx={{ p: 3, mb: 3 }}>
-                        <Typography variant="h5" gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                            <ConfirmationNumberIcon /> {t('Ballot Tokens')}
-                        </Typography>
-                        <Typography variant="body2" color="text.secondary" paragraph>
-                            {t('Manage voting tokens for this election. Tokens will be displayed here.')}
-                        </Typography>
-                        <Alert severity="info">
-                            {t('Token management feature coming soon')}
-                        </Alert>
-                    </Paper>
+                {!isCreateMode && election && electionId && adminUuid && (
+                    <BallotTokensList
+                        electionId={electionId}
+                        adminUuid={adminUuid}
+                    />
                 )}
             </Box>
         </Container>

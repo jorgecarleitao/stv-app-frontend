@@ -134,7 +134,15 @@
   "Save Changes": "Guardar Alterações",
   "View Public Page": "Ver Página Pública",
   "Please provide a valid title and at least 2 candidates": "Por favor forneça um título válido e pelo menos 2 candidatos",
-  "Ballot Tokens": "Tokens de Voto",
-  "Manage voting tokens for this election. Tokens will be displayed here.": "Gerir tokens de votação para esta eleição. Os tokens serão apresentados aqui.",
-  "Token management feature coming soon": "Funcionalidade de gestão de tokens em breve"
+  "Ballot Tokens": "Tokens de Votação",
+  "Ballot tokens allow voters to access their unique voting page. Share these links individually or export all as CSV.": "Os tokens de votação permitem que os eleitores acessem sua página de votação única. Compartilhe esses links individualmente ou exporte todos como CSV.",
+  "No ballot tokens have been created yet.": "Nenhum token de votação foi criado ainda.",
+  "Copy All as CSV": "Copiar Todos como CSV",
+  "Used on {{date}}": "Usado em {{date}}",
+  "Not used yet": "Ainda não usado",
+  "Create New Tokens": "Criar Novos Tokens",
+  "Number of tokens": "Número de tokens",
+  "Create Tokens": "Criar Tokens",
+  "Token count must be at least 1": "O número de tokens deve ser pelo menos 1",
+  "Important: Each token should be shared with exactly one person. Tokens are unique to each voter and should not be reused or shared publicly.": "Importante: Cada token deve ser partilhado com exatamente uma pessoa. Os tokens são únicos para cada eleitor e não devem ser reutilizados ou partilhados publicamente."
 }

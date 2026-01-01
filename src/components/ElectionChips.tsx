@@ -51,7 +51,7 @@ export function ElectionChips({
                 <Chip
                     icon={<HowToVoteIcon />}
                     label={`${castedCount}/${votersCount} ${t('cast')}`}
-                    color={castedCount >= votersCount ? 'success' : 'default'}
+                    color='default'
                     size={size}
                 />
             ) : (

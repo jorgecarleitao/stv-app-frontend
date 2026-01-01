@@ -33,7 +33,7 @@ export default function ElectionList({ path }: ElectionListProps) {
     const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
-        document.title = `${t('Elections')} - ${t('STV election runner')}`;
+        document.title = `${t('Elections')} - ${t('App title')}`;
         loadElections();
     }, [t]);
 
@@ -92,7 +92,7 @@ export default function ElectionList({ path }: ElectionListProps) {
                                 <>
                                     {index > 0 && <Divider />}
                                     <ListItem key={election.id} disablePadding>
-                                        <ListItemButton 
+                                        <ListItemButton
                                             component="a"
                                             href={`/elections/${election.id}`}
                                         >

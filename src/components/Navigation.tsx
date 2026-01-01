@@ -31,6 +31,10 @@ export default function Navigation({ mode, toggleTheme }: NavigationProps) {
     const { t, i18n } = useTranslation();
     const [mobileOpen, setMobileOpen] = useState(false);
 
+    const brandLabel = t('App title');
+    const languages = Object.keys(i18n.options.resources ?? {});
+    const linkSx = { textDecoration: 'none', color: 'inherit' };
+
     const handleDrawerToggle = () => {
         setMobileOpen(prevState => !prevState);
     };
@@ -38,28 +42,25 @@ export default function Navigation({ mode, toggleTheme }: NavigationProps) {
     const navItems = [
         { path: '/simulate', label: t('Simulate') },
         { path: '/elections', label: t('Elections') },
+        { path: '/stv-explainer', label: t('STV guide') },
         { path: '/admin-guide', label: t('Admin Guide') },
     ];
 
-    const drawer = (
+    const drawerContent = (
         <Box onClick={handleDrawerToggle} sx={{ textAlign: 'center' }}>
-            <Typography 
-                variant="h6" 
+            <Typography
+                variant="h6"
                 component="a"
                 href="/"
-                sx={{ my: 2, cursor: 'pointer', textDecoration: 'none', color: 'inherit', display: 'block' }}
+                sx={{ my: 2, display: 'block', ...linkSx }}
             >
-                {t("STV election runner")}
+                {brandLabel}
             </Typography>
             <Divider />
             <List>
-                {navItems.map((item) => (
+                {navItems.map(item => (
                     <ListItem key={item.path} disablePadding>
-                        <ListItemButton
-                            component="a"
-                            href={item.path}
-                            sx={{ textAlign: 'center' }}
-                        >
+                        <ListItemButton component="a" href={item.path} sx={{ textAlign: 'center' }}>
                             <ListItemText primary={item.label} />
                         </ListItemButton>
                     </ListItem>
@@ -85,26 +86,17 @@ export default function Navigation({ mode, toggleTheme }: NavigationProps) {
                         variant="h6"
                         component="a"
                         href="/"
-                        sx={{ 
-                            flexGrow: 1, 
+                        sx={{
+                            flexGrow: 1,
                             display: { xs: 'none', sm: 'block' },
-                            cursor: 'pointer',
-                            textDecoration: 'none',
-                            color: 'inherit',
-                            '&:hover': { opacity: 0.8 }
+                            ...linkSx
                         }}
                     >
-                        {t("STV election runner")}
+                        {brandLabel}
                     </Typography>
-                    <Box sx={{ display: { xs: 'none', sm: 'block' } }}>
-                        {navItems.map((item) => (
-                            <Button
-                                key={item.path}
-                                component="a"
-                                href={item.path}
-                                sx={{ ml: 1 }}
-                                color="inherit"
-                            >
+                    <Box sx={{ display: { xs: 'none', sm: 'flex' }, gap: 1 }}>
+                        {navItems.map(item => (
+                            <Button key={item.path} component="a" href={item.path} color="inherit">
                                 {item.label}
                             </Button>
                         ))}
@@ -122,7 +114,7 @@ export default function Navigation({ mode, toggleTheme }: NavigationProps) {
                         onChange={(e) => i18n.changeLanguage(e.target.value)}
                         sx={{ ml: 2, color: 'inherit' }}
                     >
-                        {Object.keys(i18n.options.resources).map(lang => (
+                        {languages.map(lang => (
                             <MenuItem key={lang} value={lang}>
                                 {locale.getLanguageNativeName(lang)}
                             </MenuItem>
@@ -143,7 +135,7 @@ export default function Navigation({ mode, toggleTheme }: NavigationProps) {
                         '& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth },
                     }}
                 >
-                    {drawer}
+                    {drawerContent}
                 </Drawer>
             </nav>
         </>

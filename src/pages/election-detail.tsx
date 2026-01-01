@@ -60,7 +60,7 @@ export default function ElectionDetail({ electionId }: ElectionDetailProps) {
 
     useEffect(() => {
         if (electionState) {
-            document.title = `${electionState.election.title} - ${t('STV election runner')}`;
+            document.title = `${electionState.election.title} - ${t('App title')}`;
         }
     }, [electionState, t]);
 
@@ -277,7 +277,7 @@ export default function ElectionDetail({ electionId }: ElectionDetailProps) {
                             {t('Each cell shows how many voters preferred the row candidate over the column candidate')}
                         </Typography>
                         <Box sx={{ overflowX: 'auto' }}>
-                            <Box component="table" sx={{ 
+                            <Box component="table" sx={{
                                 width: '100%',
                                 borderCollapse: 'collapse',
                                 '& td, & th': {
@@ -307,9 +307,9 @@ export default function ElectionDetail({ electionId }: ElectionDetailProps) {
                                         {election.candidates.map((candidate, idx) => (
                                             <Box component="th" key={idx}>
                                                 <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 0.5 }}>
-                                                    <Avatar sx={{ 
-                                                        width: 24, 
-                                                        height: 24, 
+                                                    <Avatar sx={{
+                                                        width: 24,
+                                                        height: 24,
                                                         fontSize: '0.75rem',
                                                         bgcolor: 'primary.main'
                                                     }}>
@@ -326,9 +326,9 @@ export default function ElectionDetail({ electionId }: ElectionDetailProps) {
                                         <Box component="tr" key={rowIdx}>
                                             <Box component="th">
                                                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, justifyContent: 'flex-start' }}>
-                                                    <Avatar sx={{ 
-                                                        width: 24, 
-                                                        height: 24, 
+                                                    <Avatar sx={{
+                                                        width: 24,
+                                                        height: 24,
                                                         fontSize: '0.75rem',
                                                         bgcolor: 'primary.main'
                                                     }}>
@@ -342,19 +342,19 @@ export default function ElectionDetail({ electionId }: ElectionDetailProps) {
                                                 const opposite = results.pairwise_matrix[colIdx][rowIdx];
                                                 const isWin = rowIdx !== colIdx && value > opposite;
                                                 const isTie = rowIdx !== colIdx && value === opposite;
-                                                
+
                                                 return (
-                                                    <Box 
-                                                        component="td" 
+                                                    <Box
+                                                        component="td"
                                                         key={colIdx}
                                                         sx={{
-                                                            bgcolor: rowIdx === colIdx 
-                                                                ? 'action.disabledBackground' 
-                                                                : isWin 
-                                                                ? 'success.50'
-                                                                : isTie
-                                                                ? 'warning.50'
-                                                                : 'inherit',
+                                                            bgcolor: rowIdx === colIdx
+                                                                ? 'action.disabledBackground'
+                                                                : isWin
+                                                                    ? 'success.50'
+                                                                    : isTie
+                                                                        ? 'warning.50'
+                                                                        : 'inherit',
                                                             fontWeight: isWin ? 'bold' : 'normal'
                                                         }}
                                                     >
@@ -415,8 +415,8 @@ export default function ElectionDetail({ electionId }: ElectionDetailProps) {
                             <List>
                                 {election.ballots.map((uuid) => (
                                     <ListItem key={uuid} disablePadding>
-                                        <ListItemButton 
-                                            component="a" 
+                                        <ListItemButton
+                                            component="a"
                                             href={`/elections/${election.id}/ballot/${uuid}`}
                                         >
                                             <ListItemAvatar>

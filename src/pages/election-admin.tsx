@@ -35,18 +35,18 @@ export default function ElectionAdmin({ electionId, adminUuid }: ElectionAdminPr
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [saving, setSaving] = useState(false);
-    
+
     // Determine if we're in create mode (no electionId) or edit mode
     const isCreateMode = !electionId;
 
     useEffect(() => {
         if (isCreateMode) {
-            document.title = `${t('Create Election')} - ${t('STV election runner')}`;
+            document.title = `${t('Create Election')} - ${t('App title')}`;
         } else if (election) {
-            document.title = `${election.title} (Admin) - ${t('STV election runner')}`;
+            document.title = `${election.title} (Admin) - ${t('App title')}`;
         }
     }, [isCreateMode, election, t]);
-    
+
     // Edit form state
     const [editTitle, setEditTitle] = useState('');
     const [editDescription, setEditDescription] = useState('');
@@ -54,7 +54,7 @@ export default function ElectionAdmin({ electionId, adminUuid }: ElectionAdminPr
     const [editCandidates, setEditCandidates] = useState<string[]>(['']);
     const [editStartTime, setEditStartTime] = useState('');
     const [editEndTime, setEditEndTime] = useState('');
-    
+
     // Field-specific errors
     const [titleError, setTitleError] = useState<string | null>(null);
     const [candidatesError, setCandidatesError] = useState<string | null>(null);
@@ -384,13 +384,13 @@ export default function ElectionAdmin({ electionId, adminUuid }: ElectionAdminPr
                         <Typography variant="h5" gutterBottom>
                             {isCreateMode ? t('Create New Election') : t('Edit Election Details')}
                         </Typography>
-                        
+
                         {election?.is_locked && (
                             <Alert severity="info" sx={{ mb: 2 }}>
                                 {t('Title, description, and candidates are locked because voting tokens have been redeemed.')}
                             </Alert>
                         )}
-                        
+
                         <Box sx={{ mt: 2 }}>
                             <TextField
                                 label={t('Election Title')}
@@ -447,7 +447,7 @@ export default function ElectionAdmin({ electionId, adminUuid }: ElectionAdminPr
                                         {t('Add Candidate')}
                                     </Button>
                                 </Box>
-                                
+
                                 <Stack spacing={1}>
                                     {editCandidates.map((candidate, index) => (
                                         <Box key={index} sx={{ display: 'flex', gap: 1 }}>
@@ -510,7 +510,7 @@ export default function ElectionAdmin({ electionId, adminUuid }: ElectionAdminPr
                                 disabled={saving}
                                 error={!!dateTimeError}
                             />
-                            
+
                             {dateTimeError && (
                                 <Typography variant="caption" color="error" sx={{ mb: 2, display: 'block' }}>
                                     {dateTimeError}

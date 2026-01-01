@@ -132,7 +132,7 @@ export default function Simulate({ path }: SimulateProps = {}) {
     const { t } = useTranslation();
 
     useEffect(() => {
-        document.title = `${t('Simulate')} - ${t('STV election runner')}`;
+        document.title = `${t('Simulate')} - ${t('App title')}`;
     }, [t]);
 
     const [election, setElection] = useState<Election>(defaultElection);

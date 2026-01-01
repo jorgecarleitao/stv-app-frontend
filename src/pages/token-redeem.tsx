@@ -33,7 +33,7 @@ export default function TokenRedeem({ electionId, tokenId }: TokenRedeemProps) {
 
     useEffect(() => {
         if (electionData) {
-            document.title = `${electionData.title} - ${t('STV election runner')}`;
+            document.title = `${electionData.election.title} - ${t('App title')}`;
         }
     }, [electionData, t]);
 
@@ -125,7 +125,7 @@ export default function TokenRedeem({ electionId, tokenId }: TokenRedeemProps) {
                             {electionData && (
                                 <Paper variant="outlined" sx={{ p: 3, mb: 3 }}>
                                     <Typography variant="h5" gutterBottom>
-                                        {electionData.election.name}
+                                        {electionData.election.title}
                                     </Typography>
                                     {electionData.election.description && (
                                         <Typography variant="body1" color="text.secondary" paragraph>

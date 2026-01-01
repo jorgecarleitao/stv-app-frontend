@@ -21,7 +21,7 @@ export default function Home({ }: HomeProps = {}) {
     const { t } = useTranslation();
 
     useEffect(() => {
-        document.title = t('STV election runner');
+        document.title = t('App title');
     }, [t]);
 
     return (
@@ -29,7 +29,7 @@ export default function Home({ }: HomeProps = {}) {
             {/* Hero Section */}
             <Box sx={{ textAlign: 'center', my: 6 }}>
                 <Typography variant="h2" component="h1" gutterBottom sx={{ fontWeight: 'bold' }}>
-                    {t('STV election runner')}
+                    {t('App title')}
                 </Typography>
                 <Typography variant="h5" color="text.secondary" paragraph sx={{ mb: 4 }}>
                     {t('heroSubtitle')}

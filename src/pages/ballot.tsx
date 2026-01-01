@@ -31,7 +31,7 @@ export default function BallotPage({ electionId, ballotUuid }: BallotPageProps) 
 
     useEffect(() => {
         if (electionData) {
-            document.title = `${electionData.election.title} - ${t('STV election runner')}`;
+            document.title = `${electionData.election.title} - ${t('App title')}`;
         }
     }, [electionData, t]);
 

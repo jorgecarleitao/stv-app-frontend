@@ -1,3 +1,4 @@
+
 import { render } from 'preact';
 import { useMemo, useState } from 'preact/hooks';
 import { useTranslation } from 'react-i18next';
@@ -14,6 +15,7 @@ import './i18n';
 import Home from './pages/home';
 import Simulate from './pages/simulate';
 import Footer from './footer';
+import StvExplainer from './pages/stv-explainer';
 import ElectionList from './pages/elections';
 import ElectionDetail from './pages/election-detail';
 import ElectionAdmin from './pages/election-admin';
@@ -58,6 +60,7 @@ export default function App() {
 						<TokenRedeem path="/elections/:electionId/tokens/:tokenId" />
 						<BallotPage path="/elections/:electionId/ballot/:ballotUuid" />
 						<AdminUserGuide path="/admin-guide" />
+						<StvExplainer path="/stv-explainer" />
 					</Router>
 				</Box>
 				<Footer />

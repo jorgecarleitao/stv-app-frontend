@@ -1,0 +1,31 @@
+<svg width="1200" height="630" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background gradient -->
+  <defs>
+    <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#1976d2;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#1565c0;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="1200" height="630" fill="url(#grad)"/>
+  
+  <!-- Checkmark icon -->
+  <circle cx="300" cy="315" r="120" fill="#ffffff" opacity="0.2"/>
+  <path d="M 250 315 L 280 345 L 350 275" stroke="#ffffff" stroke-width="20" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+  
+  <!-- Title -->
+  <text x="500" y="280" font-family="Arial, sans-serif" font-size="72" font-weight="bold" fill="#ffffff">
+    Hub Eleitoral
+  </text>
+  
+  <!-- Subtitle -->
+  <text x="500" y="350" font-family="Arial, sans-serif" font-size="36" fill="#ffffff" opacity="0.9">
+    Eleições por Voto Único Transferível
+  </text>
+  
+  <!-- Description -->
+  <text x="500" y="410" font-family="Arial, sans-serif" font-size="28" fill="#ffffff" opacity="0.8">
+    Seguro, Transparente e Auditável
+  </text>
+</svg>

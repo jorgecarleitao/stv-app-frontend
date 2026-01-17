@@ -1,8 +1,8 @@
-
 import { render } from 'preact';
 import { useMemo, useState } from 'preact/hooks';
 import { useTranslation } from 'react-i18next';
 import Router from 'preact-router';
+import { HelmetProvider } from 'react-helmet-async';
 
 import { createTheme } from '@mui/material/styles';
 import Box from '@mui/material/Box';
@@ -25,48 +25,50 @@ import Navigation from './components/Navigation';
 import AdminUserGuide from './pages/admin-guide';
 
 export default function App() {
-	const { t, i18n } = useTranslation();
-	const prefersDarkMode = useMediaQuery('(prefers-color-scheme: dark)');
-	const [mode, setMode] = useState<'light' | 'dark'>(prefersDarkMode ? 'dark' : 'light');
+  const { t, i18n } = useTranslation();
+  const prefersDarkMode = useMediaQuery('(prefers-color-scheme: dark)');
+  const [mode, setMode] = useState<'light' | 'dark'>(prefersDarkMode ? 'dark' : 'light');
 
-	const theme = useMemo(
-		() =>
-			createTheme({
-				palette: {
-					mode: mode,
-				},
-			}),
-		[mode],
-	);
+  const theme = useMemo(
+    () =>
+      createTheme({
+        palette: {
+          mode: mode,
+        },
+      }),
+    [mode]
+  );
 
-	const toggleTheme = () => {
-		setMode(theme.palette.mode === 'dark' ? 'light' : 'dark');
-	};
+  const toggleTheme = () => {
+    setMode(theme.palette.mode === 'dark' ? 'light' : 'dark');
+  };
 
-	return (
-		<ThemeProvider theme={theme}>
-			<CssBaseline enableColorScheme />
-			<Box>
-				<Navigation mode={mode} toggleTheme={toggleTheme} />
-				<Box component="main" sx={{ p: 3 }}>
-					<Toolbar />
-					<Router>
-						<Home path="/" />
-						<Simulate path="/simulate" />
-						<ElectionList path="/elections" />
-						<ElectionAdmin path="/elections/create" />
-						<ElectionDetail path="/elections/:electionId" />
-						<ElectionAdmin path="/elections/:electionId/admin/:adminUuid" />
-						<TokenRedeem path="/elections/:electionId/tokens/:tokenId" />
-						<BallotPage path="/elections/:electionId/ballot/:ballotUuid" />
-						<AdminUserGuide path="/admin-guide" />
-						<StvExplainer path="/stv-explainer" />
-					</Router>
-				</Box>
-				<Footer />
-			</Box>
-		</ThemeProvider>
-	);
+  return (
+    <HelmetProvider>
+      <ThemeProvider theme={theme}>
+        <CssBaseline enableColorScheme />
+        <Box>
+          <Navigation mode={mode} toggleTheme={toggleTheme} />
+          <Box component="main" sx={{ p: 3 }}>
+            <Toolbar />
+            <Router>
+              <Home path="/" />
+              <Simulate path="/simulate" />
+              <ElectionList path="/elections" />
+              <ElectionAdmin path="/elections/create" />
+              <ElectionDetail path="/elections/:electionId" />
+              <ElectionAdmin path="/elections/:electionId/admin/:adminUuid" />
+              <TokenRedeem path="/elections/:electionId/tokens/:tokenId" />
+              <BallotPage path="/elections/:electionId/ballot/:ballotUuid" />
+              <AdminUserGuide path="/admin-guide" />
+              <StvExplainer path="/stv-explainer" />
+            </Router>
+          </Box>
+          <Footer />
+        </Box>
+      </ThemeProvider>
+    </HelmetProvider>
+  );
 }
 
 render(<App />, document.getElementById('app'));

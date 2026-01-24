@@ -3,7 +3,11 @@ import { useTranslation } from 'react-i18next';
 import { SEO } from '../components/SEO';
 import { Container, Typography, Box, Paper, Card, CardContent, Chip } from '@mui/material';
 
-export default function AdminUserGuide() {
+interface Props {
+  path?: string;
+}
+
+export default function AdminUserGuide({ path }: Props = {}) {
   const { t } = useTranslation();
 
   const pageTitle = `${t('Admin Guide')} - ${t('App title')}`;

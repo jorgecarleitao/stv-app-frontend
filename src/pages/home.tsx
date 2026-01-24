@@ -184,6 +184,9 @@ export default function Home({}: HomeProps = {}) {
           >
             {t('View Source Code')}
           </Button>
+          <Button variant="outlined" component="a" href="/risk-assessment">
+            {t('Risk Assessment')}
+          </Button>
         </Box>
       </Paper>
 

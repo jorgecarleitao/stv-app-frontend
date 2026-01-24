@@ -23,6 +23,7 @@ import BallotPage from './pages/ballot';
 import TokenRedeem from './pages/token-redeem';
 import Navigation from './components/Navigation';
 import AdminUserGuide from './pages/admin-guide';
+import RiskAssessment from './pages/risk-assessment';
 
 export default function App() {
   const { t, i18n } = useTranslation();
@@ -62,6 +63,7 @@ export default function App() {
               <BallotPage path="/elections/:electionId/ballot/:ballotUuid" />
               <AdminUserGuide path="/admin-guide" />
               <StvExplainer path="/stv-explainer" />
+              <RiskAssessment path="/risk-assessment" />
             </Router>
           </Box>
           <Footer />

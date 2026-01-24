@@ -485,7 +485,12 @@ export default function ElectionDetail({ electionId }: ElectionDetailProps) {
           </Accordion>
         )}
 
-        {!results && (
+        {!results && votingClosed && casted === 0 && (
+          <Alert severity="info" sx={{ my: 3 }}>
+            {t('Election closed without any vote')}
+          </Alert>
+        )}
+        {!results && !votingClosed && (
           <Alert severity="info" sx={{ my: 3 }}>
             {t('Results will be available after voting is complete')}
           </Alert>

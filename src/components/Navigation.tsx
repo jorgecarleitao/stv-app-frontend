@@ -44,6 +44,7 @@ export default function Navigation({ mode, toggleTheme }: NavigationProps) {
     { path: '/elections', label: t('Elections') },
     { path: '/stv-explainer', label: t('STV guide') },
     { path: '/admin-guide', label: t('Admin Guide') },
+    { path: '/risk-assessment', label: t('Risk Assessment') },
   ];
 
   const drawerContent = (

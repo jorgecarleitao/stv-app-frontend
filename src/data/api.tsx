@@ -10,6 +10,7 @@ export interface Ballot {
 export interface Election {
   candidates: string[];
   seats: number;
+  ordered_seats: boolean;
   ballots: Ballot[];
 }
 
@@ -34,6 +35,7 @@ export interface ElectionConfig {
   description?: string;
   candidates: string[];
   seats: number;
+  ordered_seats: boolean;
   start_time: string;
   end_time: string;
   number_of_ballots: number;
@@ -52,6 +54,7 @@ export interface CreateElectionRequest {
   description?: string | null;
   candidates: string[];
   num_seats: number;
+  ordered_seats: boolean;
   start_time: string;
   end_time: string;
 }
@@ -63,6 +66,7 @@ export interface ElectionResponse {
   description?: string | null;
   candidates: string[];
   num_seats: number;
+  ordered_seats: boolean;
   start_time: string;
   end_time: string;
   is_locked: boolean;

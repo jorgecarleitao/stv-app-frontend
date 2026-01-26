@@ -12,6 +12,9 @@ import Button from '@mui/material/Button';
 import Stack from '@mui/material/Stack';
 import TextField from '@mui/material/TextField';
 import IconButton from '@mui/material/IconButton';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import Switch from '@mui/material/Switch';
+import Tooltip from '@mui/material/Tooltip';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
 import SaveIcon from '@mui/icons-material/Save';
@@ -58,6 +61,7 @@ export default function ElectionAdmin({ electionId, adminUuid }: ElectionAdminPr
   const [editTitle, setEditTitle] = useState('');
   const [editDescription, setEditDescription] = useState('');
   const [editNumSeats, setEditNumSeats] = useState(1);
+  const [editOrderedSeats, setEditOrderedSeats] = useState(true);
   const [editCandidates, setEditCandidates] = useState<string[]>(['']);
   const [editStartTime, setEditStartTime] = useState('');
   const [editEndTime, setEditEndTime] = useState('');
@@ -99,6 +103,7 @@ export default function ElectionAdmin({ electionId, adminUuid }: ElectionAdminPr
     setEditTitle(data.title);
     setEditDescription(data.description || '');
     setEditNumSeats(data.num_seats);
+    setEditOrderedSeats(data.ordered_seats);
     setEditCandidates([...data.candidates]);
     setEditStartTime(formatDateTimeLocal(new Date(data.start_time)));
     setEditEndTime(formatDateTimeLocal(new Date(data.end_time)));
@@ -184,6 +189,7 @@ export default function ElectionAdmin({ electionId, adminUuid }: ElectionAdminPr
         description: editDescription.trim() || null,
         candidates: validCandidates,
         num_seats: editNumSeats,
+        ordered_seats: editOrderedSeats,
         start_time: startDate.toISOString(),
         end_time: endDate.toISOString(),
       };
@@ -432,11 +438,32 @@ export default function ElectionAdmin({ electionId, adminUuid }: ElectionAdminPr
                 fullWidth
                 required
                 inputProps={{ min: 1 }}
-                sx={{ mb: 3 }}
+                sx={{ mb: 2 }}
                 disabled={saving}
                 error={!!seatsError}
                 helperText={seatsError}
               />
+
+              <Box sx={{ mb: 3 }}>
+                <Tooltip
+                  title={t(
+                    'Ordered: Winners are ranked by position (1st, 2nd, 3rd, etc.). Unordered: Winners are identified without ranking them.'
+                  )}
+                  placement="right"
+                  arrow
+                >
+                  <FormControlLabel
+                    control={
+                      <Switch
+                        checked={editOrderedSeats}
+                        onChange={e => setEditOrderedSeats((e.target as HTMLInputElement).checked)}
+                        disabled={saving}
+                      />
+                    }
+                    label={t('Rank elected candidates (ordered seats)')}
+                  />
+                </Tooltip>
+              </Box>
 
               <Box sx={{ mb: 2 }}>
                 <Box

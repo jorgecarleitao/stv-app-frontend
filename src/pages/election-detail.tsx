@@ -198,15 +198,17 @@ export default function ElectionDetail({ electionId }: ElectionDetailProps) {
                             fontWeight: 'bold',
                           }}
                         >
-                          {idx + 1}
+                          {election.ordered_seats ? idx + 1 : e.candidate.charAt(0).toUpperCase()}
                         </Avatar>
                         <Box>
                           <Typography variant="h6" component="div">
                             {e.candidate}
                           </Typography>
-                          <Typography variant="body2" color="text.secondary">
-                            {t('Position')} {idx + 1}
-                          </Typography>
+                          {election.ordered_seats && (
+                            <Typography variant="body2" color="text.secondary">
+                              {t('Position')} {idx + 1}
+                            </Typography>
+                          )}
                         </Box>
                       </Box>
                     </CardContent>
@@ -262,136 +264,140 @@ export default function ElectionDetail({ electionId }: ElectionDetailProps) {
         </Paper>
 
         {/* Pairwise Comparison Matrix */}
-        {votingClosed && results && results.pairwise_matrix && results.order && (
-          <Paper elevation={2} sx={{ p: 3, mb: 3 }}>
-            <Typography variant="h5" gutterBottom>
-              {t('Pairwise Comparison Matrix')}
-            </Typography>
-            <Typography variant="body2" color="text.secondary" paragraph>
-              {t(
-                'Each cell shows how many voters preferred the row candidate over the column candidate'
-              )}
-            </Typography>
-            <Box sx={{ overflowX: 'auto' }}>
-              <Box
-                component="table"
-                sx={{
-                  width: '100%',
-                  borderCollapse: 'collapse',
-                  '& td, & th': {
-                    border: '1px solid',
-                    borderColor: 'divider',
-                    p: 1.5,
-                    textAlign: 'center',
-                    minWidth: '80px',
-                  },
-                  '& th': {
-                    bgcolor: 'action.hover',
-                    fontWeight: 'bold',
-                    position: 'sticky',
-                    top: 0,
-                    zIndex: 1,
-                  },
-                  '& tbody th': {
-                    position: 'sticky',
-                    left: 0,
-                    bgcolor: 'action.hover',
-                    zIndex: 1,
-                  },
-                }}
-              >
-                <Box component="thead">
-                  <Box component="tr">
-                    <Box component="th" sx={{ minWidth: '120px !important' }}></Box>
-                    {election.candidates.map((candidate, idx) => (
-                      <Box component="th" key={idx}>
-                        <Box
-                          sx={{
-                            display: 'flex',
-                            flexDirection: 'column',
-                            alignItems: 'center',
-                            gap: 0.5,
-                          }}
-                        >
-                          <Avatar
+        {votingClosed &&
+          results &&
+          results.pairwise_matrix &&
+          results.order &&
+          election.ordered_seats && (
+            <Paper elevation={2} sx={{ p: 3, mb: 3 }}>
+              <Typography variant="h5" gutterBottom>
+                {t('Pairwise Comparison Matrix')}
+              </Typography>
+              <Typography variant="body2" color="text.secondary" paragraph>
+                {t(
+                  'Each cell shows how many voters preferred the row candidate over the column candidate'
+                )}
+              </Typography>
+              <Box sx={{ overflowX: 'auto' }}>
+                <Box
+                  component="table"
+                  sx={{
+                    width: '100%',
+                    borderCollapse: 'collapse',
+                    '& td, & th': {
+                      border: '1px solid',
+                      borderColor: 'divider',
+                      p: 1.5,
+                      textAlign: 'center',
+                      minWidth: '80px',
+                    },
+                    '& th': {
+                      bgcolor: 'action.hover',
+                      fontWeight: 'bold',
+                      position: 'sticky',
+                      top: 0,
+                      zIndex: 1,
+                    },
+                    '& tbody th': {
+                      position: 'sticky',
+                      left: 0,
+                      bgcolor: 'action.hover',
+                      zIndex: 1,
+                    },
+                  }}
+                >
+                  <Box component="thead">
+                    <Box component="tr">
+                      <Box component="th" sx={{ minWidth: '120px !important' }}></Box>
+                      {election.candidates.map((candidate, idx) => (
+                        <Box component="th" key={idx}>
+                          <Box
                             sx={{
-                              width: 24,
-                              height: 24,
-                              fontSize: '0.75rem',
-                              bgcolor: 'primary.main',
+                              display: 'flex',
+                              flexDirection: 'column',
+                              alignItems: 'center',
+                              gap: 0.5,
                             }}
                           >
-                            {results.order[idx] + 1}
-                          </Avatar>
-                          <Typography variant="caption">{candidate}</Typography>
+                            <Avatar
+                              sx={{
+                                width: 24,
+                                height: 24,
+                                fontSize: '0.75rem',
+                                bgcolor: 'primary.main',
+                              }}
+                            >
+                              {results.order[idx] + 1}
+                            </Avatar>
+                            <Typography variant="caption">{candidate}</Typography>
+                          </Box>
                         </Box>
+                      ))}
+                    </Box>
+                  </Box>
+                  <Box component="tbody">
+                    {election.candidates.map((candidate, rowIdx) => (
+                      <Box component="tr" key={rowIdx}>
+                        <Box component="th">
+                          <Box
+                            sx={{
+                              display: 'flex',
+                              alignItems: 'center',
+                              gap: 1,
+                              justifyContent: 'flex-start',
+                            }}
+                          >
+                            <Avatar
+                              sx={{
+                                width: 24,
+                                height: 24,
+                                fontSize: '0.75rem',
+                                bgcolor: 'primary.main',
+                              }}
+                            >
+                              {results.order[rowIdx] + 1}
+                            </Avatar>
+                            <Typography variant="body2">{candidate}</Typography>
+                          </Box>
+                        </Box>
+                        {election.candidates.map((_, colIdx) => {
+                          const value = results.pairwise_matrix[rowIdx][colIdx];
+                          const opposite = results.pairwise_matrix[colIdx][rowIdx];
+                          const isWin = rowIdx !== colIdx && value > opposite;
+                          const isTie = rowIdx !== colIdx && value === opposite;
+
+                          return (
+                            <Box
+                              component="td"
+                              key={colIdx}
+                              sx={{
+                                bgcolor:
+                                  rowIdx === colIdx
+                                    ? 'action.disabledBackground'
+                                    : isWin
+                                      ? 'success.50'
+                                      : isTie
+                                        ? 'warning.50'
+                                        : 'inherit',
+                                fontWeight: isWin ? 'bold' : 'normal',
+                              }}
+                            >
+                              {rowIdx === colIdx ? '—' : value}
+                            </Box>
+                          );
+                        })}
                       </Box>
                     ))}
                   </Box>
                 </Box>
-                <Box component="tbody">
-                  {election.candidates.map((candidate, rowIdx) => (
-                    <Box component="tr" key={rowIdx}>
-                      <Box component="th">
-                        <Box
-                          sx={{
-                            display: 'flex',
-                            alignItems: 'center',
-                            gap: 1,
-                            justifyContent: 'flex-start',
-                          }}
-                        >
-                          <Avatar
-                            sx={{
-                              width: 24,
-                              height: 24,
-                              fontSize: '0.75rem',
-                              bgcolor: 'primary.main',
-                            }}
-                          >
-                            {results.order[rowIdx] + 1}
-                          </Avatar>
-                          <Typography variant="body2">{candidate}</Typography>
-                        </Box>
-                      </Box>
-                      {election.candidates.map((_, colIdx) => {
-                        const value = results.pairwise_matrix[rowIdx][colIdx];
-                        const opposite = results.pairwise_matrix[colIdx][rowIdx];
-                        const isWin = rowIdx !== colIdx && value > opposite;
-                        const isTie = rowIdx !== colIdx && value === opposite;
-
-                        return (
-                          <Box
-                            component="td"
-                            key={colIdx}
-                            sx={{
-                              bgcolor:
-                                rowIdx === colIdx
-                                  ? 'action.disabledBackground'
-                                  : isWin
-                                    ? 'success.50'
-                                    : isTie
-                                      ? 'warning.50'
-                                      : 'inherit',
-                              fontWeight: isWin ? 'bold' : 'normal',
-                            }}
-                          >
-                            {rowIdx === colIdx ? '—' : value}
-                          </Box>
-                        );
-                      })}
-                    </Box>
-                  ))}
-                </Box>
               </Box>
-            </Box>
-            <Typography variant="caption" color="text.secondary" sx={{ mt: 2, display: 'block' }}>
-              {t(
-                'Candidates are ordered by their final ranking (Copeland method). Green cells indicate wins, yellow indicates ties.'
-              )}
-            </Typography>
-          </Paper>
-        )}
+              <Typography variant="caption" color="text.secondary" sx={{ mt: 2, display: 'block' }}>
+                {t(
+                  'Candidates are ordered by their final ranking (Copeland method). Green cells indicate wins, yellow indicates ties.'
+                )}
+              </Typography>
+            </Paper>
+          )}
 
         {/* Ballot Groups (Accordion) */}
         {results && results.election.ballots.length > 0 && (

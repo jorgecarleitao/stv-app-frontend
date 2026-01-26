@@ -95,6 +95,47 @@ export default function AdminUserGuide({ path }: Props = {}) {
         </Box>
       </Paper>
 
+      <Paper elevation={2} sx={{ p: 3, my: 3, bgcolor: 'background.paper' }}>
+        <Typography variant="h6" gutterBottom>
+          {t('Ordered vs Unordered Seats')}
+        </Typography>
+        <Typography variant="body2" paragraph>
+          {t('When creating an election, you can choose how elected candidates are presented:')}
+        </Typography>
+        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+          <Box>
+            <Typography variant="subtitle2" gutterBottom sx={{ fontWeight: 'bold' }}>
+              {t('Ordered Seats')}
+            </Typography>
+            <Typography variant="body2" paragraph>
+              {t(
+                'Winners are ranked by position (1st, 2nd, 3rd place, etc.). Use this when the order matters - for example, when electing a president, vice-president, and secretary, or when determining seniority in a committee.'
+              )}
+            </Typography>
+            <Typography variant="body2" color="text.secondary">
+              {t(
+                "Technical note: After STV determines the winners, they are ranked using Copeland's pairwise comparison method based on voter preferences."
+              )}
+            </Typography>
+          </Box>
+          <Box>
+            <Typography variant="subtitle2" gutterBottom sx={{ fontWeight: 'bold' }}>
+              {t('Unordered Seats')}
+            </Typography>
+            <Typography variant="body2" paragraph>
+              {t(
+                'Winners are identified without ranking them. Use this when all elected candidates have equal status - for example, when filling multiple board member positions where all members have the same authority.'
+              )}
+            </Typography>
+            <Typography variant="body2" color="text.secondary">
+              {t(
+                'Technical note: Only the STV algorithm runs to determine who wins. No additional ranking is computed.'
+              )}
+            </Typography>
+          </Box>
+        </Box>
+      </Paper>
+
       <Typography variant="h5" gutterBottom sx={{ mt: 4 }}>
         {t('Steps for Administrators:')}
       </Typography>

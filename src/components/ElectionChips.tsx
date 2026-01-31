@@ -32,11 +32,7 @@ export function ElectionChips({
   const isOpen = now >= start && now < end;
 
   return (
-    <Stack
-      direction="row"
-      spacing={1}
-      sx={{ mt: size === 'small' ? 1 : 2, flexWrap: 'wrap', gap: 1 }}
-    >
+    <Stack direction="row" spacing={1} sx={{ mt: size === 'small' ? 1 : 2 }} flexWrap="wrap">
       <Chip
         icon={<WeekendIcon />}
         label={`${seats} ${t('seats')}`}

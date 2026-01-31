@@ -1,8 +1,7 @@
 import { useEffect, useState } from 'preact/hooks';
 import { useTranslation } from 'react-i18next';
-import { SEO } from '../components/SEO';
+import { Page } from '../components/Page';
 
-import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 import Paper from '@mui/material/Paper';
@@ -10,18 +9,11 @@ import Alert from '@mui/material/Alert';
 import CircularProgress from '@mui/material/CircularProgress';
 import Button from '@mui/material/Button';
 import Stack from '@mui/material/Stack';
-import TextField from '@mui/material/TextField';
-import IconButton from '@mui/material/IconButton';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import Switch from '@mui/material/Switch';
-import Tooltip from '@mui/material/Tooltip';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
 import SaveIcon from '@mui/icons-material/Save';
 import CancelIcon from '@mui/icons-material/Cancel';
 import VisibilityIcon from '@mui/icons-material/Visibility';
-import AddIcon from '@mui/icons-material/Add';
-import DeleteIcon from '@mui/icons-material/Delete';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 
 import {
@@ -32,6 +24,10 @@ import {
   ElectionResponse,
 } from '../data/api';
 import { BallotTokensList } from '../components/BallotTokensList';
+import { ElectionBasicInfo } from '../components/ElectionBasicInfo';
+import { ElectionSeatsConfig } from '../components/ElectionSeatsConfig';
+import { CandidatesList } from '../components/CandidatesList';
+import { ElectionTimeConfig } from '../components/ElectionTimeConfig';
 
 interface ElectionAdminProps {
   path?: string;
@@ -251,96 +247,83 @@ export default function ElectionAdmin({ electionId, adminUuid }: ElectionAdminPr
 
   if (loading) {
     return (
-      <Container maxWidth="lg">
-        <Box sx={{ display: 'flex', justifyContent: 'center', my: 4 }}>
+      <Page title={t('Loading...')} description={t('Election Admin meta description')} noIndex>
+        <Box sx={{ display: 'flex', justifyContent: 'center' }}>
           <CircularProgress />
         </Box>
-      </Container>
+      </Page>
     );
   }
 
   // Only show error page if we're in edit mode and failed to load the election
   if (!isCreateMode && error && !election) {
     return (
-      <Container maxWidth="lg">
-        <Box sx={{ my: 4 }}>
-          <Button component="a" href="/elections" startIcon={<ArrowBackIcon />} sx={{ mb: 2 }}>
-            {t('Back to elections')}
-          </Button>
-          <Alert severity="error">
-            {t('Error loading election')}: {error}
-          </Alert>
-        </Box>
-      </Container>
+      <Page title={t('Admin')} description={t('Election Admin meta description')} noIndex>
+        <Button component="a" href="/elections" startIcon={<ArrowBackIcon />}>
+          {t('Back to elections')}
+        </Button>
+        <Alert severity="error">
+          {t('Error loading election')}: {error}
+        </Alert>
+      </Page>
     );
   }
 
   if (!isCreateMode && !election) {
     return (
-      <Container maxWidth="lg">
-        <Box sx={{ my: 4 }}>
-          <Button component="a" href="/elections" startIcon={<ArrowBackIcon />} sx={{ mb: 2 }}>
-            {t('Back to elections')}
-          </Button>
-          <Alert severity="info">{t('Election not found')}</Alert>
-        </Box>
-      </Container>
+      <Page title={t('Admin')} description={t('Election Admin meta description')} noIndex>
+        <Button component="a" href="/elections" startIcon={<ArrowBackIcon />}>
+          {t('Back to elections')}
+        </Button>
+        <Alert severity="info">{t('Election not found')}</Alert>
+      </Page>
     );
   }
 
-  const start = election ? new Date(election.start_time) : null;
-  const end = election ? new Date(election.end_time) : null;
-  const now = new Date();
-  const votingOpen = start && end && now >= start && now < end;
-
-  const pageTitle = isCreateMode
-    ? `${t('Create Election')} - ${t('App title')}`
-    : election
-      ? `${election.title} Admin - ${t('App title')}`
-      : `${t('Admin')} - ${t('App title')}`;
-  const metaDescription = t('Election Admin meta description');
-
   return (
-    <Container maxWidth="lg">
-      <SEO title={pageTitle} description={metaDescription} noIndex />
-      <Box sx={{ my: 4 }}>
-        <Stack direction="row" spacing={2} sx={{ mb: 2 }}>
-          <Button component="a" href="/elections" startIcon={<ArrowBackIcon />}>
-            {t('Back to elections')}
-          </Button>
-          {!isCreateMode && (
-            <>
-              <Button
-                component="a"
-                href={`/elections/${electionId}`}
-                variant="outlined"
-                startIcon={<VisibilityIcon />}
-              >
-                {t('View Public Page')}
-              </Button>
-              <Button
-                variant="outlined"
-                startIcon={<ContentCopyIcon />}
-                onClick={handleCopyPublicUrl}
-              >
-                {copyPublicSuccess ? t('Copied!') : t('Copy Public Link')}
-              </Button>
-            </>
-          )}
-        </Stack>
+    <Page
+      title={isCreateMode ? t('Create Election') : election?.title || t('Admin')}
+      description={t('Election Admin meta description')}
+      noIndex
+    >
+      <Stack direction="row" spacing={2}>
+        <Button component="a" href="/elections" startIcon={<ArrowBackIcon />}>
+          {t('Back to elections')}
+        </Button>
+        {!isCreateMode && (
+          <>
+            <Button
+              component="a"
+              href={`/elections/${electionId}`}
+              variant="outlined"
+              startIcon={<VisibilityIcon />}
+            >
+              {t('View Public Page')}
+            </Button>
+            <Button
+              variant="outlined"
+              startIcon={<ContentCopyIcon />}
+              onClick={handleCopyPublicUrl}
+            >
+              {copyPublicSuccess ? t('Copied!') : t('Copy Public Link')}
+            </Button>
+          </>
+        )}
+      </Stack>
 
-        {/* Admin Badge - only show in edit mode */}
-        {!isCreateMode && election && (
-          <Alert severity="warning" icon={<AdminPanelSettingsIcon />} sx={{ mb: 3 }}>
+      {/* Admin Badge - only show in edit mode */}
+      {!isCreateMode && election && (
+        <Alert severity="warning" icon={<AdminPanelSettingsIcon />}>
+          <Stack spacing={2}>
             <Typography variant="body1">
               <strong>{t('Administrator Page')}</strong>
             </Typography>
-            <Typography variant="body2" sx={{ mt: 1 }}>
+            <Typography variant="body2">
               {t(
                 'This page allows full control over the election. Only share this URL with people you trust to administer this election.'
               )}
             </Typography>
-            <Box sx={{ mt: 2, display: 'flex', alignItems: 'center', gap: 1 }}>
+            <Stack direction="row" spacing={1} alignItems="center">
               <Box
                 sx={{
                   flex: 1,
@@ -361,33 +344,34 @@ export default function ElectionAdmin({ electionId, adminUuid }: ElectionAdminPr
                 size="small"
                 startIcon={<ContentCopyIcon />}
                 onClick={handleCopyAdminUrl}
-                sx={{ whiteSpace: 'nowrap' }}
               >
                 {copySuccess ? t('Copied!') : t('Copy')}
               </Button>
-            </Box>
-          </Alert>
-        )}
+            </Stack>
+          </Stack>
+        </Alert>
+      )}
 
-        {error && (
-          <Alert severity="error" sx={{ mb: 3 }} onClose={() => setError(null)}>
-            {error}
-          </Alert>
-        )}
+      {error && (
+        <Alert severity="error" onClose={() => setError(null)}>
+          {error}
+        </Alert>
+      )}
 
-        {loading && (
-          <Box sx={{ display: 'flex', justifyContent: 'center', my: 4 }}>
-            <CircularProgress />
-          </Box>
-        )}
+      {loading && (
+        <Stack alignItems="center" sx={{ py: 4 }}>
+          <CircularProgress />
+        </Stack>
+      )}
 
-        {!loading && !election && !isCreateMode && (
-          <Alert severity="warning">{t('Election not found.')}</Alert>
-        )}
+      {!loading && !election && !isCreateMode && (
+        <Alert severity="warning">{t('Election not found.')}</Alert>
+      )}
 
-        {/* Edit/Create Form */}
-        {(isCreateMode || election) && (
-          <Paper elevation={3} sx={{ p: 3, mb: 3, bgcolor: 'warning.50' }}>
+      {/* Edit/Create Form */}
+      {(isCreateMode || election) && (
+        <Stack spacing={3}>
+          <Paper elevation={3} sx={{ bgcolor: 'warning.50', p: 3 }}>
             <Typography variant="h5" gutterBottom>
               {isCreateMode ? t('Create New Election') : t('Edit Election Details')}
             </Typography>
@@ -400,193 +384,104 @@ export default function ElectionAdmin({ electionId, adminUuid }: ElectionAdminPr
               </Alert>
             )}
 
+            <ElectionBasicInfo
+              title={editTitle}
+              description={editDescription}
+              onTitleChange={value => {
+                setEditTitle(value);
+                if (titleError) setTitleError(null);
+              }}
+              onDescriptionChange={setEditDescription}
+              disabled={saving || election?.is_locked}
+              titleError={titleError}
+            />
+
             <Box sx={{ mt: 2 }}>
-              <TextField
-                label={t('Election Title')}
-                value={editTitle}
-                onChange={e => {
-                  setEditTitle((e.target as HTMLInputElement).value);
-                  if (titleError) setTitleError(null);
-                }}
-                fullWidth
-                required
-                sx={{ mb: 2 }}
-                disabled={saving || election?.is_locked}
-                error={!!titleError}
-                helperText={titleError}
-              />
-
-              <TextField
-                label={t('Description')}
-                value={editDescription}
-                onChange={e => setEditDescription((e.target as HTMLInputElement).value)}
-                fullWidth
-                multiline
-                rows={3}
-                sx={{ mb: 2 }}
-                disabled={saving || election?.is_locked}
-              />
-
-              <TextField
-                label={t('Number of Seats')}
-                type="number"
-                value={editNumSeats}
-                onChange={e => {
-                  setEditNumSeats(parseInt((e.target as HTMLInputElement).value) || 1);
-                  if (seatsError) setSeatsError(null);
-                }}
-                fullWidth
-                required
-                inputProps={{ min: 1 }}
-                sx={{ mb: 2 }}
-                disabled={saving}
-                error={!!seatsError}
-                helperText={seatsError}
-              />
-
-              <Box sx={{ mb: 3 }}>
-                <Tooltip
-                  title={t(
-                    'Ordered: Winners are ranked by position (1st, 2nd, 3rd, etc.). Unordered: Winners are identified without ranking them.'
-                  )}
-                  placement="right"
-                  arrow
-                >
-                  <FormControlLabel
-                    control={
-                      <Switch
-                        checked={editOrderedSeats}
-                        onChange={e => setEditOrderedSeats((e.target as HTMLInputElement).checked)}
-                        disabled={saving}
-                      />
-                    }
-                    label={t('Rank elected candidates (ordered seats)')}
-                  />
-                </Tooltip>
-              </Box>
-
-              <Box sx={{ mb: 2 }}>
-                <Box
-                  sx={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'space-between',
-                    mb: 1,
-                  }}
-                >
-                  <strong>{t('Candidates')}</strong>
-                  <Button
-                    startIcon={<AddIcon />}
-                    size="small"
-                    onClick={handleAddCandidate}
-                    disabled={saving || election?.is_locked}
-                  >
-                    {t('Add Candidate')}
-                  </Button>
-                </Box>
-
-                <Stack spacing={1}>
-                  {editCandidates.map((candidate, index) => (
-                    <Box key={index} sx={{ display: 'flex', gap: 1 }}>
-                      <TextField
-                        label={`${t('Candidate')} ${index + 1}`}
-                        value={candidate}
-                        onChange={e => {
-                          handleCandidateChange(index, (e.target as HTMLInputElement).value);
-                          if (candidatesError) setCandidatesError(null);
-                        }}
-                        fullWidth
-                        size="small"
-                        disabled={saving || election?.is_locked}
-                      />
-                      <IconButton
-                        onClick={() => handleRemoveCandidate(index)}
-                        disabled={saving || editCandidates.length <= 1 || election?.is_locked}
-                        color="error"
-                      >
-                        <DeleteIcon />
-                      </IconButton>
-                    </Box>
-                  ))}
-                </Stack>
-                {candidatesError && (
-                  <Typography variant="caption" color="error" sx={{ mt: 0.5, display: 'block' }}>
-                    {candidatesError}
-                  </Typography>
-                )}
-              </Box>
-
-              <TextField
-                label={t('Start Time')}
-                type="datetime-local"
-                value={editStartTime}
-                onChange={e => {
-                  setEditStartTime((e.target as HTMLInputElement).value);
+              <ElectionTimeConfig
+                startTime={editStartTime}
+                endTime={editEndTime}
+                onStartTimeChange={value => {
+                  setEditStartTime(value);
                   if (dateTimeError) setDateTimeError(null);
                 }}
-                fullWidth
-                required
-                sx={{ mb: 2 }}
-                InputLabelProps={{ shrink: true }}
-                disabled={saving}
-                error={!!dateTimeError}
-              />
-
-              <TextField
-                label={t('End Time')}
-                type="datetime-local"
-                value={editEndTime}
-                onChange={e => {
-                  setEditEndTime((e.target as HTMLInputElement).value);
+                onEndTimeChange={value => {
+                  setEditEndTime(value);
                   if (dateTimeError) setDateTimeError(null);
                 }}
-                fullWidth
-                required
-                sx={{ mb: 1 }}
-                InputLabelProps={{ shrink: true }}
                 disabled={saving}
-                error={!!dateTimeError}
+                dateTimeError={dateTimeError}
               />
-
-              {dateTimeError && (
-                <Typography variant="caption" color="error" sx={{ mb: 2, display: 'block' }}>
-                  {dateTimeError}
-                </Typography>
-              )}
-
-              <Stack direction="row" spacing={2} sx={{ mt: 2 }}>
-                <Button
-                  variant="contained"
-                  startIcon={<SaveIcon />}
-                  onClick={handleSave}
-                  disabled={saving}
-                >
-                  {saving
-                    ? isCreateMode
-                      ? t('Creating...')
-                      : t('Saving...')
-                    : isCreateMode
-                      ? t('Create Election')
-                      : t('Save Changes')}
-                </Button>
-                <Button
-                  variant="outlined"
-                  startIcon={<CancelIcon />}
-                  onClick={handleCancelEdit}
-                  disabled={saving}
-                >
-                  {t('Cancel')}
-                </Button>
-              </Stack>
             </Box>
           </Paper>
-        )}
 
-        {/* Tokens Section - only in edit mode */}
-        {!isCreateMode && election && electionId && adminUuid && (
-          <BallotTokensList electionId={electionId} adminUuid={adminUuid} />
-        )}
-      </Box>
-    </Container>
+          <Paper elevation={3} sx={{ p: 3 }}>
+            <Typography variant="h5" gutterBottom>
+              {t('Number of seats to elect')}
+            </Typography>
+            <ElectionSeatsConfig
+              numSeats={editNumSeats}
+              orderedSeats={editOrderedSeats}
+              maxSeats={editCandidates.filter(c => c.trim().length > 0).length}
+              onNumSeatsChange={value => {
+                setEditNumSeats(value);
+                if (seatsError) setSeatsError(null);
+              }}
+              onOrderedSeatsChange={setEditOrderedSeats}
+              disabled={saving}
+              seatsError={seatsError}
+            />
+          </Paper>
+
+          <Paper elevation={3} sx={{ p: 3 }}>
+            <Typography variant="h5" gutterBottom>
+              {t('Candidates')}
+            </Typography>
+            <CandidatesList
+              candidates={editCandidates}
+              onCandidateChange={(index, value) => {
+                handleCandidateChange(index, value);
+                if (candidatesError) setCandidatesError(null);
+              }}
+              onAddCandidate={handleAddCandidate}
+              onRemoveCandidate={handleRemoveCandidate}
+              disabled={saving || election?.is_locked}
+              candidatesError={candidatesError}
+            />
+          </Paper>
+
+          <Paper elevation={3} sx={{ p: 3 }}>
+            <Stack direction="row" spacing={2}>
+              <Button
+                variant="contained"
+                startIcon={<SaveIcon />}
+                onClick={handleSave}
+                disabled={saving}
+              >
+                {saving
+                  ? isCreateMode
+                    ? t('Creating...')
+                    : t('Saving...')
+                  : isCreateMode
+                    ? t('Create Election')
+                    : t('Save Changes')}
+              </Button>
+              <Button
+                variant="outlined"
+                startIcon={<CancelIcon />}
+                onClick={handleCancelEdit}
+                disabled={saving}
+              >
+                {t('Cancel')}
+              </Button>
+            </Stack>
+          </Paper>
+        </Stack>
+      )}
+
+      {/* Tokens Section - only in edit mode */}
+      {!isCreateMode && election && electionId && adminUuid && (
+        <BallotTokensList electionId={electionId} adminUuid={adminUuid} />
+      )}
+    </Page>
   );
 }

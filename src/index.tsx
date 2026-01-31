@@ -6,6 +6,7 @@ import { HelmetProvider } from 'react-helmet-async';
 
 import { createTheme } from '@mui/material/styles';
 import Box from '@mui/material/Box';
+import Stack from '@mui/material/Stack';
 import { ThemeProvider } from '@emotion/react';
 import Toolbar from '@mui/material/Toolbar';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -50,7 +51,7 @@ export default function App() {
         <CssBaseline enableColorScheme />
         <Box>
           <Navigation mode={mode} toggleTheme={toggleTheme} />
-          <Box component="main" sx={{ p: 3 }}>
+          <Stack component="main" padding={3}>
             <Toolbar />
             <Router>
               <Home path="/" />
@@ -65,7 +66,7 @@ export default function App() {
               <StvExplainer path="/stv-explainer" />
               <RiskAssessment path="/risk-assessment" />
             </Router>
-          </Box>
+          </Stack>
           <Footer />
         </Box>
       </ThemeProvider>

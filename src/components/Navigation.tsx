@@ -5,7 +5,7 @@ import locale from 'locale-code';
 import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
-import Box from '@mui/material/Box';
+import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
 import Drawer from '@mui/material/Drawer';
@@ -48,8 +48,14 @@ export default function Navigation({ mode, toggleTheme }: NavigationProps) {
   ];
 
   const drawerContent = (
-    <Box onClick={handleDrawerToggle} sx={{ textAlign: 'center' }}>
-      <Typography variant="h6" component="a" href="/" sx={{ my: 2, display: 'block', ...linkSx }}>
+    <Stack alignItems="center" sx={{ py: 2 }} onClick={handleDrawerToggle}>
+      <Typography
+        variant="h6"
+        component="a"
+        href="/"
+        display="block"
+        sx={{ textDecoration: 'none', color: 'inherit' }}
+      >
         {brandLabel}
       </Typography>
       <Divider />
@@ -62,7 +68,7 @@ export default function Navigation({ mode, toggleTheme }: NavigationProps) {
           </ListItem>
         ))}
       </List>
-    </Box>
+    </Stack>
   );
 
   return (
@@ -74,7 +80,7 @@ export default function Navigation({ mode, toggleTheme }: NavigationProps) {
             aria-label="open drawer"
             edge="start"
             onClick={handleDrawerToggle}
-            sx={{ mr: 2, display: { sm: 'none' } }}
+            sx={{ display: { sm: 'none' } }}
           >
             <MenuIcon />
           </IconButton>
@@ -82,28 +88,29 @@ export default function Navigation({ mode, toggleTheme }: NavigationProps) {
             variant="h6"
             component="a"
             href="/"
+            flexGrow={1}
             sx={{
-              flexGrow: 1,
               display: { xs: 'none', sm: 'block' },
-              ...linkSx,
+              textDecoration: 'none',
+              color: 'inherit',
             }}
           >
             {brandLabel}
           </Typography>
-          <Box sx={{ display: { xs: 'none', sm: 'flex' }, gap: 1 }}>
+          <Stack direction="row" spacing={1} sx={{ display: { xs: 'none', sm: 'flex' } }}>
             {navItems.map(item => (
               <Button key={item.path} component="a" href={item.path} color="inherit">
                 {item.label}
               </Button>
             ))}
-          </Box>
-          <IconButton sx={{ ml: 1 }} onClick={toggleTheme} color="inherit">
+          </Stack>
+          <IconButton onClick={toggleTheme} color="inherit" sx={{ ml: 1 }}>
             {mode === 'dark' ? <Brightness7Icon /> : <Brightness4Icon />}
           </IconButton>
           <Select
             variant="standard"
             value={i18n.language}
-            onChange={(e: SelectChangeEvent) => i18n.changeLanguage(e.target.value)}
+            onChange={(e) => i18n.changeLanguage(e.target.value)}
             sx={{ ml: 2, color: 'inherit' }}
           >
             {languages.map(lang => (

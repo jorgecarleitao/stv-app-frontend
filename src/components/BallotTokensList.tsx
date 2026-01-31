@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 
 import Paper from '@mui/material/Paper';
 import Box from '@mui/material/Box';
+import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import Alert from '@mui/material/Alert';
@@ -92,110 +93,115 @@ export function BallotTokensList({ electionId, adminUuid }: BallotTokensListProp
   };
 
   return (
-    <Paper elevation={2} sx={{ p: 3, mb: 3 }}>
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
-        <Typography variant="h5" sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-          <ConfirmationNumberIcon /> {t('Ballot Tokens')}
+    <Paper elevation={2}>
+      <Stack spacing={3} sx={{ p: 3 }}>
+        <Stack direction="row" justifyContent="space-between" alignItems="center">
+          <Stack direction="row" spacing={1} alignItems="center">
+            <ConfirmationNumberIcon />
+            <Typography variant="h5">{t('Ballot Tokens')}</Typography>
+          </Stack>
+          {tokens.length > 0 && (
+            <Button
+              variant="outlined"
+              size="small"
+              startIcon={<ContentCopyIcon />}
+              onClick={handleCopyAllTokensCSV}
+            >
+              {csvCopySuccess ? t('Copied!') : t('Copy All as CSV')}
+            </Button>
+          )}
+        </Stack>
+
+        <Typography variant="body2" color="text.secondary" paragraph>
+          {t(
+            'Ballot tokens allow voters to access their unique voting page. Share these links individually or export all as CSV.'
+          )}
         </Typography>
-        {tokens.length > 0 && (
-          <Button
-            variant="outlined"
-            size="small"
-            startIcon={<ContentCopyIcon />}
-            onClick={handleCopyAllTokensCSV}
-          >
-            {csvCopySuccess ? t('Copied!') : t('Copy All as CSV')}
-          </Button>
-        )}
-      </Box>
 
-      <Typography variant="body2" color="text.secondary" paragraph>
-        {t(
-          'Ballot tokens allow voters to access their unique voting page. Share these links individually or export all as CSV.'
-        )}
-      </Typography>
+        <Alert severity="warning">
+          {t(
+            'Important: Each token should be shared with exactly one person. Tokens are unique to each voter and should not be reused or shared publicly.'
+          )}
+        </Alert>
 
-      <Alert severity="warning" sx={{ mb: 3 }}>
-        {t(
-          'Important: Each token should be shared with exactly one person. Tokens are unique to each voter and should not be reused or shared publicly.'
-        )}
-      </Alert>
-
-      {/* Token Creation */}
-      <Box sx={{ mb: 3, p: 2, bgcolor: 'background.default', borderRadius: 1 }}>
-        <Typography variant="subtitle2" gutterBottom>
-          {t('Create New Tokens')}
-        </Typography>
-        <Box sx={{ display: 'flex', gap: 2, alignItems: 'flex-start' }}>
-          <TextField
-            label={t('Number of tokens')}
-            type="number"
-            value={tokenCount}
-            onChange={e => {
-              setTokenCount(parseInt((e.target as HTMLInputElement).value) || 1);
-              if (createError) setCreateError(null);
-            }}
-            size="small"
-            inputProps={{ min: 1 }}
-            disabled={creating}
-            error={!!createError}
-            helperText={createError}
-            sx={{ width: 150 }}
-          />
-          <Button
-            variant="contained"
-            startIcon={creating ? <CircularProgress size={16} /> : <AddIcon />}
-            onClick={handleCreateTokens}
-            disabled={creating || tokenCount < 1}
-          >
-            {creating ? t('Creating...') : t('Create Tokens')}
-          </Button>
+        {/* Token Creation */}
+        <Box sx={{ p: 2, bgcolor: 'background.default', borderRadius: 1 }}>
+          <Stack spacing={2}>
+            <Typography variant="subtitle2" gutterBottom>
+              {t('Create New Tokens')}
+            </Typography>
+            <Stack direction="row" spacing={2} alignItems="flex-start">
+              <TextField
+                label={t('Number of tokens')}
+                type="number"
+                value={tokenCount}
+                onChange={e => {
+                  setTokenCount(parseInt((e.target as HTMLInputElement).value) || 1);
+                  if (createError) setCreateError(null);
+                }}
+                size="small"
+                inputProps={{ min: 1 }}
+                disabled={creating}
+                error={!!createError}
+                helperText={createError}
+                sx={{ width: 150 }}
+              />
+              <Button
+                variant="contained"
+                startIcon={creating ? <CircularProgress size={16} /> : <AddIcon />}
+                onClick={handleCreateTokens}
+                disabled={creating || tokenCount < 1}
+              >
+                {creating ? t('Creating...') : t('Create Tokens')}
+              </Button>
+            </Stack>
+          </Stack>
         </Box>
-      </Box>
 
-      {loading ? (
-        <Box sx={{ display: 'flex', justifyContent: 'center', my: 2 }}>
-          <CircularProgress size={24} />
-        </Box>
-      ) : tokens.length === 0 ? (
-        <Alert severity="info">{t('No ballot tokens have been created yet.')}</Alert>
-      ) : (
-        <Paper variant="outlined" sx={{ maxHeight: 400, overflow: 'auto' }}>
-          <List dense>
-            {tokens.map((token: BallotToken, index: number) => (
-              <div key={token.id}>
-                {index > 0 && <Divider />}
-                <ListItem
-                  secondaryAction={
-                    <IconButton
-                      edge="end"
-                      onClick={() => handleCopyTokenLink(token.id)}
-                      color={tokenCopySuccess[token.id] ? 'success' : 'default'}
-                    >
-                      <ContentCopyIcon />
-                    </IconButton>
-                  }
-                >
-                  <ListItemText
-                    primary={token.id}
-                    secondary={
-                      token.converted_at
-                        ? t('Used on {{date}}', {
-                            date: new Date(token.converted_at).toLocaleString(),
-                          })
-                        : t('Not used yet')
+        {loading ? (
+          <Stack alignItems="center" sx={{ py: 2 }}>
+            <CircularProgress size={24} />
+          </Stack>
+        ) : tokens.length === 0 ? (
+          <Alert severity="info">{t('No ballot tokens have been created yet.')}</Alert>
+        ) : (
+          <Paper variant="outlined" sx={{ maxHeight: 400, overflow: 'auto' }}>
+            <List dense>
+              {tokens.map((token: BallotToken, index: number) => (
+                <div key={token.id}>
+                  {index > 0 && <Divider />}
+                  <ListItem
+                    secondaryAction={
+                      <IconButton
+                        edge="end"
+                        onClick={() => handleCopyTokenLink(token.id)}
+                        color={tokenCopySuccess[token.id] ? 'success' : 'default'}
+                      >
+                        <ContentCopyIcon />
+                      </IconButton>
                     }
-                    primaryTypographyProps={{
-                      variant: 'body2',
-                      sx: { fontFamily: 'monospace', fontSize: '0.9rem' },
-                    }}
-                  />
-                </ListItem>
-              </div>
-            ))}
-          </List>
-        </Paper>
-      )}
+                  >
+                    <ListItemText
+                      primary={token.id}
+                      secondary={
+                        token.converted_at
+                          ? t('Used on {{date}}', {
+                              date: new Date(token.converted_at).toLocaleString(),
+                            })
+                          : t('Not used yet')
+                      }
+                      primaryTypographyProps={{
+                        variant: 'body2',
+                        sx: { fontFamily: 'monospace', fontSize: '0.9rem' },
+                      }}
+                    />
+                  </ListItem>
+                </div>
+              ))}
+            </List>
+          </Paper>
+        )}
+      </Stack>
     </Paper>
   );
 }

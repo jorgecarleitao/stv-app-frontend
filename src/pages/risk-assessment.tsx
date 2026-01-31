@@ -1,12 +1,14 @@
 import { useTranslation } from 'react-i18next';
-import { SEO } from '../components/SEO';
-import Container from '@mui/material/Container';
+import { Page } from '../components/Page';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 import Paper from '@mui/material/Paper';
-import Divider from '@mui/material/Divider';
 import Alert from '@mui/material/Alert';
 import AlertTitle from '@mui/material/AlertTitle';
+import Link from '@mui/material/Link';
+import List from '@mui/material/List';
+import ListItem from '@mui/material/ListItem';
+import ListItemText from '@mui/material/ListItemText';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
@@ -160,54 +162,46 @@ export default function RiskAssessment({}: RiskAssessmentProps = {}) {
   ];
 
   return (
-    <Container maxWidth="lg">
-      <SEO
-        title="Risk Assessment - STVote.eu"
-        description="Comprehensive risk assessment for the STVote electronic voting platform, including security threats, mitigations, and residual risks."
-      />
+    <Page
+      title="Risk Assessment"
+      description="Comprehensive risk assessment for the STVote electronic voting platform, including security threats, mitigations, and residual risks."
+    >
+      <Typography variant="body1" paragraph>
+        This document provides a comprehensive risk assessment for the STVote.eu platform. It
+        evaluates potential security threats, their likelihood and impact, implemented mitigations,
+        and residual risks.
+      </Typography>
+
+      <Alert severity="warning">
+        <AlertTitle>Scope of Use</AlertTitle>
+        STVote.eu is designed for small to medium-scale elections where electronic voting is
+        appropriate.
+        <strong> Do not use this platform for high-stakes national elections</strong> where the
+        risks require additional security measures such as physical voting, air-gapped systems, or
+        formal security certifications.
+      </Alert>
+
+      <Paper sx={{ p: 3 }}>
+        <Typography variant="h5" gutterBottom>
+          Risk Assessment Methodology
+        </Typography>
+        <Typography variant="body2" paragraph>
+          Risks are assessed based on:
+        </Typography>
+        <Box>
+          <Typography variant="body2" component="div">
+            <strong>Likelihood:</strong> Very Low, Low, Medium, High, Very High
+          </Typography>
+          <Typography variant="body2" component="div">
+            <strong>Impact:</strong> Very Low, Low, Medium, High, Critical
+          </Typography>
+          <Typography variant="body2" component="div">
+            <strong>Residual Risk:</strong> Risk remaining after mitigations are applied
+          </Typography>
+        </Box>
+      </Paper>
 
       <Box>
-        <Typography variant="h3" component="h1" gutterBottom>
-          Risk Assessment
-        </Typography>
-
-        <Typography variant="body1" paragraph>
-          This document provides a comprehensive risk assessment for the STVote.eu platform. It
-          evaluates potential security threats, their likelihood and impact, implemented
-          mitigations, and residual risks.
-        </Typography>
-
-        <Alert severity="warning">
-          <AlertTitle>Scope of Use</AlertTitle>
-          STVote.eu is designed for small to medium-scale elections where electronic voting is
-          appropriate.
-          <strong> Do not use this platform for high-stakes national elections</strong> where the
-          risks require additional security measures such as physical voting, air-gapped systems, or
-          formal security certifications.
-        </Alert>
-
-        <Paper>
-          <Typography variant="h5" gutterBottom>
-            Risk Assessment Methodology
-          </Typography>
-          <Typography variant="body2" paragraph>
-            Risks are assessed based on:
-          </Typography>
-          <Box>
-            <Typography variant="body2" component="div">
-              <strong>Likelihood:</strong> Very Low, Low, Medium, High, Very High
-            </Typography>
-            <Typography variant="body2" component="div">
-              <strong>Impact:</strong> Very Low, Low, Medium, High, Critical
-            </Typography>
-            <Typography variant="body2" component="div">
-              <strong>Residual Risk:</strong> Risk remaining after mitigations are applied
-            </Typography>
-          </Box>
-        </Paper>
-
-        <Divider />
-
         <Typography variant="h5" gutterBottom>
           Identified Risks and Mitigations
         </Typography>
@@ -252,180 +246,229 @@ export default function RiskAssessment({}: RiskAssessmentProps = {}) {
             </TableBody>
           </Table>
         </TableContainer>
-
-        <Divider />
-
-        <Paper>
-          <Typography variant="h5" gutterBottom>
-            Security Architecture
-          </Typography>
-
-          <Typography variant="h6">Ballot Anonymization</Typography>
-          <Typography variant="body2" paragraph>
-            The core security feature is the permanent erasure of the ballot token-to-ballot UUID
-            association. When a voter redeems their token, a new ballot UUID is generated and the
-            link between the token and ballot is never stored. This ensures voter anonymity while
-            maintaining ballot integrity.
-          </Typography>
-
-          <Typography variant="h6">No Authentication Required</Typography>
-          <Typography variant="body2" paragraph>
-            The system uses knowledge-based access control (UUID tokens) rather than traditional
-            authentication. This eliminates the need for user accounts, passwords, or personal data
-            collection, reducing both privacy risks and implementation complexity.
-          </Typography>
-
-          <Typography variant="h6">Public Auditability</Typography>
-          <Typography variant="body2" paragraph>
-            After an election ends, all ballots are made public. Anyone can verify the counting
-            algorithm matches the published results. The complete source code for the counting
-            algorithm, backend, frontend, and infrastructure is open source and auditable.
-          </Typography>
-
-          <Typography variant="h6">Single-Use Tokens</Typography>
-          <Typography variant="body2" paragraph>
-            Each ballot token can only be redeemed once and only during the voting period. Tokens
-            cannot be redeemed after the election closes, preventing late manipulation attempts.
-          </Typography>
-
-          <Typography variant="h6">Election Locking</Typography>
-          <Typography variant="body2" paragraph>
-            Once the first vote is cast, an election becomes "locked" and its configuration
-            (candidates, seats, times) cannot be modified. This prevents administrators from
-            changing election parameters after voting has begun.
-          </Typography>
-        </Paper>
-
-        <Paper>
-          <Typography variant="h5" gutterBottom>
-            Technical Security Measures
-          </Typography>
-
-          <Box>
-            <Typography variant="body2" component="div">
-              • <strong>Database:</strong> SQLite with file-system access controls
-            </Typography>
-            <Typography variant="body2" component="div">
-              • <strong>Deployment:</strong> Docker containers running as non-root user (UID 1000)
-            </Typography>
-            <Typography variant="body2" component="div">
-              • <strong>TLS/HTTPS:</strong> Automatic HTTPS via Caddy reverse proxy with Let's
-              Encrypt
-            </Typography>
-            <Typography variant="body2" component="div">
-              • <strong>Input Validation:</strong> All inputs validated for type safety and business
-              logic
-            </Typography>
-            <Typography variant="body2" component="div">
-              • <strong>Atomicity:</strong> Database transactions ensure consistency of critical
-              operations
-            </Typography>
-            <Typography variant="body2" component="div">
-              • <strong>Open Source:</strong> All code publicly available for security review
-            </Typography>
-          </Box>
-        </Paper>
-
-        <Paper>
-          <Typography variant="h5" gutterBottom>
-            Recommendations for Electoral Commissions
-          </Typography>
-
-          <Typography variant="body2" paragraph>
-            To minimize risks, electoral commissions should:
-          </Typography>
-
-          <Box>
-            <Typography variant="body2" component="div">
-              1. <strong>Distribute tokens securely:</strong> Use encrypted channels (Signal, secure
-              email) to send ballot tokens to voters
-            </Typography>
-            <Typography variant="body2" component="div">
-              2. <strong>Keep admin UUIDs confidential:</strong> Only share admin URLs with trusted
-              election administrators
-            </Typography>
-            <Typography variant="body2" component="div">
-              3. <strong>Assess coercion risk:</strong> Consider if voters might face pressure to
-              vote certain ways. If high, use physical voting instead
-            </Typography>
-            <Typography variant="body2" component="div">
-              4. <strong>Communicate transparently:</strong> Inform voters about the security model
-              and how their privacy is protected
-            </Typography>
-            <Typography variant="body2" component="div">
-              5. <strong>Plan for contingencies:</strong> Have backup plans if technical issues
-              occur during voting period
-            </Typography>
-            <Typography variant="body2" component="div">
-              6. <strong>Verify results:</strong> Use the public ballot data to independently verify
-              the counting algorithm
-            </Typography>
-            <Typography variant="body2" component="div">
-              7. <strong>Self-hosting option:</strong> For maximum control and security, consider
-              self-hosting using the open-source code
-            </Typography>
-          </Box>
-        </Paper>
-
-        <Alert severity="info">
-          <AlertTitle>Open Source Transparency</AlertTitle>
-          All source code is publicly available:
-          <Box>
-            <Typography variant="body2">
-              • Backend:{' '}
-              <a
-                href="https://github.com/jorgecarleitao/stv-app"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                github.com/jorgecarleitao/stv-app
-              </a>
-            </Typography>
-            <Typography variant="body2">
-              • Frontend:{' '}
-              <a
-                href="https://github.com/jorgecarleitao/stv-app-frontend"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                github.com/jorgecarleitao/stv-app-frontend
-              </a>
-            </Typography>
-            <Typography variant="body2">
-              • Infrastructure:{' '}
-              <a
-                href="https://github.com/jorgecarleitao/stv-app-deploy"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                github.com/jorgecarleitao/stv-app-deploy
-              </a>
-            </Typography>
-          </Box>
-        </Alert>
-
-        <Paper>
-          <Typography variant="h5" gutterBottom>
-            Conclusion
-          </Typography>
-          <Typography variant="body2" paragraph>
-            STVote.eu provides a secure and transparent platform for running STV elections in
-            contexts where electronic voting is appropriate. The system's security relies on
-            cryptographic randomness (UUIDs), permanent anonymization of votes, public auditability,
-            and open-source transparency.
-          </Typography>
-          <Typography variant="body2">
-            The platform is suitable for community organizations, clubs, associations, and
-            small-scale democratic processes. It is <strong>not suitable</strong> for high-stakes
-            elections requiring additional security measures, formal certifications, or protection
-            against nation-state level threats.
-          </Typography>
-        </Paper>
-
-        <Typography variant="body2" color="text.secondary" align="center">
-          Last updated: January 2026
-        </Typography>
       </Box>
-    </Container>
+
+      <Paper sx={{ p: 3 }}>
+        <Typography variant="h5" gutterBottom>
+          Security Architecture
+        </Typography>
+
+        <Typography variant="h6">Ballot Anonymization</Typography>
+        <Typography variant="body2" paragraph>
+          The core security feature is the permanent erasure of the ballot token-to-ballot UUID
+          association. When a voter redeems their token, a new ballot UUID is generated and the link
+          between the token and ballot is never stored. This ensures voter anonymity while
+          maintaining ballot integrity.
+        </Typography>
+
+        <Typography variant="h6">No Authentication Required</Typography>
+        <Typography variant="body2" paragraph>
+          The system uses knowledge-based access control (UUID tokens) rather than traditional
+          authentication. This eliminates the need for user accounts, passwords, or personal data
+          collection, reducing both privacy risks and implementation complexity.
+        </Typography>
+
+        <Typography variant="h6">Public Auditability</Typography>
+        <Typography variant="body2" paragraph>
+          After an election ends, all ballots are made public. Anyone can verify the counting
+          algorithm matches the published results. The complete source code for the counting
+          algorithm, backend, frontend, and infrastructure is open source and auditable.
+        </Typography>
+
+        <Typography variant="h6">Single-Use Tokens</Typography>
+        <Typography variant="body2" paragraph>
+          Each ballot token can only be redeemed once and only during the voting period. Tokens
+          cannot be redeemed after the election closes, preventing late manipulation attempts.
+        </Typography>
+
+        <Typography variant="h6">Election Locking</Typography>
+        <Typography variant="body2" paragraph>
+          Once the first vote is cast, an election becomes "locked" and its configuration
+          (candidates, seats, times) cannot be modified. This prevents administrators from changing
+          election parameters after voting has begun.
+        </Typography>
+      </Paper>
+
+      <Paper sx={{ p: 3 }}>
+        <Typography variant="h5" gutterBottom>
+          Technical Security Measures
+        </Typography>
+
+        <List>
+          <ListItem>
+            <ListItemText
+              primary={
+                <>
+                  <strong>Database:</strong> SQLite with file-system access controls
+                </>
+              }
+            />
+          </ListItem>
+          <ListItem>
+            <ListItemText
+              primary={
+                <>
+                  <strong>Deployment:</strong> Docker containers running as non-root user (UID 1000)
+                </>
+              }
+            />
+          </ListItem>
+          <ListItem>
+            <ListItemText
+              primary={
+                <>
+                  <strong>TLS/HTTPS:</strong> Automatic HTTPS via Caddy reverse proxy with Let's
+                  Encrypt
+                </>
+              }
+            />
+          </ListItem>
+          <ListItem>
+            <ListItemText
+              primary={
+                <>
+                  <strong>Input Validation:</strong> All inputs validated for type safety and
+                  business logic
+                </>
+              }
+            />
+          </ListItem>
+          <ListItem>
+            <ListItemText
+              primary={
+                <>
+                  <strong>Atomicity:</strong> Database transactions ensure consistency of critical
+                  operations
+                </>
+              }
+            />
+          </ListItem>
+          <ListItem>
+            <ListItemText
+              primary={
+                <>
+                  <strong>Open Source:</strong> All code publicly available for security review
+                </>
+              }
+            />
+          </ListItem>
+        </List>
+      </Paper>
+
+      <Paper sx={{ p: 3 }}>
+        <Typography variant="h5" gutterBottom>
+          Recommendations for Electoral Commissions
+        </Typography>
+
+        <Typography variant="body2" paragraph>
+          To minimize risks, electoral commissions should:
+        </Typography>
+
+        <List sx={{ listStyleType: 'decimal', pl: 4 }}>
+          <ListItem sx={{ display: 'list-item' }}>
+            <ListItemText
+              primary={
+                <>
+                  <strong>Distribute tokens securely:</strong> Use encrypted channels (Signal,
+                  secure email) to send ballot tokens to voters
+                </>
+              }
+            />
+          </ListItem>
+          <ListItem sx={{ display: 'list-item' }}>
+            <ListItemText
+              primary={
+                <>
+                  <strong>Keep admin UUIDs confidential:</strong> Only share admin URLs with trusted
+                  election administrators
+                </>
+              }
+            />
+          </ListItem>
+          <ListItem sx={{ display: 'list-item' }}>
+            <ListItemText
+              primary={
+                <>
+                  <strong>Assess coercion risk:</strong> Consider if voters might face pressure to
+                  vote certain ways. If high, use physical voting instead
+                </>
+              }
+            />
+          </ListItem>
+          <ListItem sx={{ display: 'list-item' }}>
+            <ListItemText
+              primary={
+                <>
+                  <strong>Communicate transparently:</strong> Inform voters about the security model
+                  and how their privacy is protected
+                </>
+              }
+            />
+          </ListItem>
+          <ListItem sx={{ display: 'list-item' }}>
+            <ListItemText
+              primary={
+                <>
+                  <strong>Plan for contingencies:</strong> Have backup plans if technical issues
+                  occur during voting period
+                </>
+              }
+            />
+          </ListItem>
+          <ListItem sx={{ display: 'list-item' }}>
+            <ListItemText
+              primary={
+                <>
+                  <strong>Self-hosting option:</strong> For maximum control and security, consider
+                  self-hosting using the open-source code
+                </>
+              }
+            />
+          </ListItem>
+        </List>
+      </Paper>
+
+      <Paper sx={{ p: 3 }}>
+        <Typography variant="h5" gutterBottom>
+          Open Source Transparency
+        </Typography>
+        <Typography variant="body2">
+          All source code is publicly available:{' '}
+          <Link href="https://github.com/jorgecarleitao/stv-app" target="_blank" rel="noopener noreferrer">
+            Backend
+          </Link>
+          ,{' '}
+          <Link href="https://github.com/jorgecarleitao/stv-app-frontend" target="_blank" rel="noopener noreferrer">
+            Frontend
+          </Link>
+          ,{' '}
+          <Link href="https://github.com/jorgecarleitao/stv-app-infrastructure" target="_blank" rel="noopener noreferrer">
+            Infrastructure
+          </Link>
+        </Typography>
+      </Paper>
+
+      <Paper sx={{ p: 3 }}>
+        <Typography variant="h5" gutterBottom>
+          Conclusion
+        </Typography>
+        <Typography variant="body2" paragraph>
+          STVote.eu provides a secure and transparent platform for running STV elections in contexts
+          where electronic voting is appropriate. The system's security relies on cryptographic
+          randomness (UUIDs), permanent anonymization of votes, public auditability, and open-source
+          transparency.
+        </Typography>
+        <Typography variant="body2">
+          The platform is suitable for community organizations, clubs, associations, and small-scale
+          democratic processes. It is <strong>not suitable</strong> for high-stakes elections
+          requiring additional security measures, formal certifications, or protection against
+          nation-state level threats.
+        </Typography>
+      </Paper>
+
+      <Typography variant="body2" color="text.secondary" align="center" sx={{ mt: 2 }}>
+        Last updated: January 2026
+      </Typography>
+    </Page>
   );
 }

@@ -1,7 +1,7 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { SEO } from '../components/SEO';
-import { Container, Typography, Box, Paper, Card, CardContent, Chip } from '@mui/material';
+import { Page } from '../components/Page';
+import { Typography, Box, Paper, Card, CardContent, Chip } from '@mui/material';
 
 interface Props {
   path?: string;
@@ -57,11 +57,7 @@ export default function AdminUserGuide({ path }: Props = {}) {
     },
   ];
   return (
-    <Container maxWidth="md" sx={{ py: 4 }}>
-      <SEO title={pageTitle} description={metaDescription} />
-      <Typography variant="h4" gutterBottom>
-        {t('Admin Guide')}
-      </Typography>
+    <Page title={t('Admin Guide')} description={metaDescription}>
       <Typography variant="body1" paragraph>
         {t(
           'This guide is for election administrators - members of an electoral commission or individuals delegated by the commission to manage an election.'
@@ -175,6 +171,6 @@ export default function AdminUserGuide({ path }: Props = {}) {
           </Card>
         ))}
       </Box>
-    </Container>
+    </Page>
   );
 }

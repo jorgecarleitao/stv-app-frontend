@@ -38,55 +38,57 @@ export function BallotGroupDisplay({
   const maxCandidates = candidates.length;
 
   return (
-    <Paper variant="outlined" sx={{ p: 2 }}>
-      <Box display="flex" alignItems="center" gap={2} flexWrap="wrap">
-        {groupNumber !== undefined && (
-          <Typography fontWeight="bold">
-            {t('Ballot group')} {groupNumber}
-          </Typography>
-        )}
-        {readOnly ? (
-          <Chip
-            label={`${ballot.votes} ${ballot.votes === 1 ? t('vote') : t('votes')}`}
-            color="primary"
-            size="medium"
-          />
-        ) : (
-          <TextField
-            label={t('Votes')}
-            size="small"
-            type="number"
-            sx={{ width: 90 }}
-            inputProps={{ min: 1 }}
-            value={ballot.votes}
-            onChange={e => onChangeVotes?.(Number(e.target.value))}
-          />
-        )}
-        {!readOnly && onRemove && (
-          <IconButton color="error" onClick={onRemove}>
-            <DeleteIcon />
-          </IconButton>
-        )}
-        {subtitle && (
-          <Typography variant="caption" color="text.secondary" sx={{ ml: 'auto' }}>
-            {subtitle}
-          </Typography>
-        )}
-      </Box>
-      <Box sx={{ mt: 2, pl: 2 }}>
-        <Stack spacing={1.5}>
-          {candidates.map((cand, candIdx) => (
-            <CandidateRankSelector
-              key={candIdx}
-              candidate={cand}
-              rank={ballot.ranks[candIdx]}
-              maxRank={maxCandidates}
-              readOnly={readOnly}
-              onChange={rank => onChangeRank?.(candIdx, rank)}
+    <Paper variant="outlined">
+      <Stack spacing={2} sx={{ p: 2 }}>
+        <Box display="flex" alignItems="center" gap={2} flexWrap="wrap">
+          {groupNumber !== undefined && (
+            <Typography fontWeight="bold">
+              {t('Ballot group')} {groupNumber}
+            </Typography>
+          )}
+          {readOnly ? (
+            <Chip
+              label={`${ballot.votes} ${ballot.votes === 1 ? t('vote') : t('votes')}`}
+              color="primary"
+              size="medium"
             />
-          ))}
-        </Stack>
-      </Box>
+          ) : (
+            <TextField
+              label={t('Votes')}
+              size="small"
+              type="number"
+              sx={{ width: 90 }}
+              inputProps={{ min: 1 }}
+              value={ballot.votes}
+              onChange={e => onChangeVotes?.(Number(e.target.value))}
+            />
+          )}
+          {!readOnly && onRemove && (
+            <IconButton color="error" onClick={onRemove}>
+              <DeleteIcon />
+            </IconButton>
+          )}
+          {subtitle && (
+            <Typography variant="caption" color="text.secondary" sx={{ ml: 'auto' }}>
+              {subtitle}
+            </Typography>
+          )}
+        </Box>
+        <Box sx={{ pl: 2 }}>
+          <Stack spacing={1.5}>
+            {candidates.map((cand, candIdx) => (
+              <CandidateRankSelector
+                key={candIdx}
+                candidate={cand}
+                rank={ballot.ranks[candIdx]}
+                maxRank={maxCandidates}
+                readOnly={readOnly}
+                onChange={rank => onChangeRank?.(candIdx, rank)}
+              />
+            ))}
+          </Stack>
+        </Box>
+      </Stack>
     </Paper>
   );
 }

@@ -1,6 +1,7 @@
 import { useTranslation } from 'react-i18next';
 
 import Box from '@mui/material/Box';
+import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 
@@ -26,37 +27,38 @@ export function CandidateRankSelector({
   return (
     <Box
       sx={{
-        display: 'flex',
-        alignItems: 'center',
-        gap: 2,
         p: 2,
         border: '1px solid',
         borderColor: 'divider',
         borderRadius: 1,
       }}
     >
-      <Typography sx={{ flexGrow: 1, fontWeight: 'medium' }}>{candidate}</Typography>
-      <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
-        <Button
-          variant={rank === null || rank === undefined ? 'contained' : 'outlined'}
-          size="small"
-          onClick={() => onChange(null)}
-          disabled={readOnly}
-        >
-          {t('No preference')}
-        </Button>
-        {rankOptions.map(option => (
+      <Stack direction="row" spacing={2} alignItems="center" flexWrap="wrap">
+        <Typography fontWeight="medium" flexGrow={1}>
+          {candidate}
+        </Typography>
+        <Stack direction="row" spacing={1} flexWrap="wrap">
           <Button
-            key={option}
-            variant={rank === option ? 'contained' : 'outlined'}
+            variant={rank === null || rank === undefined ? 'contained' : 'outlined'}
             size="small"
-            onClick={() => onChange(option)}
+            onClick={() => onChange(null)}
             disabled={readOnly}
           >
-            {option}
+            {t('No preference')}
           </Button>
-        ))}
-      </Box>
+          {rankOptions.map(option => (
+            <Button
+              key={option}
+              variant={rank === option ? 'contained' : 'outlined'}
+              size="small"
+              onClick={() => onChange(option)}
+              disabled={readOnly}
+            >
+              {option}
+            </Button>
+          ))}
+        </Stack>
+      </Stack>
     </Box>
   );
 }

@@ -1,7 +1,6 @@
 import { useTranslation } from 'react-i18next';
-import { SEO } from '../components/SEO';
+import { Page } from '../components/Page';
 import Typography from '@mui/material/Typography';
-import Container from '@mui/material/Container';
 import Paper from '@mui/material/Paper';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
@@ -50,11 +49,7 @@ export default function StvExplainer({ path }: Props = {}) {
   ];
 
   return (
-    <Container maxWidth="md" sx={{ py: 4 }}>
-      <SEO title={pageTitle} description={metaDescription} />
-      <Typography variant="h4" component="h1" gutterBottom>
-        {t('STV guide')}
-      </Typography>
+    <Page title={t('STV guide')} description={metaDescription}>
       <Typography variant="body1" paragraph>
         {t('stvMd.intro1')}
       </Typography>
@@ -198,6 +193,6 @@ export default function StvExplainer({ path }: Props = {}) {
           </Box>
         </CardContent>
       </Card>
-    </Container>
+    </Page>
   );
 }

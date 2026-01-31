@@ -1,20 +1,14 @@
 import { useEffect, useState, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import { SEO } from '../components/SEO';
+import { Page } from '../components/Page';
 
-import Box from '@mui/material/Box';
+import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
-import Container from '@mui/material/Container';
+
 import Alert from '@mui/material/Alert';
 import Paper from '@mui/material/Paper';
-import Stack from '@mui/material/Stack';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
-import List from '@mui/material/List';
-import ListItem from '@mui/material/ListItem';
-import ListItemAvatar from '@mui/material/ListItemAvatar';
-import Avatar from '@mui/material/Avatar';
-import ListItemText from '@mui/material/ListItemText';
 import InputAdornment from '@mui/material/InputAdornment';
 import IconButton from '@mui/material/IconButton';
 import Tooltip from '@mui/material/Tooltip';
@@ -29,7 +23,12 @@ import * as yaml from 'js-yaml';
 
 import { Election, ElectionResult, Elected, simulateElection, Ballot } from '../data/api';
 import { BallotsEditor } from '../ballot';
-import { BallotGroupDisplay } from '../components/BallotGroupDisplay';
+import { ElectionResults } from '../components/ElectionResults';
+import { PairwiseMatrix } from '../components/PairwiseMatrix';
+import { ResultsBallotGroups } from '../components/ResultsBallotGroups';
+import { CountingLog } from '../components/CountingLog';
+import { ElectionSeatsConfig } from '../components/ElectionSeatsConfig';
+import { CandidatesList } from '../components/CandidatesList';
 
 // Convert UI ranks (1-based) to API ranks (0-based)
 function toApiRanks(ranks: (number | null)[]): (number | null)[] {
@@ -44,6 +43,7 @@ function fromApiRanks(ranks: (number | null)[]): (number | null)[] {
 const defaultElection: Election = {
   candidates: ['Ana', 'Rodrigo', 'Sara', 'Tiago'],
   seats: 3,
+  ordered_seats: true,
   ballots: [
     {
       votes: 10,
@@ -60,71 +60,6 @@ const HEADER = 'h5';
 
 interface SimulateProps {
   path?: string;
-}
-
-function ElectedList({ elected }: { elected: Elected[] }) {
-  const { t } = useTranslation();
-
-  return (
-    <Paper elevation={2} sx={{ p: 3, my: 2 }}>
-      <Typography variant={HEADER} gutterBottom>
-        {t('Elected candidates')}
-      </Typography>
-      <List>
-        {elected.map((e, idx) => (
-          <ListItem key={e.id}>
-            <ListItemAvatar>
-              <Avatar>{e.candidate.charAt(0).toUpperCase()}</Avatar>
-            </ListItemAvatar>
-            <ListItemText
-              primary={e.candidate}
-              secondary={`Position: ${idx + 1}${e.id !== undefined ? ` (ID: ${e.id + 1})` : ''}`}
-            />
-          </ListItem>
-        ))}
-      </List>
-    </Paper>
-  );
-}
-
-interface ElectionBasicsProps {
-  election: { seats: number; candidates: string[] };
-  setElection: React.Dispatch<React.SetStateAction<{ seats: number; candidates: string[] }>>;
-}
-
-function Seats({ election, setElection }: ElectionBasicsProps) {
-  const { t } = useTranslation();
-
-  return (
-    <Stack spacing={2}>
-      <TextField
-        label={t('Number of seats to elect')}
-        type="number"
-        InputProps={{
-          inputProps: { min: 1, max: Math.max(1, election.candidates.length) },
-          endAdornment: (
-            <InputAdornment position="end">
-              <Tooltip title={t('numberOfSeatsInstructions')} placement="top" arrow>
-                <IconButton tabIndex={-1}>
-                  <InfoOutlinedIcon fontSize="small" />
-                </IconButton>
-              </Tooltip>
-            </InputAdornment>
-          ),
-        }}
-        value={election.seats}
-        onChange={(e: any) => {
-          let val = Number(e.target.value);
-          if (val < 1) val = 1;
-          if (val > election.candidates.length) val = election.candidates.length;
-          setElection(el => ({
-            ...el,
-            number_of_seats: val,
-          }));
-        }}
-      />
-    </Stack>
-  );
 }
 
 export default function Simulate({ path }: SimulateProps = {}) {
@@ -155,6 +90,7 @@ export default function Simulate({ path }: SimulateProps = {}) {
           const loaded = yaml.load(yamlText) as Election;
           setElection(loaded);
           setYamlText(yamlText);
+          setPendingYaml(yamlText);
           setYamlError(null);
         }
       } catch (e) {
@@ -181,7 +117,9 @@ export default function Simulate({ path }: SimulateProps = {}) {
   // Update YAML text when election changes (but not on initial URL load to avoid overwriting)
   useEffect(() => {
     if (initializedFromUrl.current) {
-      setYamlText(yaml.dump(election, { noRefs: true, sortKeys: false }));
+      const newYaml = yaml.dump(election, { noRefs: true, sortKeys: false });
+      setYamlText(newYaml);
+      setPendingYaml(newYaml);
       setYamlError(null);
       setResult(null);
       setError(null);
@@ -304,88 +242,43 @@ export default function Simulate({ path }: SimulateProps = {}) {
   };
 
   return (
-    <Container>
-      <SEO title={pageTitle} description={metaDescription} />
-      <Paper elevation={4} sx={{ p: 3, mb: 4 }}>
+    <Page title={t('Simulate')} description={metaDescription}>
+      <Paper elevation={4} sx={{ p: 3 }}>
         <Typography variant={HEADER} gutterBottom>
           {t('Number of seats to elect')}
         </Typography>
-        <Seats election={election} setElection={setElection} />
+        <ElectionSeatsConfig
+          numSeats={election.seats}
+          orderedSeats={election.ordered_seats}
+          maxSeats={election.candidates.length}
+          onNumSeatsChange={val => setElection(el => ({ ...el, seats: val }))}
+          onOrderedSeatsChange={val => setElection(el => ({ ...el, ordered_seats: val }))}
+        />
       </Paper>
 
-      <Paper elevation={4} sx={{ p: 3, mb: 4 }}>
-        <Box display="flex" alignItems="center" mb={2}>
-          <Typography variant={HEADER} gutterBottom sx={{ flexGrow: 1 }}>
-            {t('Candidates')}
-          </Typography>
-          <Tooltip title={t('addCandidatesInstructions')} arrow placement="right">
-            <IconButton size="small" sx={{ ml: 1 }}>
-              <InfoOutlinedIcon fontSize="inherit" />
-            </IconButton>
-          </Tooltip>
-        </Box>
-        <Stack spacing={2}>
-          {election.candidates.map((name, idx) => (
-            <Box key={idx} display="flex" alignItems="center">
-              <TextField
-                size="small"
-                value={name}
-                label={`Candidate ${idx + 1}`}
-                sx={{ flex: 1, mr: 1 }}
-                onChange={(e: any) => handleRenameCandidate(idx, e.target.value)}
-                InputProps={{
-                  endAdornment: (
-                    <InputAdornment position="end">
-                      <Tooltip
-                        title={t("You can change the candidate's name here.")}
-                        arrow
-                        placement="top"
-                      >
-                        <InfoOutlinedIcon fontSize="small" sx={{ ml: 0.5 }} />
-                      </Tooltip>
-                    </InputAdornment>
-                  ),
-                }}
-              />
-              <Tooltip
-                title={
-                  election.candidates.length <= 1
-                    ? t('At least one candidate is required')
-                    : t('Remove this candidate')
-                }
-                arrow
-              >
-                <span>
-                  <Button
-                    variant="outlined"
-                    color="error"
-                    onClick={() => handleRemoveCandidate(idx)}
-                    disabled={election.candidates.length <= 1}
-                  >
-                    {t('Remove')}
-                  </Button>
-                </span>
-              </Tooltip>
-            </Box>
-          ))}
-          <Tooltip title={t('Click to add a new candidate to the list')} arrow>
-            <Button variant="contained" onClick={handleAddCandidate}>
-              {t('Add Candidate')}
-            </Button>
-          </Tooltip>
-        </Stack>
+      <Paper elevation={4} sx={{ p: 3 }}>
+        <Typography variant={HEADER} gutterBottom>
+          {t('Candidates')}
+        </Typography>
+        <CandidatesList
+          candidates={election.candidates}
+          onCandidateChange={handleRenameCandidate}
+          onAddCandidate={handleAddCandidate}
+          onRemoveCandidate={handleRemoveCandidate}
+        />
       </Paper>
-      <Paper elevation={2} sx={{ p: 3, mb: 4 }}>
-        <Box display="flex" alignItems="center" gap={1} mb={1}>
-          <Typography variant={HEADER} gutterBottom>
+
+      <Paper elevation={2} sx={{ p: 3 }}>
+        <Stack direction="row" alignItems="center" spacing={1} sx={{ mb: 2 }}>
+          <Typography variant={HEADER} gutterBottom sx={{ mb: 0 }}>
             {t('Ballot groups')}
           </Typography>
           <Tooltip arrow placement="right" title={t('editBallotsInstructions')}>
-            <IconButton size="small" sx={{ ml: 1 }}>
+            <IconButton size="small">
               <InfoOutlinedIcon fontSize="small" />
             </IconButton>
           </Tooltip>
-        </Box>
+        </Stack>
         <BallotsEditor
           candidates={election.candidates}
           ballots={election.ballots.map(b => ({ ...b, ranks: fromApiRanks(b.ranks) }))}
@@ -400,63 +293,42 @@ export default function Simulate({ path }: SimulateProps = {}) {
         />
       </Paper>
 
-      <Box mb={4} mt={2} display="flex" justifyContent="center">
-        <Button
-          fullWidth
-          variant="contained"
-          color="success"
-          onClick={handleRunElection}
-          disabled={loading}
-        >
-          {loading ? t('Running...') : t('Run Election')}
-        </Button>
-      </Box>
+      <Button
+        fullWidth
+        variant="contained"
+        color="success"
+        onClick={handleRunElection}
+        disabled={loading}
+      >
+        {loading ? t('Running...') : t('Run Election')}
+      </Button>
 
-      {error && (
-        <Alert severity="error" sx={{ my: 2 }}>
-          {error}
-        </Alert>
+      {error && <Alert severity="error">{error}</Alert>}
+
+      {/* Results Section */}
+      {result && <ElectionResults elected={result.elected} orderedSeats={election.ordered_seats} />}
+
+      {/* Pairwise Comparison Matrix */}
+      {result && result.pairwise_matrix && result.order && election.ordered_seats && (
+        <PairwiseMatrix
+          candidates={result.election.candidates}
+          pairwiseMatrix={result.pairwise_matrix}
+          order={result.order}
+        />
       )}
-      {result && <ElectedList elected={result.elected} />}
+
+      {/* Ballot Groups */}
       {result && result.election.ballots.length > 0 && (
-        <Paper elevation={2} sx={{ p: 3, my: 2 }}>
-          <Typography variant={HEADER} gutterBottom>
-            {t('Combined Ballots')}
-          </Typography>
-          <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-            {result.election.ballots.length} {t('unique patterns')} •{' '}
-            {result.election.ballots.reduce((sum, b) => sum + b.votes, 0)} {t('total votes')}
-          </Typography>
-          <Stack spacing={2}>
-            {result.election.ballots.map((ballot, idx) => (
-              <BallotGroupDisplay
-                key={idx}
-                candidates={result.election.candidates}
-                ballot={{ ...ballot, ranks: fromApiRanks(ballot.ranks) }}
-                groupNumber={idx + 1}
-                readOnly={true}
-                subtitle={`${ballot.votes} ${ballot.votes === 1 ? t('vote') : t('votes')}`}
-              />
-            ))}
-          </Stack>
-        </Paper>
-      )}
-      {result && (
-        <Accordion elevation={4} sx={{ p: 2, my: 2 }}>
-          <AccordionSummary
-            expandIcon={<ExpandMoreIcon />}
-            aria-controls="steps-content"
-            id="steps-header"
-          >
-            <Typography variant={HEADER}>{t('Detailed STV log')}</Typography>
-          </AccordionSummary>
-          <AccordionDetails>
-            <pre style={{ margin: 0 }}>{result.log}</pre>
-          </AccordionDetails>
-        </Accordion>
+        <ResultsBallotGroups
+          candidates={result.election.candidates}
+          ballots={result.election.ballots.map(b => ({ ...b, ranks: fromApiRanks(b.ranks) }))}
+        />
       )}
 
-      <Paper elevation={4} sx={{ p: 2, my: 2 }}>
+      {/* Detailed Counting Log */}
+      {result && <CountingLog log={result.log} />}
+
+      <Paper elevation={4} sx={{ p: 2 }}>
         <Typography variant={HEADER} gutterBottom>
           {t('Load/Save election')}
         </Typography>
@@ -466,10 +338,9 @@ export default function Simulate({ path }: SimulateProps = {}) {
           minRows={8}
           maxRows={20}
           fullWidth
-          value={yamlText}
+          value={pendingYaml}
           onChange={(e: any) => setPendingYaml(e.target.value)}
           placeholder={t('Edit election YAML here...')}
-          sx={{ mb: 1 }}
           error={!!yamlError}
           InputProps={{
             endAdornment: (
@@ -483,12 +354,8 @@ export default function Simulate({ path }: SimulateProps = {}) {
             ),
           }}
         />
-        {yamlError && (
-          <Alert severity="error" sx={{ mb: 1 }}>
-            {yamlError}
-          </Alert>
-        )}
+        {yamlError && <Alert severity="error">{yamlError}</Alert>}
       </Paper>
-    </Container>
+    </Page>
   );
 }

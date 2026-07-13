@@ -37,7 +37,13 @@ export function ElectionResults({
         </Typography>
         <Grid container spacing={2}>
           {elected.map((e, idx) => (
-            <Grid item xs={12} sm={6} md={4} key={e.id}>
+            <Grid
+              key={e.id}
+              size={{
+                xs: 12,
+                sm: 6,
+                md: 4
+              }}>
               <Card elevation={2}>
                 <CardContent>
                   <Stack direction="row" alignItems="center" spacing={2}>

@@ -67,10 +67,13 @@ export default function Home({}: HomeProps = {}) {
           </Button>
         </Box>
       </Box>
-
       {/* Feature Cards */}
       <Grid container spacing={3} sx={{ my: 4 }}>
-        <Grid item xs={12} md={4}>
+        <Grid
+          size={{
+            xs: 12,
+            md: 4
+          }}>
           <Card elevation={3} sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
             <CardContent sx={{ flexGrow: 1 }}>
               <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
@@ -91,7 +94,11 @@ export default function Home({}: HomeProps = {}) {
           </Card>
         </Grid>
 
-        <Grid item xs={12} md={4}>
+        <Grid
+          size={{
+            xs: 12,
+            md: 4
+          }}>
           <Card elevation={3} sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
             <CardContent sx={{ flexGrow: 1 }}>
               <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
@@ -112,7 +119,11 @@ export default function Home({}: HomeProps = {}) {
           </Card>
         </Grid>
 
-        <Grid item xs={12} md={4}>
+        <Grid
+          size={{
+            xs: 12,
+            md: 4
+          }}>
           <Card elevation={3} sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
             <CardContent sx={{ flexGrow: 1 }}>
               <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
@@ -133,9 +144,7 @@ export default function Home({}: HomeProps = {}) {
           </Card>
         </Grid>
       </Grid>
-
       <Divider sx={{ my: 6 }} />
-
       {/* What is STV Section */}
       <Paper elevation={2} sx={{ p: 4, my: 4 }}>
         <Box sx={{ display: 'flex', alignItems: 'center', mb: 3 }}>
@@ -159,7 +168,6 @@ export default function Home({}: HomeProps = {}) {
           </Button>
         </Box>
       </Paper>
-
       {/* Technical Details Section */}
       <Paper elevation={2} sx={{ p: 4, my: 4 }}>
         <Typography variant="h4" component="h2" gutterBottom>
@@ -189,7 +197,6 @@ export default function Home({}: HomeProps = {}) {
           </Button>
         </Box>
       </Paper>
-
       {/* Call to Action */}
       <Box sx={{ textAlign: 'center', my: 6, p: 4, bgcolor: 'action.hover', borderRadius: 2 }}>
         <Typography variant="h4" gutterBottom>

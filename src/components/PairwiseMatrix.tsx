@@ -108,17 +108,19 @@ export function PairwiseMatrix({ candidates, pairwiseMatrix, order }: PairwiseMa
                       <Box
                         component="td"
                         key={colIdx}
-                        sx={{
-                          bgcolor:
-                            rowIdx === colIdx
-                              ? 'action.disabledBackground'
-                              : isWin
-                                ? 'success.50'
-                                : isTie
-                                  ? 'warning.50'
-                                  : 'inherit',
-                          fontWeight: isWin ? 'bold' : 'normal',
-                        }}
+                        sx={[rowIdx === colIdx ? {
+                          bgcolor: 'action.disabledBackground'
+                        } : {
+                          bgcolor: isWin
+                              ? 'success.50'
+                              : isTie
+                                ? 'warning.50'
+                                : 'inherit'
+                        }, isWin ? {
+                          fontWeight: 'bold'
+                        } : {
+                          fontWeight: 'normal'
+                        }]}
                       >
                         {rowIdx === colIdx ? '—' : value}
                       </Box>

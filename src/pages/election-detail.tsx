@@ -147,7 +147,6 @@ export default function ElectionDetail({ electionId }: ElectionDetailProps) {
       <Button startIcon={<ArrowBackIcon />} onClick={handleBack}>
         {t('Back to elections')}
       </Button>
-
       {/* Description */}
       {election.description && (
         <Typography variant="body1" color="text.secondary" paragraph>
@@ -162,7 +161,6 @@ export default function ElectionDetail({ electionId }: ElectionDetailProps) {
         startTime={election.start_time}
         endTime={election.end_time}
       />
-
       {/* Voting Period Info */}
       <Alert severity={votingClosed ? 'info' : 'success'}>
         <Typography variant="body2">
@@ -170,7 +168,6 @@ export default function ElectionDetail({ electionId }: ElectionDetailProps) {
           {!votingClosed && ` • ${votingProgress.toFixed(0)}% ${t('turnout')}`}
         </Typography>
       </Alert>
-
       {/* Results Section - Show first if voting closed */}
       {votingClosed && results && (
         <ElectionResults
@@ -180,7 +177,6 @@ export default function ElectionDetail({ electionId }: ElectionDetailProps) {
           showSimulateButton={results.election.ballots.length > 0}
         />
       )}
-
       {/* Candidates List */}
       <Paper elevation={2} sx={{ p: 3, mb: 3 }}>
         <Typography
@@ -192,7 +188,13 @@ export default function ElectionDetail({ electionId }: ElectionDetailProps) {
         </Typography>
         <Grid container spacing={2} sx={{ mt: 1 }}>
           {election.candidates.map((candidate, idx) => (
-            <Grid item xs={12} sm={6} md={4} key={idx}>
+            <Grid
+              key={idx}
+              size={{
+                xs: 12,
+                sm: 6,
+                md: 4
+              }}>
               <Box
                 sx={{
                   display: 'flex',
@@ -212,7 +214,6 @@ export default function ElectionDetail({ electionId }: ElectionDetailProps) {
           ))}
         </Grid>
       </Paper>
-
       {/* Pairwise Comparison Matrix */}
       {votingClosed &&
         results &&
@@ -225,7 +226,6 @@ export default function ElectionDetail({ electionId }: ElectionDetailProps) {
             order={results.order}
           />
         )}
-
       {/* Ballot Groups (Accordion) */}
       {results && results.election.ballots.length > 0 && (
         <ResultsBallotGroups
@@ -234,7 +234,6 @@ export default function ElectionDetail({ electionId }: ElectionDetailProps) {
           showIcon={true}
         />
       )}
-
       {/* Individual Ballots List (Accordion) */}
       {election.ballots && election.ballots.length > 0 && (
         <Accordion elevation={2} sx={{ mb: 3 }}>
@@ -261,10 +260,8 @@ export default function ElectionDetail({ electionId }: ElectionDetailProps) {
           </AccordionDetails>
         </Accordion>
       )}
-
       {/* Election Log (Accordion) */}
       {results && <CountingLog log={results.log} />}
-
       {!results && votingClosed && casted === 0 && (
         <Alert severity="info">{t('Election closed without any vote')}</Alert>
       )}

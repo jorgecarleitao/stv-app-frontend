@@ -19,9 +19,70 @@ export interface Elected {
   id: number;
 }
 
+// ===== Structured Counting Log =====
+
+export interface CountingLogHeader {
+  title: string;
+  package_name: string;
+  rule: string;
+  arithmetic: string;
+  seats: number;
+  ballots: number;
+  quota: string;
+  omega: string;
+}
+
+export interface CountingLogCandidate {
+  name: string;
+  withdrawn: boolean;
+}
+
+export type CountingLogCandidateStatus = 'elected' | 'hopeful' | 'defeated';
+
+export interface CountingLogCandidateCount {
+  name: string;
+  status: CountingLogCandidateStatus;
+  votes: string;
+}
+
+export interface CountingLogStats {
+  quota: string;
+  votes: string;
+  residual: string;
+  total: string;
+  surplus: string;
+}
+
+export type CountingLogActionType =
+  | 'begin_count'
+  | 'count_complete'
+  | { elect: { candidate: string } }
+  | { elect_remaining: { candidate: string } }
+  | { iterate: { reason: string } }
+  | { defeat: { reason: string; candidate: string } }
+  | { defeat_remaining: { candidate: string } }
+  | { break_tie: { candidates: string[]; defeated: string } };
+
+export interface CountingLogAction {
+  action_type: CountingLogActionType;
+  candidate_counts: CountingLogCandidateCount[];
+  stats: CountingLogStats;
+}
+
+export interface CountingLogRound {
+  round_number: number;
+  actions: CountingLogAction[];
+}
+
+export interface CountingLog {
+  header: CountingLogHeader;
+  candidates: CountingLogCandidate[];
+  rounds: CountingLogRound[];
+}
+
 export interface ElectionResult {
   election: Election;
-  log: string;
+  log: CountingLog;
   elected: Elected[];
   order: Record<number, number>; // Map from candidate ID to order position
   pairwise_matrix: number[][]; // n×n matrix of pairwise comparisons

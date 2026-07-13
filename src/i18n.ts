@@ -32,6 +32,10 @@ i18n
         'subdomain',
       ],
       caches: ['localStorage', 'cookie'],
+      convertDetectedLanguage: (lng) => {
+        if (lng === 'en-GB' || lng === 'en-AU' || lng === 'en-CA') return 'en-US';
+        return lng;
+      },
     },
   });
 

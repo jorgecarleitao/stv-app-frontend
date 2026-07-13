@@ -5,9 +5,243 @@ import Accordion from '@mui/material/Accordion';
 import AccordionSummary from '@mui/material/AccordionSummary';
 import AccordionDetails from '@mui/material/AccordionDetails';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import Card from '@mui/material/Card';
+import CardContent from '@mui/material/CardContent';
+import Chip from '@mui/material/Chip';
+import Stack from '@mui/material/Stack';
+import Divider from '@mui/material/Divider';
+import Paper from '@mui/material/Paper';
+import Table from '@mui/material/Table';
+import TableBody from '@mui/material/TableBody';
+import TableCell from '@mui/material/TableCell';
+import TableContainer from '@mui/material/TableContainer';
+import TableHead from '@mui/material/TableHead';
+import TableRow from '@mui/material/TableRow';
+import Tooltip from '@mui/material/Tooltip';
+import WithdrawnIcon from '@mui/icons-material/Cancel';
+
+import type { CountingLog, CountingLogAction, CountingLogCandidateStatus } from '../data/api';
 
 interface CountingLogProps {
-  log: string;
+  log: CountingLog;
+}
+
+function formatActionType(
+  actionType: CountingLogAction['action_type'],
+  t: (key: string) => string
+): string {
+  if (typeof actionType === 'string') {
+    if (actionType === 'begin_count') return t('Begin Count');
+    if (actionType === 'count_complete') return t('Count Complete');
+    return actionType;
+  }
+  if ('elect' in actionType) return `${t('Elect')}: ${actionType.elect.candidate}`;
+  if ('elect_remaining' in actionType)
+    return `${t('Elect remaining')}: ${actionType.elect_remaining.candidate}`;
+  if ('iterate' in actionType) return `${t('Iterate')}: ${actionType.iterate.reason}`;
+  if ('defeat' in actionType)
+    return `${t('Defeat')}: ${actionType.defeat.candidate} (${actionType.defeat.reason})`;
+  if ('defeat_remaining' in actionType)
+    return `${t('Defeat remaining')}: ${actionType.defeat_remaining.candidate}`;
+  if ('break_tie' in actionType)
+    return `${t('Break tie')}: ${actionType.break_tie.defeated} ${t('defeated from')} [${actionType.break_tie.candidates.join(', ')}]`;
+  return '';
+}
+
+function statusColor(status: CountingLogCandidateStatus): 'success' | 'info' | 'error' {
+  switch (status) {
+    case 'elected':
+      return 'success';
+    case 'hopeful':
+      return 'info';
+    case 'defeated':
+      return 'error';
+  }
+}
+
+function HeaderSection({ log }: { log: CountingLog }) {
+  const { t } = useTranslation();
+  const { header } = log;
+
+  return (
+    <Paper variant="outlined" sx={{ p: 2, mb: 3 }}>
+      <Typography variant="subtitle1" fontWeight="bold" gutterBottom>
+        {header.title || t('Counting Log')}
+      </Typography>
+      <Stack direction="row" flexWrap="wrap" gap={1}>
+        <Chip label={`${t('Rule')}: ${header.rule}`} size="small" />
+        <Chip label={`${t('Arithmetic')}: ${header.arithmetic}`} size="small" />
+        <Chip label={`${t('Seats')}: ${header.seats}`} size="small" />
+        <Chip label={`${t('Ballots')}: ${header.ballots}`} size="small" />
+        <Chip label={`${t('Quota')}: ${header.quota}`} size="small" />
+      </Stack>
+    </Paper>
+  );
+}
+
+function CandidatesSection({ candidates }: { candidates: CountingLog['candidates'] }) {
+  const { t } = useTranslation();
+  const active = candidates.filter(c => !c.withdrawn);
+  const withdrawn = candidates.filter(c => c.withdrawn);
+
+  return (
+    <Stack direction="row" flexWrap="wrap" gap={1} sx={{ mb: 3 }}>
+      {active.map(c => (
+        <Chip key={c.name} label={c.name} size="small" color="primary" variant="outlined" />
+      ))}
+      {withdrawn.map(c => (
+        <Chip
+          key={c.name}
+          label={c.name}
+          size="small"
+          color="default"
+          variant="outlined"
+          icon={<WithdrawnIcon />}
+          sx={{ textDecoration: 'line-through', opacity: 0.6 }}
+        />
+      ))}
+      {withdrawn.length > 0 && (
+        <Typography variant="caption" color="text.secondary" sx={{ alignSelf: 'center' }}>
+          ({withdrawn.length} {t('withdrawn')})
+        </Typography>
+      )}
+    </Stack>
+  );
+}
+
+function StatsRow({ stats }: { stats: CountingLog['rounds'][0]['actions'][0]['stats'] }) {
+  const { t } = useTranslation();
+  const hasAny = stats.quota || stats.votes || stats.residual || stats.total || stats.surplus;
+  if (!hasAny) return null;
+
+  const rows = [
+    stats.votes !== '' && { label: t('Votes'), value: stats.votes, tooltip: t('votesTooltip') },
+    stats.residual !== '' && {
+      label: t('Residual'),
+      value: stats.residual,
+      tooltip: t('residualTooltip'),
+      prefix: '+',
+    },
+    stats.total !== '' && {
+      label: t('Total'),
+      value: stats.total,
+      tooltip: t('totalTooltip'),
+      prefix: '=',
+      bold: true,
+    },
+    stats.surplus !== '' && {
+      label: t('Surplus'),
+      value: stats.surplus,
+      tooltip: t('surplusTooltip'),
+    },
+  ].filter(Boolean) as {
+    label: string;
+    value: string;
+    tooltip: string;
+    prefix?: string;
+    bold?: boolean;
+  }[];
+
+  return (
+    <TableContainer component={Paper} variant="outlined" sx={{ mt: 1 }}>
+      <Table size="small">
+        <TableBody>
+          {rows.map(row => (
+            <TableRow key={row.label}>
+              <TableCell sx={{ width: 24, pr: 0, borderBottom: 'none', py: 0 }}>
+                {row.prefix || ''}
+              </TableCell>
+              <Tooltip title={row.tooltip} arrow placement="left">
+                <TableCell
+                  sx={{ borderBottom: 'none', py: 0.25, fontWeight: row.bold ? 'bold' : 'normal' }}
+                >
+                  {row.label}
+                </TableCell>
+              </Tooltip>
+              <TableCell
+                align="right"
+                sx={{
+                  borderBottom: 'none',
+                  py: 0.25,
+                  fontFamily: 'monospace',
+                  fontWeight: row.bold ? 'bold' : 'normal',
+                }}
+              >
+                {row.value}
+              </TableCell>
+            </TableRow>
+          ))}
+          {stats.quota !== '' && (
+            <TableRow>
+              <TableCell sx={{ width: 24, pr: 0, borderBottom: 'none', py: 0 }} />
+              <Tooltip title={t('quotaTooltip')} arrow placement="left">
+                <TableCell sx={{ borderBottom: 'none', py: 0.25 }}>{t('Quota')}</TableCell>
+              </Tooltip>
+              <TableCell
+                align="right"
+                sx={{ borderBottom: 'none', py: 0.25, fontFamily: 'monospace' }}
+              >
+                {stats.quota}
+              </TableCell>
+            </TableRow>
+          )}
+        </TableBody>
+      </Table>
+    </TableContainer>
+  );
+}
+
+function CandidateCountsTable({ counts }: { counts: CountingLogAction['candidate_counts'] }) {
+  if (counts.length === 0) return null;
+
+  return (
+    <TableContainer component={Paper} variant="outlined" sx={{ mt: 1 }}>
+      <Table size="small">
+        <TableHead>
+          <TableRow>
+            <TableCell>{'Candidate'}</TableCell>
+            <TableCell>{'Status'}</TableCell>
+            <TableCell align="right">{'Votes'}</TableCell>
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          {counts.map(c => (
+            <TableRow key={c.name}>
+              <TableCell>{c.name}</TableCell>
+              <TableCell>
+                <Chip label={c.status} size="small" color={statusColor(c.status)} />
+              </TableCell>
+              <TableCell align="right">{c.votes}</TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+    </TableContainer>
+  );
+}
+
+function RoundCard({ round }: { round: CountingLog['rounds'][0] }) {
+  const { t } = useTranslation();
+
+  return (
+    <Card variant="outlined" sx={{ mb: 2 }}>
+      <CardContent>
+        <Typography variant="h6" gutterBottom>
+          {t('Round')} {round.round_number + 1}
+        </Typography>
+        {round.actions.map((action, idx) => (
+          <Box key={idx} sx={{ mb: 2 }}>
+            {idx > 0 && <Divider sx={{ my: 1.5 }} />}
+            <Typography variant="subtitle2" fontWeight="bold" gutterBottom>
+              {formatActionType(action.action_type, t)}
+            </Typography>
+            <CandidateCountsTable counts={action.candidate_counts} />
+            <StatsRow stats={action.stats} />
+          </Box>
+        ))}
+      </CardContent>
+    </Card>
+  );
 }
 
 export function CountingLog({ log }: CountingLogProps) {
@@ -19,23 +253,11 @@ export function CountingLog({ log }: CountingLogProps) {
         <Typography variant="h6">{t('Detailed Counting Log')}</Typography>
       </AccordionSummary>
       <AccordionDetails>
-        <Box
-          component="pre"
-          sx={{
-            whiteSpace: 'pre-wrap',
-            wordBreak: 'break-word',
-            fontSize: '0.75rem',
-            fontFamily: 'monospace',
-            p: 2,
-            bgcolor: 'background.default',
-            borderRadius: 1,
-            maxHeight: '400px',
-            overflow: 'auto',
-            margin: 0,
-          }}
-        >
-          {log}
-        </Box>
+        <HeaderSection log={log} />
+        <CandidatesSection candidates={log.candidates} />
+        {log.rounds.map(round => (
+          <RoundCard key={round.round_number} round={round} />
+        ))}
       </AccordionDetails>
     </Accordion>
   );

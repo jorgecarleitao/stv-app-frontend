@@ -103,7 +103,7 @@ export default function BallotPage({ electionId, ballotUuid }: BallotPageProps) 
     const now = new Date();
     const readOnly = !!(start && end) && (now < start || now >= end);
     if (readOnly) return;
-    const newRanks = [...ballot.ranks];
+    const newRanks = [...(ballot.ranks ?? [])];
     newRanks[candidateIdx] = rank;
     setBallot({ ...ballot, ranks: newRanks });
     setSuccess(false); // Mark ballot as unsaved after changes
@@ -195,7 +195,7 @@ export default function BallotPage({ electionId, ballotUuid }: BallotPageProps) 
               <CandidateRankSelector
                 key={idx}
                 candidate={candidate}
-                rank={ballot.ranks[idx]}
+                rank={ballot.ranks?.[idx] ?? null}
                 maxRank={maxRank}
                 readOnly={readOnly}
                 onChange={rank => handleRankChange(idx, rank)}

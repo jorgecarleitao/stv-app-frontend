@@ -110,7 +110,7 @@ export default function Navigation({ mode, toggleTheme }: NavigationProps) {
           <Select
             variant="standard"
             value={i18n.language}
-            onChange={(e) => i18n.changeLanguage(e.target.value)}
+            onChange={(e) => i18n.changeLanguage((e.target as HTMLSelectElement).value)}
             sx={{ ml: 2, color: 'inherit' }}
           >
             {languages.map(lang => (

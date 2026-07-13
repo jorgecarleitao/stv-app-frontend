@@ -60,7 +60,7 @@ export function BallotGroupDisplay({
               sx={{ width: 90 }}
               inputProps={{ min: 1 }}
               value={ballot.votes}
-              onChange={e => onChangeVotes?.(Number(e.target.value))}
+              onChange={e => onChangeVotes?.(Number((e.target as HTMLInputElement).value))}
             />
           )}
           {!readOnly && onRemove && (
@@ -80,7 +80,7 @@ export function BallotGroupDisplay({
               <CandidateRankSelector
                 key={candIdx}
                 candidate={cand}
-                rank={ballot.ranks[candIdx]}
+                rank={ballot.ranks?.[candIdx] ?? null}
                 maxRank={maxCandidates}
                 readOnly={readOnly}
                 onChange={rank => onChangeRank?.(candIdx, rank)}

@@ -88,7 +88,7 @@ export default function Simulate({ path }: SimulateProps = {}) {
         const yamlText = LZString.decompressFromEncodedURIComponent(encoded);
         if (yamlText) {
           const loaded = yaml.load(yamlText) as Election;
-          setElection(loaded);
+      setElection({ ...loaded, ordered_seats: loaded.ordered_seats ?? false } as Election);
           setYamlText(yamlText);
           setPendingYaml(yamlText);
           setYamlError(null);
@@ -152,7 +152,7 @@ export default function Simulate({ path }: SimulateProps = {}) {
       candidates: [...e.candidates, `${t('Candidate')} ${e.candidates.length + 1}`],
       ballots: e.ballots.map(b => ({
         ...b,
-        ranks: [...b.ranks, null],
+        ranks: [...(b.ranks ?? []), null],
       })),
     }));
   };
@@ -163,7 +163,7 @@ export default function Simulate({ path }: SimulateProps = {}) {
       candidates: e.candidates.filter((_, i) => i !== idx),
       ballots: e.ballots.map(b => ({
         ...b,
-        ranks: b.ranks.filter((_, i) => i !== idx),
+        ranks: (b.ranks ?? []).filter((_, i) => i !== idx),
       })),
     }));
   };
@@ -210,7 +210,7 @@ export default function Simulate({ path }: SimulateProps = {}) {
         i === ballotIdx
           ? {
               ...b,
-              ranks: b.ranks.map((r, cIdx) => (cIdx === candIdx ? rank : r)),
+              ranks: (b.ranks ?? []).map((r, cIdx) => (cIdx === candIdx ? rank : r)),
             }
           : b
       ),
@@ -234,7 +234,7 @@ export default function Simulate({ path }: SimulateProps = {}) {
         setYamlError('YAML is parsed but not recognized as an election structure.');
         return;
       }
-      setElection(loaded);
+      setElection({ ...loaded, ordered_seats: (loaded as any).ordered_seats ?? false } as Election);
       setYamlError(null);
     } catch (err: any) {
       setYamlError('YAML parse error: ' + err.message);
@@ -281,7 +281,7 @@ export default function Simulate({ path }: SimulateProps = {}) {
         </Stack>
         <BallotsEditor
           candidates={election.candidates}
-          ballots={election.ballots.map(b => ({ ...b, ranks: fromApiRanks(b.ranks) }))}
+          ballots={election.ballots.map(b => ({ ...b, ranks: fromApiRanks(b.ranks ?? []) }))}
           onChangeBallotVotes={handleChangeBallotVotes}
           onChangeBallotRank={(ballotIdx, candIdx, rank) => {
             // Convert 1-based UI rank to 0-based API rank
@@ -321,7 +321,7 @@ export default function Simulate({ path }: SimulateProps = {}) {
       {result && result.election.ballots.length > 0 && (
         <ResultsBallotGroups
           candidates={result.election.candidates}
-          ballots={result.election.ballots.map(b => ({ ...b, ranks: fromApiRanks(b.ranks) }))}
+          ballots={result.election.ballots.map(b => ({ ...b, ranks: fromApiRanks(b.ranks ?? []) }))}
         />
       )}
 

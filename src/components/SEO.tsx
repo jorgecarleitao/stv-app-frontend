@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 
 interface SEOProps {
   title: string;
-  description: string;
+  description?: string;
   noIndex?: boolean;
 }
 

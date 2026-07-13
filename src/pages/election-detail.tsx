@@ -230,7 +230,7 @@ export default function ElectionDetail({ electionId }: ElectionDetailProps) {
       {results && results.election.ballots.length > 0 && (
         <ResultsBallotGroups
           candidates={results.election.candidates}
-          ballots={results.election.ballots.map(b => ({ ...b, ranks: fromApiRanks(b.ranks) }))}
+          ballots={results.election.ballots.map(b => ({ ...b, ranks: fromApiRanks(b.ranks ?? []) }))}
           showIcon={true}
         />
       )}

@@ -13,6 +13,11 @@ import InputAdornment from '@mui/material/InputAdornment';
 import IconButton from '@mui/material/IconButton';
 import Tooltip from '@mui/material/Tooltip';
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
+import Accordion from '@mui/material/Accordion';
+import AccordionSummary from '@mui/material/AccordionSummary';
+import AccordionDetails from '@mui/material/AccordionDetails';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import CircularProgress from '@mui/material/CircularProgress';
 
 import LZString from 'lz-string';
 import * as yaml from 'js-yaml';
@@ -25,6 +30,7 @@ import { ResultsBallotGroups } from '../components/ResultsBallotGroups';
 import { CountingLog } from '../components/CountingLog';
 import { ElectionSeatsConfig } from '../components/ElectionSeatsConfig';
 import { CandidatesList } from '../components/CandidatesList';
+import { ResultsSummary } from '../components/ResultsSummary';
 
 // Convert UI ranks (1-based) to API ranks (0-based)
 function toApiRanks(ranks: (number | null)[]): (number | null)[] {
@@ -253,8 +259,43 @@ export default function Simulate({ path }: SimulateProps = {}) {
     }
   };
 
+  const canRun = election.candidates.length >= 2 && election.seats > 0 && election.ballots.length > 0;
+  const totalVotes = election.ballots.reduce((sum, b) => sum + b.votes, 0);
+
   return (
     <Page title={t('Simulate')} description={metaDescription}>
+      {/* YAML: collapsed by default at top */}
+      <Accordion elevation={4} defaultExpanded={false}>
+        <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+          <Typography variant="subtitle1">{t('Load/Save election')}</Typography>
+        </AccordionSummary>
+        <AccordionDetails>
+          <TextField
+            label="YAML"
+            multiline
+            minRows={8}
+            maxRows={20}
+            fullWidth
+            value={pendingYaml}
+            onChange={(e: any) => setPendingYaml(e.target.value)}
+            placeholder={t('Edit election YAML here...')}
+            error={!!yamlError}
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="end">
+                  <Tooltip title={t('loadSaveYamlInstructions')} placement="top" arrow>
+                    <IconButton tabIndex={-1}>
+                      <InfoOutlinedIcon fontSize="small" />
+                    </IconButton>
+                  </Tooltip>
+                </InputAdornment>
+              ),
+            }}
+          />
+          {yamlError && <Alert severity="error">{yamlError}</Alert>}
+        </AccordionDetails>
+      </Accordion>
+
       <Paper elevation={4} sx={{ p: 3 }}>
         <Typography variant={HEADER} gutterBottom>
           {t('Number of seats to elect')}
@@ -291,34 +332,72 @@ export default function Simulate({ path }: SimulateProps = {}) {
             </IconButton>
           </Tooltip>
         </Stack>
-        <BallotsEditor
-          candidates={election.candidates}
-          ballots={election.ballots.map(b => ({ ...b, ranks: fromApiRanks(b.ranks ?? []) }))}
-          onChangeBallotVotes={handleChangeBallotVotes}
-          onChangeBallotRank={(ballotIdx, candIdx, rank) => {
-            // Convert 1-based UI rank to 0-based API rank
-            const apiRank = rank === null ? null : rank - 1;
-            handleChangeBallotRank(ballotIdx, candIdx, apiRank);
-          }}
-          onAddBallot={handleAddBallot}
-          onRemoveBallot={handleRemoveBallot}
-        />
+        {election.ballots.length === 0 ? (
+          <Paper variant="outlined" sx={{ p: 3, textAlign: 'center' }}>
+            <Typography color="text.secondary">
+              No ballot groups yet. Add one to define voting patterns.
+            </Typography>
+            <Button variant="outlined" onClick={handleAddBallot} sx={{ mt: 1 }}>
+              {t('Add Ballot group')}
+            </Button>
+          </Paper>
+        ) : (
+          <BallotsEditor
+            candidates={election.candidates}
+            ballots={election.ballots.map(b => ({ ...b, ranks: fromApiRanks(b.ranks ?? []) }))}
+            onChangeBallotVotes={handleChangeBallotVotes}
+            onChangeBallotRank={(ballotIdx, candIdx, rank) => {
+              const apiRank = rank === null ? null : rank - 1;
+              handleChangeBallotRank(ballotIdx, candIdx, apiRank);
+            }}
+            onAddBallot={handleAddBallot}
+            onRemoveBallot={handleRemoveBallot}
+          />
+        )}
       </Paper>
 
-      <Button
-        fullWidth
-        variant="contained"
-        color="success"
-        onClick={handleRunElection}
-        disabled={loading}
+      <Tooltip
+        title={
+          !canRun
+            ? `Need at least 2 candidates, 1 seat, and 1 ballot group`
+            : ''
+        }
       >
-        {loading ? t('Running...') : t('Run Election')}
-      </Button>
+        <span>
+          <Button
+            fullWidth
+            variant="contained"
+            color="success"
+            onClick={handleRunElection}
+            disabled={loading || !canRun}
+          >
+            {loading ? (
+              <>
+                <CircularProgress size={18} sx={{ mr: 1, color: 'inherit' }} />
+                {t('Running...')}
+              </>
+            ) : (
+              t('Run Election')
+            )}
+          </Button>
+        </span>
+      </Tooltip>
 
       {error && <Alert severity="error">{error}</Alert>}
 
-      {/* Results Section */}
-      {result && <ElectionResults elected={result.elected} orderedSeats={election.ordered_seats} />}
+      {/* Results */}
+      {result && (
+        <ElectionResults elected={result.elected} orderedSeats={election.ordered_seats} />
+      )}
+
+      {/* Results Summary */}
+      {result && (
+        <ResultsSummary
+          log={result.log}
+          seats={election.seats}
+          numElected={result.elected.length}
+        />
+      )}
 
       {/* Pairwise Comparison Matrix */}
       {result && result.pairwise_matrix && result.order && election.ordered_seats && (
@@ -339,35 +418,6 @@ export default function Simulate({ path }: SimulateProps = {}) {
 
       {/* Detailed Counting Log */}
       {result && <CountingLog log={result.log} />}
-
-      <Paper elevation={4} sx={{ p: 2 }}>
-        <Typography variant={HEADER} gutterBottom>
-          {t('Load/Save election')}
-        </Typography>
-        <TextField
-          label="YAML"
-          multiline
-          minRows={8}
-          maxRows={20}
-          fullWidth
-          value={pendingYaml}
-          onChange={(e: any) => setPendingYaml(e.target.value)}
-          placeholder={t('Edit election YAML here...')}
-          error={!!yamlError}
-          InputProps={{
-            endAdornment: (
-              <InputAdornment position="end">
-                <Tooltip title={t('loadSaveYamlInstructions')} placement="top" arrow>
-                  <IconButton tabIndex={-1}>
-                    <InfoOutlinedIcon fontSize="small" />
-                  </IconButton>
-                </Tooltip>
-              </InputAdornment>
-            ),
-          }}
-        />
-        {yamlError && <Alert severity="error">{yamlError}</Alert>}
-      </Paper>
     </Page>
   );
 }

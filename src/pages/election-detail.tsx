@@ -30,6 +30,7 @@ import { ElectionChips } from '../components/ElectionChips';
 import { ElectionResults } from '../components/ElectionResults';
 import { PairwiseMatrix } from '../components/PairwiseMatrix';
 import { ResultsBallotGroups } from '../components/ResultsBallotGroups';
+import { ResultsSummary } from '../components/ResultsSummary';
 import { CountingLog } from '../components/CountingLog';
 
 import { getElection, ElectionState } from '../data/api';
@@ -170,12 +171,19 @@ export default function ElectionDetail({ electionId }: ElectionDetailProps) {
       </Alert>
       {/* Results Section - Show first if voting closed */}
       {votingClosed && results && (
-        <ElectionResults
-          elected={results.elected}
-          orderedSeats={election.ordered_seats}
-          onSimulate={handleSimulate}
-          showSimulateButton={results.election.ballots.length > 0}
-        />
+        <>
+          <ElectionResults
+            elected={results.elected}
+            orderedSeats={election.ordered_seats}
+            onSimulate={handleSimulate}
+            showSimulateButton={results.election.ballots.length > 0}
+          />
+          <ResultsSummary
+            log={results.log}
+            seats={election.seats}
+            numElected={results.elected.length}
+          />
+        </>
       )}
       {/* Candidates List */}
       <Paper elevation={2} sx={{ p: 3, mb: 3 }}>

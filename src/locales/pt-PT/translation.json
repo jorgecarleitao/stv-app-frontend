@@ -235,5 +235,8 @@
   "votesTooltip": "Votos ativos ainda em jogo (podem ser transferidos)",
   "residualTooltip": "Votos esgotados que não puderam ser transferidos",
   "totalTooltip": "Todos os votos = Votos ativos + Residual",
-  "surplusTooltip": "Votos que excedem a quota, transferidos para as próximas preferências"
+  "surplusTooltip": "Votos que excedem a quota, transferidos para as próximas preferências",
+  "Elected": "Eleitos",
+  "Hopeful": "Em disputa",
+  "Defeated": "Derrotados"
 }

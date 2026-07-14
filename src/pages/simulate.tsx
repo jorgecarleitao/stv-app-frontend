@@ -13,10 +13,6 @@ import InputAdornment from '@mui/material/InputAdornment';
 import IconButton from '@mui/material/IconButton';
 import Tooltip from '@mui/material/Tooltip';
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
-import Accordion from '@mui/material/Accordion';
-import AccordionSummary from '@mui/material/AccordionSummary';
-import AccordionDetails from '@mui/material/AccordionDetails';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 
 import LZString from 'lz-string';
 import * as yaml from 'js-yaml';
@@ -41,17 +37,33 @@ function fromApiRanks(ranks: (number | null)[]): (number | null)[] {
 }
 
 const defaultElection: Election = {
-  candidates: ['Ana', 'Rodrigo', 'Sara', 'Tiago'],
+  candidates: ['Elena', 'Marco', 'Lucia', 'André', 'Sofia'],
   seats: 3,
-  ordered_seats: true,
+  ordered_seats: false,
   ballots: [
     {
-      votes: 10,
-      ranks: [2, 1, null, 0], // 0-based ranks (API format)
+      votes: 11,
+      ranks: [0, 3, 4, 1, 2], // Elena > André > Sofia > Marco > Lucia
     },
     {
-      votes: 5,
-      ranks: [3, 1, 0, 2], // 0-based ranks (API format)
+      votes: 4,
+      ranks: [0, 3, 4, 2, 1], // Elena > Sofia > André > Marco > Lucia
+    },
+    {
+      votes: 9,
+      ranks: [2, 0, 1, 3, 4], // Marco > Lucia > Elena > André > Sofia
+    },
+    {
+      votes: 8,
+      ranks: [2, 3, 0, 1, 4], // Lucia > André > Elena > Marco > Sofia
+    },
+    {
+      votes: 4,
+      ranks: [4, 3, 2, 1, 0], // Sofia > André > Lucia > Marco > Elena
+    },
+    {
+      votes: 3,
+      ranks: [3, 4, 2, 0, 1], // André > Sofia > Lucia > Elena > Marco
     },
   ],
 };

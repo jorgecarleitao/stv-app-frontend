@@ -1,3 +1,4 @@
+import { Fragment } from 'react';
 import { useTranslation } from 'react-i18next';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
@@ -15,12 +16,14 @@ import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
 import TableContainer from '@mui/material/TableContainer';
-import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Tooltip from '@mui/material/Tooltip';
 import WithdrawnIcon from '@mui/icons-material/Cancel';
+import ElectedIcon from '@mui/icons-material/CheckCircle';
+import DefeatedIcon from '@mui/icons-material/Cancel';
+import HopefulIcon from '@mui/icons-material/HourglassEmpty';
 
-import type { CountingLog, CountingLogAction, CountingLogCandidateStatus } from '../data/api';
+import type { CountingLog, CountingLogAction } from '../data/api';
 
 interface CountingLogProps {
   log: CountingLog;
@@ -48,16 +51,6 @@ function formatActionType(
   return '';
 }
 
-function statusColor(status: CountingLogCandidateStatus): 'success' | 'info' | 'error' {
-  switch (status) {
-    case 'elected':
-      return 'success';
-    case 'hopeful':
-      return 'info';
-    case 'defeated':
-      return 'error';
-  }
-}
 
 function HeaderSection({ log }: { log: CountingLog }) {
   const { t } = useTranslation();
@@ -73,7 +66,7 @@ function HeaderSection({ log }: { log: CountingLog }) {
         <Chip label={`${t('Arithmetic')}: ${header.arithmetic}`} size="small" />
         <Chip label={`${t('Seats')}: ${header.seats}`} size="small" />
         <Chip label={`${t('Ballots')}: ${header.ballots}`} size="small" />
-        <Chip label={`${t('Quota')}: ${header.quota}`} size="small" />
+        <Chip label={`${header.ballots} / (${header.seats} + 1)`} size="small" />
       </Stack>
     </Paper>
   );
@@ -111,7 +104,7 @@ function CandidatesSection({ candidates }: { candidates: CountingLog['candidates
 
 function StatsRow({ stats }: { stats: CountingLog['rounds'][0]['actions'][0]['stats'] }) {
   const { t } = useTranslation();
-  const hasAny = stats.quota || stats.votes || stats.residual || stats.total || stats.surplus;
+  const hasAny = stats.votes || stats.residual || stats.total || stats.surplus;
   if (!hasAny) return null;
 
   const rows = [
@@ -171,52 +164,61 @@ function StatsRow({ stats }: { stats: CountingLog['rounds'][0]['actions'][0]['st
               </TableCell>
             </TableRow>
           ))}
-          {stats.quota !== '' && (
-            <TableRow>
-              <TableCell sx={{ width: 24, pr: 0, borderBottom: 'none', py: 0 }} />
-              <Tooltip title={t('quotaTooltip')} arrow placement="left">
-                <TableCell sx={{ borderBottom: 'none', py: 0.25 }}>{t('Quota')}</TableCell>
-              </Tooltip>
-              <TableCell
-                align="right"
-                sx={{ borderBottom: 'none', py: 0.25, fontFamily: 'monospace' }}
-              >
-                {stats.quota}
-              </TableCell>
-            </TableRow>
-          )}
         </TableBody>
       </Table>
     </TableContainer>
   );
 }
 
-function CandidateCountsTable({ counts }: { counts: CountingLogAction['candidate_counts'] }) {
+function CandidateStatusIcon({ status }: { status: CountingLogAction['candidate_counts'][0]['status'] }) {
+  if (status === 'elected') return <ElectedIcon sx={{ fontSize: 18, color: '#2e7d32', verticalAlign: 'middle', mr: 0.5 }} />;
+  if (status === 'defeated') return <DefeatedIcon sx={{ fontSize: 18, color: '#d32f2f', verticalAlign: 'middle', mr: 0.5 }} />;
+  return <HopefulIcon sx={{ fontSize: 18, color: '#0288d1', verticalAlign: 'middle', mr: 0.5 }} />;
+}
+
+function CandidateCountsBarChart({
+  counts,
+  quota,
+}: {
+  counts: CountingLogAction['candidate_counts'];
+  quota: string;
+}) {
+  const { t } = useTranslation();
+
   if (counts.length === 0) return null;
 
+  const quotaVal = parseFloat(quota) || 0;
+  const votes = counts.map(c => parseFloat(c.votes) || 0);
+  const xMax = Math.max(...votes, quotaVal) || 1;
+
   return (
-    <TableContainer component={Paper} variant="outlined" sx={{ mt: 1 }}>
-      <Table size="small">
-        <TableHead>
-          <TableRow>
-            <TableCell>{'Candidate'}</TableCell>
-            <TableCell>{'Status'}</TableCell>
-            <TableCell align="right">{'Votes'}</TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {counts.map(c => (
-            <TableRow key={c.name}>
-              <TableCell>{c.name}</TableCell>
-              <TableCell>
-                <Chip label={c.status} size="small" color={statusColor(c.status)} />
-              </TableCell>
-              <TableCell align="right">{c.votes}</TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-    </TableContainer>
+    <Paper variant="outlined" sx={{ p: 1.5 }}>
+      <Box sx={{ display: 'grid', gridTemplateColumns: 'auto 1fr auto', alignItems: 'center', rowGap: 0.75 }}>
+        {counts.map((c) => {
+          const v = parseFloat(c.votes) || 0;
+          const belowPct = (Math.min(v, quotaVal) / xMax) * 100;
+          const abovePct = (Math.max(0, v - quotaVal) / xMax) * 100;
+          const quotaPct = (quotaVal / xMax) * 100;
+
+          return (
+            <Fragment key={c.name}>
+              <Box sx={{ display: 'flex', alignItems: 'center', pr: 1 }}>
+                <CandidateStatusIcon status={c.status} />
+                <Typography variant="body2" noWrap>{c.name}</Typography>
+              </Box>
+              <Tooltip title={c.votes}>
+                <Box sx={{ height: 22, bgcolor: 'action.hover', borderRadius: 1, position: 'relative', overflow: 'hidden' }}>
+                  {belowPct > 0 && <Box sx={{ position: 'absolute', left: 0, top: 0, bottom: 0, width: `${belowPct}%`, bgcolor: 'primary.light' }} />}
+                  {abovePct > 0 && <Box sx={{ position: 'absolute', left: `${belowPct}%`, top: 0, bottom: 0, width: `${abovePct}%`, bgcolor: 'primary.main' }} />}
+                  {quotaVal > 0 && <Box sx={{ position: 'absolute', left: `${quotaPct}%`, top: 0, bottom: 0, width: 2, bgcolor: 'warning.main', zIndex: 1 }} />}
+                </Box>
+              </Tooltip>
+              <Typography variant="body2" sx={{ fontFamily: 'monospace', fontSize: 13, pl: 1 }}>{c.votes}</Typography>
+            </Fragment>
+          );
+        })}
+      </Box>
+    </Paper>
   );
 }
 
@@ -235,7 +237,7 @@ function RoundCard({ round }: { round: CountingLog['rounds'][0] }) {
             <Typography variant="subtitle2" fontWeight="bold" gutterBottom>
               {formatActionType(action.action_type, t)}
             </Typography>
-            <CandidateCountsTable counts={action.candidate_counts} />
+            <CandidateCountsBarChart counts={action.candidate_counts} quota={action.stats.quota} />
             <StatsRow stats={action.stats} />
           </Box>
         ))}

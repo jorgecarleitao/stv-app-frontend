@@ -33,7 +33,7 @@ import { ResultsBallotGroups } from '../components/ResultsBallotGroups';
 import { ResultsSummary } from '../components/ResultsSummary';
 import { CountingLog } from '../components/CountingLog';
 
-import { getElection, ElectionState } from '../data/api';
+import { getElection, ElectionState, isCopelandResult } from '../data/api';
 
 // Convert API ranks (0-based) to UI ranks (1-based)
 function fromApiRanks(ranks: (number | null)[]): (number | null)[] {
@@ -174,7 +174,7 @@ export default function ElectionDetail({ electionId }: ElectionDetailProps) {
         <>
           <ElectionResults
             elected={results.elected}
-            orderedSeats={election.ordered_seats}
+            electionType={election.election_type}
             onSimulate={handleSimulate}
             showSimulateButton={results.election.ballots.length > 0}
           />
@@ -223,17 +223,13 @@ export default function ElectionDetail({ electionId }: ElectionDetailProps) {
         </Grid>
       </Paper>
       {/* Pairwise Comparison Matrix */}
-      {votingClosed &&
-        results &&
-        results.pairwise_matrix &&
-        results.order &&
-        election.ordered_seats && (
-          <PairwiseMatrix
-            candidates={election.candidates}
-            pairwiseMatrix={results.pairwise_matrix}
-            order={results.order}
-          />
-        )}
+      {votingClosed && results && isCopelandResult(results) && (
+        <PairwiseMatrix
+          candidates={election.candidates}
+          pairwiseMatrix={results.pairwise_matrix}
+          order={results.order}
+        />
+      )}
       {/* Ballot Groups (Accordion) */}
       {results && results.election.ballots.length > 0 && (
         <ResultsBallotGroups

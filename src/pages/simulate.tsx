@@ -22,7 +22,7 @@ import CircularProgress from '@mui/material/CircularProgress';
 import LZString from 'lz-string';
 import * as yaml from 'js-yaml';
 
-import { Election, ElectionResult, Elected, simulateElection, Ballot } from '../data/api';
+import { Election, ElectionResult, simulateElection, ElectionType, isCopelandResult } from '../data/api';
 import { BallotsEditor } from '../ballot';
 import { ElectionResults } from '../components/ElectionResults';
 import { PairwiseMatrix } from '../components/PairwiseMatrix';
@@ -45,7 +45,7 @@ function fromApiRanks(ranks: (number | null)[]): (number | null)[] {
 const defaultElection: Election = {
   candidates: ['Elena', 'Marco', 'Lucia', 'André', 'Sofia'],
   seats: 3,
-  ordered_seats: false,
+  election_type: 'stv-md',
   ballots: [
     {
       votes: 11,
@@ -106,7 +106,7 @@ export default function Simulate({ path }: SimulateProps = {}) {
         const yamlText = LZString.decompressFromEncodedURIComponent(encoded);
         if (yamlText) {
           const loaded = yaml.load(yamlText) as Election;
-      setElection({ ...loaded, ordered_seats: loaded.ordered_seats ?? false } as Election);
+          setElection({ ...loaded, election_type: (loaded.election_type ?? 'stv-md') as ElectionType } as Election);
           setYamlText(yamlText);
           setPendingYaml(yamlText);
           setYamlError(null);
@@ -227,9 +227,9 @@ export default function Simulate({ path }: SimulateProps = {}) {
       ballots: e.ballots.map((b, i) =>
         i === ballotIdx
           ? {
-              ...b,
-              ranks: (b.ranks ?? []).map((r, cIdx) => (cIdx === candIdx ? rank : r)),
-            }
+            ...b,
+            ranks: (b.ranks ?? []).map((r, cIdx) => (cIdx === candIdx ? rank : r)),
+          }
           : b
       ),
     }));
@@ -252,7 +252,7 @@ export default function Simulate({ path }: SimulateProps = {}) {
         setYamlError('YAML is parsed but not recognized as an election structure.');
         return;
       }
-      setElection({ ...loaded, ordered_seats: (loaded as any).ordered_seats ?? false } as Election);
+      setElection({ ...loaded, election_type: ((loaded as any).election_type ?? 'stv-md') as ElectionType } as Election);
       setYamlError(null);
     } catch (err: any) {
       setYamlError('YAML parse error: ' + err.message);
@@ -302,10 +302,10 @@ export default function Simulate({ path }: SimulateProps = {}) {
         </Typography>
         <ElectionSeatsConfig
           numSeats={election.seats}
-          orderedSeats={election.ordered_seats}
+          electionType={election.election_type}
           maxSeats={election.candidates.length}
           onNumSeatsChange={val => setElection(el => ({ ...el, seats: val }))}
-          onOrderedSeatsChange={val => setElection(el => ({ ...el, ordered_seats: val }))}
+          onElectionTypeChange={val => setElection(el => ({ ...el, election_type: val }))}
         />
       </Paper>
 
@@ -387,7 +387,7 @@ export default function Simulate({ path }: SimulateProps = {}) {
 
       {/* Results */}
       {result && (
-        <ElectionResults elected={result.elected} orderedSeats={election.ordered_seats} />
+        <ElectionResults elected={result.elected} electionType={election.election_type} />
       )}
 
       {/* Results Summary */}
@@ -400,7 +400,7 @@ export default function Simulate({ path }: SimulateProps = {}) {
       )}
 
       {/* Pairwise Comparison Matrix */}
-      {result && result.pairwise_matrix && result.order && election.ordered_seats && (
+      {result && isCopelandResult(result) && (
         <PairwiseMatrix
           candidates={result.election.candidates}
           pairwiseMatrix={result.pairwise_matrix}

@@ -1,26 +1,29 @@
 import { useTranslation } from 'react-i18next';
 import Stack from '@mui/material/Stack';
 import TextField from '@mui/material/TextField';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import Switch from '@mui/material/Switch';
+import MenuItem from '@mui/material/MenuItem';
+import FormControl from '@mui/material/FormControl';
+import InputLabel from '@mui/material/InputLabel';
+import Select from '@mui/material/Select';
 import Tooltip from '@mui/material/Tooltip';
+import type { ElectionType } from '../data/api';
 
 interface ElectionSeatsConfigProps {
   numSeats: number;
-  orderedSeats: boolean;
+  electionType: ElectionType;
   maxSeats?: number;
   onNumSeatsChange: (value: number) => void;
-  onOrderedSeatsChange: (value: boolean) => void;
+  onElectionTypeChange: (value: ElectionType) => void;
   disabled?: boolean;
   seatsError?: string | null;
 }
 
 export function ElectionSeatsConfig({
   numSeats,
-  orderedSeats,
+  electionType,
   maxSeats,
   onNumSeatsChange,
-  onOrderedSeatsChange,
+  onElectionTypeChange,
   disabled = false,
   seatsError = null,
 }: ElectionSeatsConfigProps) {
@@ -43,21 +46,23 @@ export function ElectionSeatsConfig({
 
       <Tooltip
         title={t(
-          'Ordered: Winners are ranked by position (1st, 2nd, 3rd, etc.). Unordered: Winners are identified without ranking them.'
+          'STV-MD: Winners are identified without ranking. STV-MD Copeland: Winners are ranked by position using pairwise comparison.'
         )}
         placement="right"
         arrow
       >
-        <FormControlLabel
-          control={
-            <Switch
-              checked={orderedSeats}
-              onChange={e => onOrderedSeatsChange((e.target as HTMLInputElement).checked)}
-              disabled={disabled}
-            />
-          }
-          label={t('Rank elected candidates (ordered seats)')}
-        />
+        <FormControl fullWidth disabled={disabled}>
+          <InputLabel id="election-type-label">{t('Election Type')}</InputLabel>
+          <Select
+            labelId="election-type-label"
+            value={electionType}
+            label={t('Election Type')}
+            onChange={e => onElectionTypeChange(e.target.value as ElectionType)}
+          >
+            <MenuItem value="stv-md">{t('STV-MD (unordered)')}</MenuItem>
+            <MenuItem value="stv-md-coperland">{t('STV-MD Copeland (ordered)')}</MenuItem>
+          </Select>
+        </FormControl>
       </Tooltip>
     </Stack>
   );

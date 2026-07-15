@@ -22,6 +22,7 @@ import {
   createElection,
   CreateElectionRequest,
   ElectionResponse,
+  ElectionType,
 } from '../data/api';
 import { BallotTokensList } from '../components/BallotTokensList';
 import { ElectionBasicInfo } from '../components/ElectionBasicInfo';
@@ -57,7 +58,7 @@ export default function ElectionAdmin({ electionId, adminUuid }: ElectionAdminPr
   const [editTitle, setEditTitle] = useState('');
   const [editDescription, setEditDescription] = useState('');
   const [editNumSeats, setEditNumSeats] = useState(1);
-  const [editOrderedSeats, setEditOrderedSeats] = useState(true);
+  const [editElectionType, setEditElectionType] = useState<ElectionType>('stv-md');
   const [editCandidates, setEditCandidates] = useState<string[]>(['']);
   const [editStartTime, setEditStartTime] = useState('');
   const [editEndTime, setEditEndTime] = useState('');
@@ -99,7 +100,7 @@ export default function ElectionAdmin({ electionId, adminUuid }: ElectionAdminPr
     setEditTitle(data.title);
     setEditDescription(data.description || '');
     setEditNumSeats(data.num_seats);
-    setEditOrderedSeats(data.ordered_seats);
+    setEditElectionType(data.election_type);
     setEditCandidates([...data.candidates]);
     setEditStartTime(formatDateTimeLocal(new Date(data.start_time)));
     setEditEndTime(formatDateTimeLocal(new Date(data.end_time)));
@@ -185,7 +186,7 @@ export default function ElectionAdmin({ electionId, adminUuid }: ElectionAdminPr
         description: editDescription.trim() || null,
         candidates: validCandidates,
         num_seats: editNumSeats,
-        ordered_seats: editOrderedSeats,
+        election_type: editElectionType,
         start_time: startDate.toISOString(),
         end_time: endDate.toISOString(),
       };
@@ -420,13 +421,13 @@ export default function ElectionAdmin({ electionId, adminUuid }: ElectionAdminPr
             </Typography>
             <ElectionSeatsConfig
               numSeats={editNumSeats}
-              orderedSeats={editOrderedSeats}
+              electionType={editElectionType}
               maxSeats={editCandidates.filter(c => c.trim().length > 0).length}
               onNumSeatsChange={value => {
                 setEditNumSeats(value);
                 if (seatsError) setSeatsError(null);
               }}
-              onOrderedSeatsChange={setEditOrderedSeats}
+              onElectionTypeChange={setEditElectionType}
               disabled={saving}
               seatsError={seatsError}
             />

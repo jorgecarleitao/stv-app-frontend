@@ -8,6 +8,7 @@ import CardContent from '@mui/material/CardContent';
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import ScienceIcon from '@mui/icons-material/Science';
+import type { ElectionType } from '../data/api';
 
 interface Elected {
   id: number;
@@ -16,18 +17,19 @@ interface Elected {
 
 interface ElectionResultsProps {
   elected: Elected[];
-  orderedSeats: boolean;
+  electionType: ElectionType;
   onSimulate?: () => void;
   showSimulateButton?: boolean;
 }
 
 export function ElectionResults({
   elected,
-  orderedSeats,
+  electionType,
   onSimulate,
   showSimulateButton = false,
 }: ElectionResultsProps) {
   const { t } = useTranslation();
+  const isOrdered = electionType === 'stv-md-coperland';
 
   return (
     <Paper elevation={3}>
@@ -56,13 +58,13 @@ export function ElectionResults({
                         fontWeight: 'bold',
                       }}
                     >
-                      {orderedSeats ? idx + 1 : e.candidate.charAt(0).toUpperCase()}
+                      {isOrdered ? idx + 1 : e.candidate.charAt(0).toUpperCase()}
                     </Avatar>
                     <Stack>
                       <Typography variant="h6" component="div">
                         {e.candidate}
                       </Typography>
-                      {orderedSeats && (
+                      {isOrdered && (
                         <Typography variant="body2" color="text.secondary">
                           {t('Position')} {idx + 1}
                         </Typography>

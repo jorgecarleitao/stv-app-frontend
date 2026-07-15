@@ -2,6 +2,8 @@ const BASE_URL = '/api';
 
 // ===== Shared Data Structures =====
 
+export type ElectionType = 'stv-md' | 'stv-md-coperland';
+
 export interface Ballot {
   votes: number;
   ranks: (number | null)[] | null;
@@ -10,7 +12,7 @@ export interface Ballot {
 export interface Election {
   candidates: string[];
   seats: number;
-  ordered_seats: boolean;
+  election_type: ElectionType;
   ballots: Ballot[];
 }
 
@@ -80,12 +82,26 @@ export interface CountingLog {
   rounds: CountingLogRound[];
 }
 
-export interface ElectionResult {
-  election: Election;
-  log: CountingLog;
-  elected: Elected[];
-  order: Record<number, number>; // Map from candidate ID to order position
-  pairwise_matrix: number[][]; // n×n matrix of pairwise comparisons
+// ===== Election Result (tagged union) =====
+
+export type ElectionResult =
+  | {
+      type: 'stv-md';
+      election: Election;
+      log: CountingLog;
+      elected: Elected[];
+    }
+  | {
+      type: 'stv-md-coperland';
+      election: Election;
+      log: CountingLog;
+      elected: Elected[];
+      order: Record<string, number>;
+      pairwise_matrix: number[][];
+    };
+
+export function isCopelandResult(r: ElectionResult): r is Extract<ElectionResult, { type: 'stv-md-coperland' }> {
+  return r.type === 'stv-md-coperland';
 }
 
 // ===== Elections API =====
@@ -96,7 +112,7 @@ export interface ElectionConfig {
   description?: string;
   candidates: string[];
   seats: number;
-  ordered_seats: boolean;
+  election_type: ElectionType;
   start_time: string;
   end_time: string;
   number_of_ballots: number;
@@ -115,7 +131,7 @@ export interface CreateElectionRequest {
   description?: string | null;
   candidates: string[];
   num_seats: number;
-  ordered_seats: boolean;
+  election_type: ElectionType;
   start_time: string;
   end_time: string;
 }
@@ -127,7 +143,7 @@ export interface ElectionResponse {
   description?: string | null;
   candidates: string[];
   num_seats: number;
-  ordered_seats: boolean;
+  election_type: ElectionType;
   start_time: string;
   end_time: string;
   is_locked: boolean;

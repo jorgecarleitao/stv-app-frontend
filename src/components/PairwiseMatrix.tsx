@@ -8,7 +8,7 @@ import Box from '@mui/material/Box';
 interface PairwiseMatrixProps {
   candidates: string[];
   pairwiseMatrix: number[][];
-  order: Record<number, number>;
+  order: Record<string, number>;
 }
 
 export function PairwiseMatrix({ candidates, pairwiseMatrix, order }: PairwiseMatrixProps) {
@@ -67,7 +67,7 @@ export function PairwiseMatrix({ candidates, pairwiseMatrix, order }: PairwiseMa
                           bgcolor: 'primary.main',
                         }}
                       >
-                        {order[idx] + 1}
+                        {order[String(idx)] + 1}
                       </Avatar>
                       <Typography variant="caption">{candidate}</Typography>
                     </Stack>
@@ -93,7 +93,7 @@ export function PairwiseMatrix({ candidates, pairwiseMatrix, order }: PairwiseMa
                           bgcolor: 'primary.main',
                         }}
                       >
-                        {order[rowIdx] + 1}
+                        {order[String(rowIdx)] + 1}
                       </Avatar>
                       <Typography variant="body2">{candidate}</Typography>
                     </Stack>

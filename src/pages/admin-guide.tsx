@@ -93,15 +93,25 @@ export default function AdminUserGuide({ path }: Props = {}) {
 
       <Paper elevation={2} sx={{ p: 3, my: 3, bgcolor: 'background.paper' }}>
         <Typography variant="h6" gutterBottom>
-          {t('Ordered vs Unordered Seats')}
+          {t('Election Types')}
         </Typography>
         <Typography variant="body2" paragraph>
-          {t('When creating an election, you can choose how elected candidates are presented:')}
+          {t('When creating an election, you can choose the election type:')}
         </Typography>
         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
           <Box>
             <Typography variant="subtitle2" gutterBottom sx={{ fontWeight: 'bold' }}>
-              {t('Ordered Seats')}
+              {t('STV-MD (unordered)')}
+            </Typography>
+            <Typography variant="body2" paragraph>
+              {t(
+                'Winners are identified without ranking them. Use this when all elected candidates have equal status - for example, when filling multiple board member positions where all members have the same authority.'
+              )}
+            </Typography>
+          </Box>
+          <Box>
+            <Typography variant="subtitle2" gutterBottom sx={{ fontWeight: 'bold' }}>
+              {t('STV-MD Copeland (ordered)')}
             </Typography>
             <Typography variant="body2" paragraph>
               {t(
@@ -111,21 +121,6 @@ export default function AdminUserGuide({ path }: Props = {}) {
             <Typography variant="body2" color="text.secondary">
               {t(
                 "Technical note: After STV determines the winners, they are ranked using Copeland's pairwise comparison method based on voter preferences."
-              )}
-            </Typography>
-          </Box>
-          <Box>
-            <Typography variant="subtitle2" gutterBottom sx={{ fontWeight: 'bold' }}>
-              {t('Unordered Seats')}
-            </Typography>
-            <Typography variant="body2" paragraph>
-              {t(
-                'Winners are identified without ranking them. Use this when all elected candidates have equal status - for example, when filling multiple board member positions where all members have the same authority.'
-              )}
-            </Typography>
-            <Typography variant="body2" color="text.secondary">
-              {t(
-                'Technical note: Only the STV algorithm runs to determine who wins. No additional ranking is computed.'
               )}
             </Typography>
           </Box>

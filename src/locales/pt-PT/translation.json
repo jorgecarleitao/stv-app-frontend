@@ -165,6 +165,8 @@
   "Run Election": "Executar eleição",
   "Load/Save election": "Carregar/Guardar eleição",
   "Edit election YAML here...": "Edite aqui o YAML da eleição...",
+  "Export Data": "Exportar Dados",
+  "Export available after voting closes": "Exportação disponível após o encerramento da votação",
   "loadSaveYamlInstructions": "Carregar/Guardar eleição YAML\nCole YAML válido para atualizar a configuração da eleição.\nCopie este campo para exportar a configuração atual.\nAs alterações serão aplicadas automaticamente se o YAML for válido.",
   "STV Explainer meta description": "Aprenda como funciona o Voto Único Transferível (STV). Entenda representação proporcional, cálculos de quota e o método de Meek para eleições justas.",
   "stvMd.keyFeatureMinWaste": "Minimiza o número de votos desperdiçados",

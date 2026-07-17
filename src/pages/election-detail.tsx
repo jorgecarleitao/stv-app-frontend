@@ -22,6 +22,8 @@ import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import PeopleIcon from '@mui/icons-material/People';
 import HowToVoteIcon from '@mui/icons-material/HowToVote';
+import DownloadIcon from '@mui/icons-material/Download';
+import Tooltip from '@mui/material/Tooltip';
 
 import LZString from 'lz-string';
 import * as yaml from 'js-yaml';
@@ -33,7 +35,7 @@ import { ResultsBallotGroups } from '../components/ResultsBallotGroups';
 import { ResultsSummary } from '../components/ResultsSummary';
 import { CountingLog } from '../components/CountingLog';
 
-import { getElection, ElectionState, isCopelandResult } from '../data/api';
+import { getElection, getExportUrl, ElectionState, isCopelandResult } from '../data/api';
 
 // Convert API ranks (0-based) to UI ranks (1-based)
 function fromApiRanks(ranks: (number | null)[]): (number | null)[] {
@@ -169,6 +171,23 @@ export default function ElectionDetail({ electionId }: ElectionDetailProps) {
           {!votingClosed && ` • ${votingProgress.toFixed(0)}% ${t('turnout')}`}
         </Typography>
       </Alert>
+      {/* Export Button */}
+      <Box sx={{ display: 'flex', justifyContent: 'flex-end', mb: 2 }}>
+        <Tooltip title={!votingClosed ? t('Export available after voting closes') : ''}>
+          <span>
+            <Button
+              component="a"
+              href={votingClosed ? getExportUrl(electionId!) : undefined}
+              variant="outlined"
+              startIcon={<DownloadIcon />}
+              disabled={!votingClosed}
+            >
+              {t('Export Data')}
+            </Button>
+          </span>
+        </Tooltip>
+      </Box>
+
       {/* Results Section - Show first if voting closed */}
       {votingClosed && results && (
         <>

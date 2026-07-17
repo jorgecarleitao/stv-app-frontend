@@ -360,6 +360,12 @@ export async function putBallot(
   }
 }
 
+// ===== Export API =====
+
+export function getExportUrl(electionId: string): string {
+  return `${BASE_URL}/elections/${electionId}/export`;
+}
+
 // ===== Simulator API =====
 
 /**

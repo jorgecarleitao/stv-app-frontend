@@ -1,4 +1,4 @@
-import { Fragment } from 'react';
+import { Fragment, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
@@ -16,6 +16,7 @@ import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
 import TableContainer from '@mui/material/TableContainer';
+import TablePagination from '@mui/material/TablePagination';
 import TableRow from '@mui/material/TableRow';
 import Tooltip from '@mui/material/Tooltip';
 import WithdrawnIcon from '@mui/icons-material/Cancel';
@@ -248,18 +249,41 @@ function RoundCard({ round }: { round: CountingLog['rounds'][0] }) {
 
 export function CountingLog({ log }: CountingLogProps) {
   const { t } = useTranslation();
+  const [expanded, setExpanded] = useState(false);
+  const [roundPage, setRoundPage] = useState(0);
+  const [roundsPerPage, setRoundsPerPage] = useState(5);
+
+  const paginatedRounds = log.rounds.slice(
+    roundPage * roundsPerPage,
+    (roundPage + 1) * roundsPerPage,
+  );
 
   return (
-    <Accordion elevation={2}>
+    <Accordion elevation={2} expanded={expanded} onChange={(_, e) => setExpanded(e)}>
       <AccordionSummary expandIcon={<ExpandMoreIcon />}>
         <Typography variant="h6">{t('Detailed Counting Log')}</Typography>
       </AccordionSummary>
       <AccordionDetails>
-        <HeaderSection log={log} />
-        <CandidatesSection candidates={log.candidates} />
-        {log.rounds.map(round => (
-          <RoundCard key={round.round_number} round={round} />
-        ))}
+        {expanded && (
+          <>
+            <HeaderSection log={log} />
+            <CandidatesSection candidates={log.candidates} />
+            {paginatedRounds.map(round => (
+              <RoundCard key={round.round_number} round={round} />
+            ))}
+            <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 2 }}>
+              <TablePagination
+                component="div"
+                count={log.rounds.length}
+                page={roundPage}
+                onPageChange={(_, p) => setRoundPage(p)}
+                rowsPerPage={roundsPerPage}
+                onRowsPerPageChange={e => { setRoundsPerPage(parseInt((e.target as HTMLInputElement).value, 10)); setRoundPage(0); }}
+                rowsPerPageOptions={[5, 10, 25]}
+              />
+            </Box>
+          </>
+        )}
       </AccordionDetails>
     </Accordion>
   );

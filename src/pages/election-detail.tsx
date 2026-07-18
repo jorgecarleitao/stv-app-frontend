@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'preact/hooks';
+import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Page } from '../components/Page';
 
@@ -10,18 +10,8 @@ import CircularProgress from '@mui/material/CircularProgress';
 import Button from '@mui/material/Button';
 import Grid from '@mui/material/Grid';
 import Avatar from '@mui/material/Avatar';
-import ListItemButton from '@mui/material/ListItemButton';
-import List from '@mui/material/List';
-import ListItem from '@mui/material/ListItem';
-import ListItemAvatar from '@mui/material/ListItemAvatar';
-import ListItemText from '@mui/material/ListItemText';
-import Accordion from '@mui/material/Accordion';
-import AccordionSummary from '@mui/material/AccordionSummary';
-import AccordionDetails from '@mui/material/AccordionDetails';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import PeopleIcon from '@mui/icons-material/People';
-import HowToVoteIcon from '@mui/icons-material/HowToVote';
 import DownloadIcon from '@mui/icons-material/Download';
 import Tooltip from '@mui/material/Tooltip';
 
@@ -30,17 +20,12 @@ import * as yaml from 'js-yaml';
 
 import { ElectionChips } from '../components/ElectionChips';
 import { ElectionResults } from '../components/ElectionResults';
+import { IndividualBallotsList } from '../components/IndividualBallotsList';
 import { PairwiseMatrix } from '../components/PairwiseMatrix';
-import { ResultsBallotGroups } from '../components/ResultsBallotGroups';
 import { ResultsSummary } from '../components/ResultsSummary';
 import { CountingLog } from '../components/CountingLog';
 
 import { getElection, getExportUrl, ElectionState, isCopelandResult } from '../data/api';
-
-// Convert API ranks (0-based) to UI ranks (1-based)
-function fromApiRanks(ranks: (number | null)[]): (number | null)[] {
-  return ranks.map(r => (r === null ? null : r + 1));
-}
 
 interface ElectionDetailProps {
   path?: string;
@@ -249,41 +234,11 @@ export default function ElectionDetail({ electionId }: ElectionDetailProps) {
           order={results.order}
         />
       )}
-      {/* Ballot Groups (Accordion) */}
-      {results && results.election.ballots.length > 0 && (
-        <ResultsBallotGroups
-          candidates={results.election.candidates}
-          ballots={results.election.ballots.map(b => ({ ...b, ranks: fromApiRanks(b.ranks ?? []) }))}
-          showIcon={true}
-        />
-      )}
-      {/* Individual Ballots List (Accordion) */}
-      {election.ballots && election.ballots.length > 0 && (
-        <Accordion elevation={2} sx={{ mb: 3 }}>
-          <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-            <Typography variant="h6">
-              {t('Individual Ballots')} ({election.ballots.length})
-            </Typography>
-          </AccordionSummary>
-          <AccordionDetails>
-            <List>
-              {election.ballots.map(uuid => (
-                <ListItem key={uuid} disablePadding>
-                  <ListItemButton component="a" href={`/elections/${election.id}/ballot/${uuid}`}>
-                    <ListItemAvatar>
-                      <Avatar sx={{ bgcolor: 'primary.main' }}>
-                        {uuid.substring(0, 2).toUpperCase()}
-                      </Avatar>
-                    </ListItemAvatar>
-                    <ListItemText primary={uuid} secondary={t('Click to view ballot details')} />
-                  </ListItemButton>
-                </ListItem>
-              ))}
-            </List>
-          </AccordionDetails>
-        </Accordion>
-      )}
-      {/* Election Log (Accordion) */}
+      <IndividualBallotsList
+        electionId={election.id}
+        ballots={election.ballots ?? []}
+      />
+      {/* Election Log (Accordion) - collapsed by default */}
       {results && <CountingLog log={results.log} />}
       {!results && votingClosed && casted === 0 && (
         <Alert severity="info">{t('Election closed without any vote')}</Alert>

@@ -1,3 +1,4 @@
+import { memo } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import Box from '@mui/material/Box';
@@ -20,7 +21,7 @@ interface CandidateRankSelectorProps {
 }
 
 // Reusable rank picker: buttons for small lists, dropdown for large ones.
-export function CandidateRankSelector({
+export const CandidateRankSelector = memo(function CandidateRankSelector({
   candidate,
   rank,
   maxRank,
@@ -114,4 +115,4 @@ export function CandidateRankSelector({
       </Stack>
     </Box>
   );
-}
+});

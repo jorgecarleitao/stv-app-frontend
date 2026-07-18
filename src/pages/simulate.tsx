@@ -26,7 +26,6 @@ import { Election, ElectionResult, simulateElection, ElectionType, isCopelandRes
 import { BallotsEditor } from '../ballot';
 import { ElectionResults } from '../components/ElectionResults';
 import { PairwiseMatrix } from '../components/PairwiseMatrix';
-import { ResultsBallotGroups } from '../components/ResultsBallotGroups';
 import { CountingLog } from '../components/CountingLog';
 import { ElectionSeatsConfig } from '../components/ElectionSeatsConfig';
 import { CandidatesList } from '../components/CandidatesList';
@@ -405,14 +404,6 @@ export default function Simulate({ path }: SimulateProps = {}) {
           candidates={result.election.candidates}
           pairwiseMatrix={result.pairwise_matrix}
           order={result.order}
-        />
-      )}
-
-      {/* Ballot Groups */}
-      {result && result.election.ballots.length > 0 && (
-        <ResultsBallotGroups
-          candidates={result.election.candidates}
-          ballots={result.election.ballots.map(b => ({ ...b, ranks: fromApiRanks(b.ranks ?? []) }))}
         />
       )}
 

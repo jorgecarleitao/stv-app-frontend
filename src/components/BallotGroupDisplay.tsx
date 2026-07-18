@@ -1,3 +1,4 @@
+import { memo } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import Box from '@mui/material/Box';
@@ -24,7 +25,7 @@ interface BallotGroupDisplayProps {
   subtitle?: string;
 }
 
-export function BallotGroupDisplay({
+export const BallotGroupDisplay = memo(function BallotGroupDisplay({
   candidates,
   ballot,
   groupNumber,
@@ -91,4 +92,4 @@ export function BallotGroupDisplay({
       </Stack>
     </Paper>
   );
-}
+});

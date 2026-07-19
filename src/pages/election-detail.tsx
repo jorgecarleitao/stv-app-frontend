@@ -25,7 +25,7 @@ import { PairwiseMatrix } from '../components/PairwiseMatrix';
 import { ResultsSummary } from '../components/ResultsSummary';
 import { CountingLog } from '../components/CountingLog';
 
-import { getElection, getExportUrl, ElectionState, isCopelandResult } from '../data/api';
+import { getElection, getExportUrl, ElectionState, isCopelandResult, isGroupedResult, ElectionResult } from '../data/api';
 
 interface ElectionDetailProps {
   path?: string;
@@ -181,12 +181,26 @@ export default function ElectionDetail({ electionId }: ElectionDetailProps) {
             electionType={election.election_type}
             onSimulate={handleSimulate}
             showSimulateButton={results.election.ballots.length > 0}
+            groups={isGroupedResult(results) ? results.groups : undefined}
+            groupResults={isGroupedResult(results) ? results.group_results : undefined}
           />
-          <ResultsSummary
-            log={results.log}
-            seats={election.seats}
-            numElected={results.elected.length}
-          />
+          {isGroupedResult(results) ? (
+            results.group_results.map((gr) => (
+              <ResultsSummary
+                key={gr.group}
+                log={gr.log}
+                seats={gr.seats}
+                numElected={gr.elected.length}
+                groupName={gr.group}
+              />
+            ))
+          ) : (
+            <ResultsSummary
+              log={results.log}
+              seats={election.seats}
+              numElected={results.elected.length}
+            />
+          )}
         </>
       )}
       {/* Candidates List */}
@@ -239,7 +253,7 @@ export default function ElectionDetail({ electionId }: ElectionDetailProps) {
         ballots={election.ballots ?? []}
       />
       {/* Election Log (Accordion) - collapsed by default */}
-      {results && <CountingLog log={results.log} />}
+      {results && <CountingLogSection results={results} />}
       {!results && votingClosed && casted === 0 && (
         <Alert severity="info">{t('Election closed without any vote')}</Alert>
       )}
@@ -248,4 +262,17 @@ export default function ElectionDetail({ electionId }: ElectionDetailProps) {
       )}
     </Page>
   );
+}
+
+function CountingLogSection({ results }: { results: ElectionResult }) {
+  if (isGroupedResult(results)) {
+    return (
+      <>
+        {results.group_results.map((gr) => (
+          <CountingLog key={gr.group} log={gr.log} groupName={gr.group} />
+        ))}
+      </>
+    );
+  }
+  return <CountingLog log={results.log} />;
 }

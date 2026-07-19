@@ -239,5 +239,21 @@
   "surplusTooltip": "Votos que excedem a quota, transferidos para as próximas preferências",
   "Elected": "Eleitos",
   "Hopeful": "Em disputa",
-  "Defeated": "Derrotados"
+  "Defeated": "Derrotados",
+  "STV-MD Grouped (by groups)": "STV-MD Agrupado (por grupos)",
+  "Groups": "Grupos",
+  "Group": "Grupo",
+  "Add Group": "Adicionar Grupo",
+  "No groups defined": "Nenhum grupo definido",
+  "Define groups and seat allocation per group. Total group seats must equal total seats.": "Defina grupos e alocação de lugares por grupo. O total de lugares dos grupos deve igualar o total de lugares.",
+  "At least 2 groups are required for grouped elections": "Pelo menos 2 grupos são necessários para eleições agrupadas",
+  "All groups must have a name": "Todos os grupos devem ter um nome",
+  "Group names must be unique": "Os nomes dos grupos devem ser únicos",
+  "Sum of group seats must equal total seats": "A soma dos lugares dos grupos deve igualar o total de lugares",
+  "All candidates must be assigned to a group": "Todos os candidatos devem ser atribuídos a um grupo",
+  "All Elected": "Todos os Eleitos",
+  "Assign each candidate to a group. Candidates in each group compete only for the seats allocated to that group.": "Atribua cada candidato a um grupo. Os candidatos em cada grupo competem apenas pelos lugares atribuídos a esse grupo.",
+  "Candidates are split into predefined groups (e.g., female/male) with a specific number of seats allocated to each group. STV is run independently within each group. Use this to guarantee representation for each group — for example, in parity elections where a certain number of seats must be filled by each group.": "Os candidatos são divididos em grupos predefinidos (ex.: feminino/masculino) com um número específico de lugares atribuídos a cada grupo. O STV é executado independentemente dentro de cada grupo. Use isto para garantir representação para cada grupo — por exemplo, em eleições de paridade onde um certo número de lugares deve ser preenchido por cada grupo.",
+  "When using this type, you define the groups and their seat counts in the election setup, then assign each candidate to a group. A voter's ballot is evaluated separately per group: only candidates from that group are considered, preserving the voter's relative preference order.": "Ao usar este tipo, defina os grupos e os seus lugares na configuração da eleição e depois atribua cada candidato a um grupo. O boletim de voto é avaliado separadamente por grupo: apenas os candidatos desse grupo são considerados, preservando a ordem de preferência relativa do eleitor.",
+  "The system shows elected candidates, optional Copeland ranking, detailed counting rounds, and the pairwise comparison matrix. For grouped elections, results are displayed per group with separate counting logs for each group.": "O sistema mostra os candidatos eleitos, classificação Copeland opcional, rondas de contagem detalhadas e a matriz de comparação pairwise. Para eleições agrupadas, os resultados são exibidos por grupo com registos de contagem separados para cada grupo."
 }

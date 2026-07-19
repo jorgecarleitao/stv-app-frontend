@@ -22,13 +22,14 @@ import CircularProgress from '@mui/material/CircularProgress';
 import LZString from 'lz-string';
 import * as yaml from 'js-yaml';
 
-import { Election, ElectionResult, simulateElection, ElectionType, isCopelandResult } from '../data/api';
+import { Election, ElectionResult, simulateElection, ElectionType, isCopelandResult, isGroupedResult, GroupConfig } from '../data/api';
 import { BallotsEditor } from '../ballot';
 import { ElectionResults } from '../components/ElectionResults';
 import { PairwiseMatrix } from '../components/PairwiseMatrix';
 import { CountingLog } from '../components/CountingLog';
 import { ElectionSeatsConfig } from '../components/ElectionSeatsConfig';
 import { CandidatesList } from '../components/CandidatesList';
+import { GroupConfigList } from '../components/GroupConfigList';
 import { ResultsSummary } from '../components/ResultsSummary';
 
 // Convert UI ranks (1-based) to API ranks (0-based)
@@ -48,29 +49,31 @@ const defaultElection: Election = {
   ballots: [
     {
       votes: 11,
-      ranks: [0, 3, 4, 1, 2], // Elena > André > Sofia > Marco > Lucia
+      ranks: [0, 3, 4, 1, 2],
     },
     {
       votes: 4,
-      ranks: [0, 3, 4, 2, 1], // Elena > Sofia > André > Marco > Lucia
+      ranks: [0, 3, 4, 2, 1],
     },
     {
       votes: 9,
-      ranks: [2, 0, 1, 3, 4], // Marco > Lucia > Elena > André > Sofia
+      ranks: [2, 0, 1, 3, 4],
     },
     {
       votes: 8,
-      ranks: [2, 3, 0, 1, 4], // Lucia > André > Elena > Marco > Sofia
+      ranks: [2, 3, 0, 1, 4],
     },
     {
       votes: 4,
-      ranks: [4, 3, 2, 1, 0], // Sofia > André > Lucia > Marco > Elena
+      ranks: [4, 3, 2, 1, 0],
     },
     {
       votes: 3,
-      ranks: [3, 4, 2, 0, 1], // André > Sofia > Lucia > Elena > Marco
+      ranks: [3, 4, 2, 0, 1],
     },
   ],
+  groups: [],
+  candidate_groups: [],
 };
 
 const HEADER = 'h5';
@@ -193,6 +196,18 @@ export default function Simulate({ path }: SimulateProps = {}) {
     });
   };
 
+  const handleCandidateGroupChange = (idx: number, group: string) => {
+    setElection(e => {
+      const newGroups = [...(e.candidate_groups ?? [])];
+      newGroups[idx] = group;
+      return { ...e, candidate_groups: newGroups };
+    });
+  };
+
+  const handleGroupsChange = (groups: GroupConfig[]) => {
+    setElection(e => ({ ...e, groups }));
+  };
+
   const handleAddBallot = () => {
     setElection(e => ({
       ...e,
@@ -304,9 +319,35 @@ export default function Simulate({ path }: SimulateProps = {}) {
           electionType={election.election_type}
           maxSeats={election.candidates.length}
           onNumSeatsChange={val => setElection(el => ({ ...el, seats: val }))}
-          onElectionTypeChange={val => setElection(el => ({ ...el, election_type: val }))}
+          onElectionTypeChange={val => {
+            setElection(el => {
+              const isGrouped = val === 'stv-md-grouped';
+              return {
+                ...el,
+                election_type: val,
+                groups: isGrouped && el.groups?.length === 0
+                  ? [{ name: 'Group A', seats: 1 }, { name: 'Group B', seats: 1 }]
+                  : el.groups ?? [],
+                candidate_groups: isGrouped && el.candidate_groups?.length === 0
+                  ? el.candidates.map(() => '')
+                  : el.candidate_groups ?? [],
+              };
+            });
+          }}
         />
       </Paper>
+
+      {election.election_type === 'stv-md-grouped' && (
+        <Paper elevation={4} sx={{ p: 3 }}>
+          <Typography variant={HEADER} gutterBottom>
+            {t('Groups')}
+          </Typography>
+          <GroupConfigList
+            groups={election.groups ?? []}
+            onGroupsChange={handleGroupsChange}
+          />
+        </Paper>
+      )}
 
       <Paper elevation={4} sx={{ p: 3 }}>
         <Typography variant={HEADER} gutterBottom>
@@ -314,7 +355,11 @@ export default function Simulate({ path }: SimulateProps = {}) {
         </Typography>
         <CandidatesList
           candidates={election.candidates}
+          electionType={election.election_type}
+          groups={election.election_type === 'stv-md-grouped' ? election.groups : undefined}
+          candidateGroups={election.candidate_groups}
           onCandidateChange={handleRenameCandidate}
+          onCandidateGroupChange={election.election_type === 'stv-md-grouped' ? handleCandidateGroupChange : undefined}
           onAddCandidate={handleAddCandidate}
           onRemoveCandidate={handleRemoveCandidate}
         />
@@ -386,17 +431,32 @@ export default function Simulate({ path }: SimulateProps = {}) {
 
       {/* Results */}
       {result && (
-        <ElectionResults elected={result.elected} electionType={election.election_type} />
+        <ElectionResults
+          elected={result.elected}
+          electionType={election.election_type}
+          groups={isGroupedResult(result) ? result.groups : undefined}
+          groupResults={isGroupedResult(result) ? result.group_results : undefined}
+        />
       )}
 
       {/* Results Summary */}
-      {result && (
+      {result && isGroupedResult(result) ? (
+        result.group_results.map((gr) => (
+          <ResultsSummary
+            key={gr.group}
+            log={gr.log}
+            seats={gr.seats}
+            numElected={gr.elected.length}
+            groupName={gr.group}
+          />
+        ))
+      ) : result ? (
         <ResultsSummary
           log={result.log}
           seats={election.seats}
           numElected={result.elected.length}
         />
-      )}
+      ) : null}
 
       {/* Pairwise Comparison Matrix */}
       {result && isCopelandResult(result) && (
@@ -407,8 +467,14 @@ export default function Simulate({ path }: SimulateProps = {}) {
         />
       )}
 
-      {/* Detailed Counting Log */}
-      {result && <CountingLog log={result.log} />}
+      {/* Detailed Counting Log (per group for grouped results) */}
+      {result && isGroupedResult(result) ? (
+        result.group_results.map((gr) => (
+          <CountingLog key={gr.group} log={gr.log} groupName={gr.group} />
+        ))
+      ) : result ? (
+        <CountingLog log={result.log} />
+      ) : null}
     </Page>
   );
 }

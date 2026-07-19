@@ -28,7 +28,9 @@ import { BallotTokensList } from '../components/BallotTokensList';
 import { ElectionBasicInfo } from '../components/ElectionBasicInfo';
 import { ElectionSeatsConfig } from '../components/ElectionSeatsConfig';
 import { CandidatesList } from '../components/CandidatesList';
+import { GroupConfigList } from '../components/GroupConfigList';
 import { ElectionTimeConfig } from '../components/ElectionTimeConfig';
+import type { GroupConfig } from '../data/api';
 
 interface ElectionAdminProps {
   path?: string;
@@ -60,6 +62,8 @@ export default function ElectionAdmin({ electionId, adminUuid }: ElectionAdminPr
   const [editNumSeats, setEditNumSeats] = useState(1);
   const [editElectionType, setEditElectionType] = useState<ElectionType>('stv-md');
   const [editCandidates, setEditCandidates] = useState<string[]>(['']);
+  const [editGroups, setEditGroups] = useState<GroupConfig[]>([]);
+  const [editCandidateGroups, setEditCandidateGroups] = useState<string[]>([]);
   const [editStartTime, setEditStartTime] = useState('');
   const [editEndTime, setEditEndTime] = useState('');
 
@@ -102,6 +106,13 @@ export default function ElectionAdmin({ electionId, adminUuid }: ElectionAdminPr
     setEditNumSeats(data.num_seats);
     setEditElectionType(data.election_type);
     setEditCandidates([...data.candidates]);
+    if (data.election_type === 'stv-md-grouped') {
+      setEditGroups([...data.groups]);
+      setEditCandidateGroups([...data.candidate_groups]);
+    } else {
+      setEditGroups([]);
+      setEditCandidateGroups([]);
+    }
     setEditStartTime(formatDateTimeLocal(new Date(data.start_time)));
     setEditEndTime(formatDateTimeLocal(new Date(data.end_time)));
   };
@@ -153,6 +164,37 @@ export default function ElectionAdmin({ electionId, adminUuid }: ElectionAdminPr
       hasError = true;
     }
 
+    // Validate groups for grouped elections
+    if (editElectionType === 'stv-md-grouped') {
+      if (editGroups.length < 2) {
+        setError(t('At least 2 groups are required for grouped elections'));
+        hasError = true;
+      } else {
+        const groupNames = editGroups.map(g => g.name.trim());
+        const uniqueNames = new Set(groupNames);
+        if (groupNames.some(n => !n)) {
+          setError(t('All groups must have a name'));
+          hasError = true;
+        } else if (uniqueNames.size !== groupNames.length) {
+          setError(t('Group names must be unique'));
+          hasError = true;
+        }
+
+        const totalGroupSeats = editGroups.reduce((sum, g) => sum + g.seats, 0);
+        if (totalGroupSeats !== editNumSeats) {
+          setSeatsError(t('Sum of group seats must equal total seats'));
+          hasError = true;
+        }
+
+        // Check all candidates are assigned to a group
+        const assignedGroups = editCandidateGroups.filter(g => g.trim().length > 0);
+        if (assignedGroups.length < validCandidates.length) {
+          setCandidatesError(t('All candidates must be assigned to a group'));
+          hasError = true;
+        }
+      }
+    }
+
     // Validate datetime fields
     if (!editStartTime || !editEndTime) {
       setDateTimeError(t('Start and end times are required'));
@@ -181,15 +223,19 @@ export default function ElectionAdmin({ electionId, adminUuid }: ElectionAdminPr
     try {
       setSaving(true);
 
-      const request: CreateElectionRequest = {
+      const common = {
         title: editTitle.trim(),
         description: editDescription.trim() || null,
         candidates: validCandidates,
         num_seats: editNumSeats,
-        election_type: editElectionType,
         start_time: startDate.toISOString(),
         end_time: endDate.toISOString(),
       };
+      const request: CreateElectionRequest = editElectionType === 'stv-md-grouped'
+        ? { ...common, election_type: 'stv-md-grouped' as const, groups: editGroups, candidate_groups: editCandidateGroups }
+        : editElectionType === 'stv-md-coperland'
+          ? { ...common, election_type: 'stv-md-coperland' as const }
+          : { ...common, election_type: 'stv-md' as const };
 
       if (isCreateMode) {
         // Create new election
@@ -215,14 +261,22 @@ export default function ElectionAdmin({ electionId, adminUuid }: ElectionAdminPr
     setEditCandidates(newCandidates);
   };
 
+  const handleCandidateGroupChange = (index: number, group: string) => {
+    const newGroups = [...editCandidateGroups];
+    newGroups[index] = group;
+    setEditCandidateGroups(newGroups);
+  };
+
   const handleAddCandidate = () => {
     setEditCandidates([...editCandidates, '']);
+    setEditCandidateGroups([...editCandidateGroups, '']);
   };
 
   const handleRemoveCandidate = (index: number) => {
     if (editCandidates.length > 1) {
       const newCandidates = editCandidates.filter((_, i) => i !== index);
       setEditCandidates(newCandidates);
+      setEditCandidateGroups(editCandidateGroups.filter((_, i) => i !== index));
     }
   };
 
@@ -427,11 +481,39 @@ export default function ElectionAdmin({ electionId, adminUuid }: ElectionAdminPr
                 setEditNumSeats(value);
                 if (seatsError) setSeatsError(null);
               }}
-              onElectionTypeChange={setEditElectionType}
+              onElectionTypeChange={(value) => {
+                setEditElectionType(value);
+                if (value === 'stv-md-grouped') {
+                  // Initialize with default groups if empty
+                  if (editGroups.length === 0) {
+                    setEditGroups([{ name: '', seats: 1 }, { name: '', seats: 1 }]);
+                  }
+                  // Ensure candidateGroups is in sync
+                  if (editCandidateGroups.length < editCandidates.length) {
+                    setEditCandidateGroups(editCandidates.map(() => ''));
+                  }
+                }
+              }}
               disabled={saving}
               seatsError={seatsError}
             />
           </Paper>
+
+          {editElectionType === 'stv-md-grouped' && (
+            <Paper elevation={3} sx={{ p: 3 }}>
+              <Typography variant="h5" gutterBottom>
+                {t('Groups')}
+              </Typography>
+              <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+                {t('Define groups and seat allocation per group. Total group seats must equal total seats.')}
+              </Typography>
+              <GroupConfigList
+                groups={editGroups}
+                onGroupsChange={setEditGroups}
+                disabled={saving || election?.is_locked}
+              />
+            </Paper>
+          )}
 
           <Paper elevation={3} sx={{ p: 3 }}>
             <Typography variant="h5" gutterBottom>
@@ -439,10 +521,14 @@ export default function ElectionAdmin({ electionId, adminUuid }: ElectionAdminPr
             </Typography>
             <CandidatesList
               candidates={editCandidates}
+              electionType={editElectionType}
+              groups={editElectionType === 'stv-md-grouped' ? editGroups : undefined}
+              candidateGroups={editCandidateGroups}
               onCandidateChange={(index, value) => {
                 handleCandidateChange(index, value);
                 if (candidatesError) setCandidatesError(null);
               }}
+              onCandidateGroupChange={editElectionType === 'stv-md-grouped' ? handleCandidateGroupChange : undefined}
               onAddCandidate={handleAddCandidate}
               onRemoveCandidate={handleRemoveCandidate}
               disabled={saving || election?.is_locked}

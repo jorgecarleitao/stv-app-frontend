@@ -28,6 +28,7 @@ import type { CountingLog, CountingLogAction } from '../data/api';
 
 interface CountingLogProps {
   log: CountingLog;
+  groupName?: string;
 }
 
 function formatActionType(
@@ -247,7 +248,7 @@ function RoundCard({ round }: { round: CountingLog['rounds'][0] }) {
   );
 }
 
-export function CountingLog({ log }: CountingLogProps) {
+export function CountingLog({ log, groupName }: CountingLogProps) {
   const { t } = useTranslation();
   const [expanded, setExpanded] = useState(false);
   const [roundPage, setRoundPage] = useState(0);
@@ -258,10 +259,14 @@ export function CountingLog({ log }: CountingLogProps) {
     (roundPage + 1) * roundsPerPage,
   );
 
+  const title = groupName
+    ? `${t('Counting Log')}: ${groupName}`
+    : t('Detailed Counting Log');
+
   return (
     <Accordion elevation={2} expanded={expanded} onChange={(_, e) => setExpanded(e)}>
       <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-        <Typography variant="h6">{t('Detailed Counting Log')}</Typography>
+        <Typography variant="h6">{title}</Typography>
       </AccordionSummary>
       <AccordionDetails>
         {expanded && (

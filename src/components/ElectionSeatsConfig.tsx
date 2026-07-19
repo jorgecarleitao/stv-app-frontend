@@ -46,7 +46,7 @@ export function ElectionSeatsConfig({
 
       <Tooltip
         title={t(
-          'STV-MD: Winners are identified without ranking. STV-MD Copeland: Winners are ranked by position using pairwise comparison.'
+          'STV-MD: Winners are identified without ranking. STV-MD Copeland: Winners are ranked by position using pairwise comparison. STV-MD Grouped: Candidates are split into groups and STV is run independently per group.'
         )}
         placement="right"
         arrow
@@ -57,10 +57,11 @@ export function ElectionSeatsConfig({
             labelId="election-type-label"
             value={electionType}
             label={t('Election Type')}
-            onChange={e => onElectionTypeChange(e.target.value as ElectionType)}
+            onChange={e => onElectionTypeChange((e.target as HTMLSelectElement).value as ElectionType)}
           >
             <MenuItem value="stv-md">{t('STV-MD (unordered)')}</MenuItem>
             <MenuItem value="stv-md-coperland">{t('STV-MD Copeland (ordered)')}</MenuItem>
+            <MenuItem value="stv-md-grouped">{t('STV-MD Grouped (by groups)')}</MenuItem>
           </Select>
         </FormControl>
       </Tooltip>

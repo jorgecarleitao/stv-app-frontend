@@ -52,7 +52,7 @@ export default function AdminUserGuide({ path }: Props = {}) {
         'After the voting period ends, results are calculated automatically and published on the public election page.'
       ),
       hint: t(
-        'The system shows elected candidates, Copeland ranking, detailed counting rounds, and the pairwise comparison matrix.'
+        'The system shows elected candidates, optional Copeland ranking, detailed counting rounds, and the pairwise comparison matrix. For grouped elections, results are displayed per group with separate counting logs for each group.'
       ),
     },
   ];
@@ -121,6 +121,21 @@ export default function AdminUserGuide({ path }: Props = {}) {
             <Typography variant="body2" color="text.secondary">
               {t(
                 "Technical note: After STV determines the winners, they are ranked using Copeland's pairwise comparison method based on voter preferences."
+              )}
+            </Typography>
+          </Box>
+          <Box>
+            <Typography variant="subtitle2" gutterBottom sx={{ fontWeight: 'bold' }}>
+              {t('STV-MD Grouped (by groups)')}
+            </Typography>
+            <Typography variant="body2" paragraph>
+              {t(
+                'Candidates are split into predefined groups (e.g., female/male) with a specific number of seats allocated to each group. STV is run independently within each group. Use this to guarantee representation for each group — for example, in parity elections where a certain number of seats must be filled by each group.'
+              )}
+            </Typography>
+            <Typography variant="body2" color="text.secondary">
+              {t(
+                'When using this type, you define the groups and their seat counts in the election setup, then assign each candidate to a group. A voter\'s ballot is evaluated separately per group: only candidates from that group are considered, preserving the voter\'s relative preference order.'
               )}
             </Typography>
           </Box>

@@ -16,6 +16,7 @@ interface ResultsSummaryProps {
   log: CountingLog;
   seats: number;
   numElected: number;
+  groupName?: string;
 }
 
 function CandidateStatusIcon({ status }: { status: CountingLogAction['candidate_counts'][0]['status'] }) {
@@ -69,7 +70,7 @@ function FinalRoundVotes({ log }: { log: CountingLog }) {
   );
 }
 
-export function ResultsSummary({ log, seats, numElected }: ResultsSummaryProps) {
+export function ResultsSummary({ log, seats, numElected, groupName }: ResultsSummaryProps) {
   const { t } = useTranslation();
   const { header } = log;
   const numRounds = log.rounds.length;
@@ -78,7 +79,7 @@ export function ResultsSummary({ log, seats, numElected }: ResultsSummaryProps) 
   return (
     <Paper elevation={3} sx={{ p: 3 }}>
       <Typography variant="h5" gutterBottom>
-        {t('Results')}
+        {groupName ? `${t('Group')}: ${groupName}` : t('Results')}
       </Typography>
       <Stack direction="row" flexWrap="wrap" gap={1} sx={{ mb: 1 }}>
         <Chip label={`${t('Quota')}: ${header.quota}`} size="small" color="primary" variant="outlined" />

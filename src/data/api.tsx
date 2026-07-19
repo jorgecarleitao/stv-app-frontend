@@ -2,7 +2,12 @@ const BASE_URL = '/api';
 
 // ===== Shared Data Structures =====
 
-export type ElectionType = 'stv-md' | 'stv-md-coperland';
+export type ElectionType = 'stv-md' | 'stv-md-coperland' | 'stv-md-grouped';
+
+export interface GroupConfig {
+  name: string;
+  seats: number;
+}
 
 export interface Ballot {
   votes: number;
@@ -14,6 +19,8 @@ export interface Election {
   seats: number;
   election_type: ElectionType;
   ballots: Ballot[];
+  groups?: GroupConfig[];
+  candidate_groups?: string[];
 }
 
 export interface Elected {
@@ -84,6 +91,14 @@ export interface CountingLog {
 
 // ===== Election Result (tagged union) =====
 
+export interface GroupResult {
+  group: string;
+  seats: number;
+  election: Election;
+  log: CountingLog;
+  elected: Elected[];
+}
+
 export type ElectionResult =
   | {
       type: 'stv-md';
@@ -98,26 +113,84 @@ export type ElectionResult =
       elected: Elected[];
       order: Record<string, number>;
       pairwise_matrix: number[][];
+    }
+  | {
+      type: 'stv-md-grouped';
+      election: Election;
+      groups: GroupConfig[];
+      group_results: GroupResult[];
+      elected: Elected[];
     };
+
+// ===== Helpers for discriminated unions =====
+
+export function isGroupedElectionConfig(
+  c: ElectionConfig
+): c is Extract<ElectionConfig, { election_type: 'stv-md-grouped' }> {
+  return c.election_type === 'stv-md-grouped';
+}
+
+export function isGroupedElectionResponse(
+  r: ElectionResponse
+): r is Extract<ElectionResponse, { election_type: 'stv-md-grouped' }> {
+  return r.election_type === 'stv-md-grouped';
+}
+
+export function isGroupedElectionRequest(
+  r: CreateElectionRequest
+): r is Extract<CreateElectionRequest, { election_type: 'stv-md-grouped' }> {
+  return r.election_type === 'stv-md-grouped';
+}
 
 export function isCopelandResult(r: ElectionResult): r is Extract<ElectionResult, { type: 'stv-md-coperland' }> {
   return r.type === 'stv-md-coperland';
 }
 
+export function isGroupedResult(r: ElectionResult): r is Extract<ElectionResult, { type: 'stv-md-grouped' }> {
+  return r.type === 'stv-md-grouped';
+}
+
 // ===== Elections API =====
 
-export interface ElectionConfig {
-  id: string;
-  title: string;
-  description?: string;
-  candidates: string[];
-  seats: number;
-  election_type: ElectionType;
-  start_time: string;
-  end_time: string;
-  number_of_ballots: number;
-  ballots?: string[];
-}
+export type ElectionConfig =
+  | {
+      election_type: 'stv-md';
+      id: string;
+      title: string;
+      description?: string;
+      candidates: string[];
+      seats: number;
+      start_time: string;
+      end_time: string;
+      number_of_ballots: number;
+      ballots?: string[];
+    }
+  | {
+      election_type: 'stv-md-coperland';
+      id: string;
+      title: string;
+      description?: string;
+      candidates: string[];
+      seats: number;
+      start_time: string;
+      end_time: string;
+      number_of_ballots: number;
+      ballots?: string[];
+    }
+  | {
+      election_type: 'stv-md-grouped';
+      id: string;
+      title: string;
+      description?: string;
+      candidates: string[];
+      seats: number;
+      start_time: string;
+      end_time: string;
+      number_of_ballots: number;
+      ballots?: string[];
+      groups: GroupConfig[];
+      candidate_groups: string[];
+    };
 
 export interface ElectionState {
   election: ElectionConfig;
@@ -126,28 +199,76 @@ export interface ElectionState {
   results?: ElectionResult;
 }
 
-export interface CreateElectionRequest {
-  title: string;
-  description?: string | null;
-  candidates: string[];
-  num_seats: number;
-  election_type: ElectionType;
-  start_time: string;
-  end_time: string;
-}
+export type CreateElectionRequest =
+  | {
+      election_type: 'stv-md';
+      title: string;
+      description?: string | null;
+      candidates: string[];
+      num_seats: number;
+      start_time: string;
+      end_time: string;
+    }
+  | {
+      election_type: 'stv-md-coperland';
+      title: string;
+      description?: string | null;
+      candidates: string[];
+      num_seats: number;
+      start_time: string;
+      end_time: string;
+    }
+  | {
+      election_type: 'stv-md-grouped';
+      title: string;
+      description?: string | null;
+      candidates: string[];
+      num_seats: number;
+      start_time: string;
+      end_time: string;
+      groups: GroupConfig[];
+      candidate_groups: string[];
+    };
 
-export interface ElectionResponse {
-  uuid: string;
-  admin_uuid: string;
-  title: string;
-  description?: string | null;
-  candidates: string[];
-  num_seats: number;
-  election_type: ElectionType;
-  start_time: string;
-  end_time: string;
-  is_locked: boolean;
-}
+export type ElectionResponse =
+  | {
+      election_type: 'stv-md';
+      uuid: string;
+      admin_uuid: string;
+      title: string;
+      description?: string | null;
+      candidates: string[];
+      num_seats: number;
+      start_time: string;
+      end_time: string;
+      is_locked: boolean;
+    }
+  | {
+      election_type: 'stv-md-coperland';
+      uuid: string;
+      admin_uuid: string;
+      title: string;
+      description?: string | null;
+      candidates: string[];
+      num_seats: number;
+      start_time: string;
+      end_time: string;
+      is_locked: boolean;
+    }
+  | {
+      election_type: 'stv-md-grouped';
+      uuid: string;
+      admin_uuid: string;
+      title: string;
+      description?: string | null;
+      candidates: string[];
+      num_seats: number;
+      start_time: string;
+      end_time: string;
+      is_locked: boolean;
+      groups: GroupConfig[];
+      candidate_groups: string[];
+    };
 
 /**
  * Fetch list of all available elections

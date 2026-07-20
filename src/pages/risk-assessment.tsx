@@ -20,190 +20,180 @@ interface RiskAssessmentProps {
   path?: string;
 }
 
+interface Threat {
+  threat: string;
+  description: string;
+  likelihood: string;
+  impact: string;
+  mitigation: string;
+  residualRisk: string;
+}
+
 export default function RiskAssessment({}: RiskAssessmentProps = {}) {
   const { t } = useTranslation();
 
-  const risks = [
+  const risks: Threat[] = [
     {
-      threat: 'Token Interception',
-      description: 'An attacker intercepts a ballot token URL during distribution',
-      likelihood: 'Medium',
-      impact: 'Low',
-      mitigation:
-        'Tokens are single-use UUIDs. Use secure distribution channels (encrypted messaging, email). Electoral commission should use secure communication.',
-      residualRisk: 'Low',
+      threat: t('riskAssessment.threat.tokenInterception.title'),
+      description: t('riskAssessment.threat.tokenInterception.description'),
+      likelihood: t('riskAssessment.threat.tokenInterception.likelihood'),
+      impact: t('riskAssessment.threat.tokenInterception.impact'),
+      mitigation: t('riskAssessment.threat.tokenInterception.mitigation'),
+      residualRisk: t('riskAssessment.threat.tokenInterception.residualRisk'),
     },
     {
-      threat: 'Ballot Token Theft',
-      description: 'An attacker obtains a ballot token before the voter uses it',
-      likelihood: 'Low',
-      impact: 'Low',
-      mitigation:
-        'Tokens are single-use and can only be redeemed once. If a voter notices their token was used, they can report to electoral commission.',
-      residualRisk: 'Low',
+      threat: t('riskAssessment.threat.ballotTokenTheft.title'),
+      description: t('riskAssessment.threat.ballotTokenTheft.description'),
+      likelihood: t('riskAssessment.threat.ballotTokenTheft.likelihood'),
+      impact: t('riskAssessment.threat.ballotTokenTheft.impact'),
+      mitigation: t('riskAssessment.threat.ballotTokenTheft.mitigation'),
+      residualRisk: t('riskAssessment.threat.ballotTokenTheft.residualRisk'),
     },
     {
-      threat: 'Database Compromise',
-      description: 'An attacker gains access to the database',
-      likelihood: 'Low',
-      impact: 'High',
-      mitigation:
-        'Election results remain valid (ballots are public after election). Unredeemed tokens could be compromised. Use strong access controls, regular backups, and security updates.',
-      residualRisk: 'Medium',
+      threat: t('riskAssessment.threat.databaseCompromise.title'),
+      description: t('riskAssessment.threat.databaseCompromise.description'),
+      likelihood: t('riskAssessment.threat.databaseCompromise.likelihood'),
+      impact: t('riskAssessment.threat.databaseCompromise.impact'),
+      mitigation: t('riskAssessment.threat.databaseCompromise.mitigation'),
+      residualRisk: t('riskAssessment.threat.databaseCompromise.residualRisk'),
     },
     {
-      threat: 'Server Compromise',
-      description: 'An attacker gains control of the server',
-      likelihood: 'Low',
-      impact: 'Critical',
-      mitigation:
-        'Regular security updates, minimal exposed ports, proper firewall configuration. Deploy using Docker with non-root user. Use reverse proxy with automatic TLS.',
-      residualRisk: 'Medium',
+      threat: t('riskAssessment.threat.serverCompromise.title'),
+      description: t('riskAssessment.threat.serverCompromise.description'),
+      likelihood: t('riskAssessment.threat.serverCompromise.likelihood'),
+      impact: t('riskAssessment.threat.serverCompromise.impact'),
+      mitigation: t('riskAssessment.threat.serverCompromise.mitigation'),
+      residualRisk: t('riskAssessment.threat.serverCompromise.residualRisk'),
     },
     {
-      threat: 'Coercion/Vote Buying',
-      description: 'Voter is forced to vote a certain way or sells their vote',
-      likelihood: 'Varies',
-      impact: 'Medium',
-      mitigation:
-        'Ballot UUID is only known to the voter. However, voters can prove how they voted by sharing their ballot UUID. Unsuitable for elections with high coercion risk.',
-      residualRisk: 'High',
+      threat: t('riskAssessment.threat.coercion.title'),
+      description: t('riskAssessment.threat.coercion.description'),
+      likelihood: t('riskAssessment.threat.coercion.likelihood'),
+      impact: t('riskAssessment.threat.coercion.impact'),
+      mitigation: t('riskAssessment.threat.coercion.mitigation'),
+      residualRisk: t('riskAssessment.threat.coercion.residualRisk'),
     },
     {
-      threat: 'Denial of Service (DDoS)',
-      description: 'Attackers overwhelm the server to prevent voting',
-      likelihood: 'Low',
-      impact: 'High',
-      mitigation:
-        'STVote.eu is protected by Cloudflare, providing enterprise-grade DDoS mitigation. Additional protections: rate limiting at application level, automatic TLS via Caddy. If service disruption occurs, voting period can be extended.',
-      residualRisk: 'Low',
+      threat: t('riskAssessment.threat.ddos.title'),
+      description: t('riskAssessment.threat.ddos.description'),
+      likelihood: t('riskAssessment.threat.ddos.likelihood'),
+      impact: t('riskAssessment.threat.ddos.impact'),
+      mitigation: t('riskAssessment.threat.ddos.mitigation'),
+      residualRisk: t('riskAssessment.threat.ddos.residualRisk'),
     },
     {
-      threat: 'Admin UUID Leakage',
-      description: 'Election admin UUID is exposed allowing unauthorized modifications',
-      likelihood: 'Low',
-      impact: 'High',
-      mitigation:
-        'Admin UUIDs should be kept confidential. Elections become locked after first vote is cast. Use secure URL sharing practices.',
-      residualRisk: 'Low',
+      threat: t('riskAssessment.threat.adminUuidLeakage.title'),
+      description: t('riskAssessment.threat.adminUuidLeakage.description'),
+      likelihood: t('riskAssessment.threat.adminUuidLeakage.likelihood'),
+      impact: t('riskAssessment.threat.adminUuidLeakage.impact'),
+      mitigation: t('riskAssessment.threat.adminUuidLeakage.mitigation'),
+      residualRisk: t('riskAssessment.threat.adminUuidLeakage.residualRisk'),
     },
     {
-      threat: 'Supply Chain Attack',
-      description: 'Compromised dependency in software supply chain',
-      likelihood: 'Low',
-      impact: 'Critical',
-      mitigation:
-        'All source code is open source and auditable. Use dependency scanning, regular updates, and review dependencies.',
-      residualRisk: 'Low',
+      threat: t('riskAssessment.threat.supplyChain.title'),
+      description: t('riskAssessment.threat.supplyChain.description'),
+      likelihood: t('riskAssessment.threat.supplyChain.likelihood'),
+      impact: t('riskAssessment.threat.supplyChain.impact'),
+      mitigation: t('riskAssessment.threat.supplyChain.mitigation'),
+      residualRisk: t('riskAssessment.threat.supplyChain.residualRisk'),
     },
     {
-      threat: 'Voter Privacy Breach',
-      description: 'Linking ballots back to voters through timing or other metadata',
-      likelihood: 'Low',
-      impact: 'High',
-      mitigation:
-        'Ballot-token association is permanently erased upon token redemption. No IP logging or tracking. Ballots are only revealed after election ends.',
-      residualRisk: 'Low',
+      threat: t('riskAssessment.threat.voterPrivacy.title'),
+      description: t('riskAssessment.threat.voterPrivacy.description'),
+      likelihood: t('riskAssessment.threat.voterPrivacy.likelihood'),
+      impact: t('riskAssessment.threat.voterPrivacy.impact'),
+      mitigation: t('riskAssessment.threat.voterPrivacy.mitigation'),
+      residualRisk: t('riskAssessment.threat.voterPrivacy.residualRisk'),
     },
     {
-      threat: 'Result Manipulation',
-      description: 'Someone tries to manipulate the election results',
-      likelihood: 'Low',
-      impact: 'Critical',
-      mitigation:
-        'All ballots are public after election ends. Anyone can verify the counting using the published algorithm. Results are auditable and reproducible.',
-      residualRisk: 'Very Low',
+      threat: t('riskAssessment.threat.resultManipulation.title'),
+      description: t('riskAssessment.threat.resultManipulation.description'),
+      likelihood: t('riskAssessment.threat.resultManipulation.likelihood'),
+      impact: t('riskAssessment.threat.resultManipulation.impact'),
+      mitigation: t('riskAssessment.threat.resultManipulation.mitigation'),
+      residualRisk: t('riskAssessment.threat.resultManipulation.residualRisk'),
     },
     {
-      threat: 'Phishing Attacks',
-      description: 'Attackers create fake voting sites to steal tokens or mislead voters',
-      likelihood: 'Medium',
-      impact: 'Medium',
-      mitigation:
-        'Electoral commission should educate voters about the official domain (stvote.eu). Use HTTPS with valid certificates. Voters should verify the URL before entering tokens.',
-      residualRisk: 'Medium',
+      threat: t('riskAssessment.threat.phishing.title'),
+      description: t('riskAssessment.threat.phishing.description'),
+      likelihood: t('riskAssessment.threat.phishing.likelihood'),
+      impact: t('riskAssessment.threat.phishing.impact'),
+      mitigation: t('riskAssessment.threat.phishing.mitigation'),
+      residualRisk: t('riskAssessment.threat.phishing.residualRisk'),
     },
     {
-      threat: 'Client-Side Compromise',
-      description: "Voter's device or browser is compromised (malware, malicious extensions)",
-      likelihood: 'Low',
-      impact: 'Low',
-      mitigation:
-        'Vote can only affect individual voter. No administrative access from client. Voters should use trusted devices and updated browsers. Consider using private/incognito mode.',
-      residualRisk: 'Low',
+      threat: t('riskAssessment.threat.clientSideCompromise.title'),
+      description: t('riskAssessment.threat.clientSideCompromise.description'),
+      likelihood: t('riskAssessment.threat.clientSideCompromise.likelihood'),
+      impact: t('riskAssessment.threat.clientSideCompromise.impact'),
+      mitigation: t('riskAssessment.threat.clientSideCompromise.mitigation'),
+      residualRisk: t('riskAssessment.threat.clientSideCompromise.residualRisk'),
     },
     {
-      threat: 'Lost Token Access',
-      description: 'Voter loses their ballot token before voting',
-      likelihood: 'Medium',
-      impact: 'Low',
-      mitigation:
-        'Electoral commission retains token list and can resend. Educate voters to store tokens securely. Tokens remain valid throughout voting period.',
-      residualRisk: 'Very Low',
+      threat: t('riskAssessment.threat.lostTokenAccess.title'),
+      description: t('riskAssessment.threat.lostTokenAccess.description'),
+      likelihood: t('riskAssessment.threat.lostTokenAccess.likelihood'),
+      impact: t('riskAssessment.threat.lostTokenAccess.impact'),
+      mitigation: t('riskAssessment.threat.lostTokenAccess.mitigation'),
+      residualRisk: t('riskAssessment.threat.lostTokenAccess.residualRisk'),
     },
     {
-      threat: 'Timing Analysis',
-      description: 'Observers correlate voting times with known voter activity',
-      likelihood: 'Low',
-      impact: 'Medium',
-      mitigation:
-        'Ballots only become public after election ends. No timestamps are exposed. Token redemption and ballot submission are separate events. Voters can redeem early and vote later.',
-      residualRisk: 'Low',
+      threat: t('riskAssessment.threat.timingAnalysis.title'),
+      description: t('riskAssessment.threat.timingAnalysis.description'),
+      likelihood: t('riskAssessment.threat.timingAnalysis.likelihood'),
+      impact: t('riskAssessment.threat.timingAnalysis.impact'),
+      mitigation: t('riskAssessment.threat.timingAnalysis.mitigation'),
+      residualRisk: t('riskAssessment.threat.timingAnalysis.residualRisk'),
     },
     {
-      threat: 'Hosting Provider Access',
-      description: 'Cloud/hosting provider personnel access system data',
-      likelihood: 'Low',
-      impact: 'High',
-      mitigation:
-        'Election results are publicly verifiable after closing. Database is encrypted at rest. For maximum security, organizations can self-host using open-source code.',
-      residualRisk: 'Medium',
+      threat: t('riskAssessment.threat.hostingProvider.title'),
+      description: t('riskAssessment.threat.hostingProvider.description'),
+      likelihood: t('riskAssessment.threat.hostingProvider.likelihood'),
+      impact: t('riskAssessment.threat.hostingProvider.impact'),
+      mitigation: t('riskAssessment.threat.hostingProvider.mitigation'),
+      residualRisk: t('riskAssessment.threat.hostingProvider.residualRisk'),
     },
   ];
 
   return (
     <Page
-      title="Risk Assessment"
-      description="Comprehensive risk assessment for the STVote electronic voting platform, including security threats, mitigations, and residual risks."
+      title={t('riskAssessment.pageTitle')}
+      description={t('riskAssessment.pageDescription')}
     >
       <Typography variant="body1" paragraph>
-        This document provides a comprehensive risk assessment for the STVote.eu platform. It
-        evaluates potential security threats, their likelihood and impact, implemented mitigations,
-        and residual risks.
+        {t('riskAssessment.intro')}
       </Typography>
 
       <Alert severity="warning">
-        <AlertTitle>Scope of Use</AlertTitle>
-        STVote.eu is designed for small to medium-scale elections where electronic voting is
-        appropriate.
-        <strong> Do not use this platform for high-stakes national elections</strong> where the
-        risks require additional security measures such as physical voting, air-gapped systems, or
-        formal security certifications.
+        <AlertTitle>{t('riskAssessment.scopeTitle')}</AlertTitle>
+        {t('riskAssessment.scopeTextPre')}
+        <strong> {t('riskAssessment.scopeTextBold')}</strong>
+        {t('riskAssessment.scopeTextPost')}
       </Alert>
 
       <Paper sx={{ p: 3 }}>
         <Typography variant="h5" gutterBottom>
-          Risk Assessment Methodology
+          {t('riskAssessment.methodologyTitle')}
         </Typography>
         <Typography variant="body2" paragraph>
-          Risks are assessed based on:
+          {t('riskAssessment.methodologyIntro')}
         </Typography>
         <Box>
           <Typography variant="body2" component="div">
-            <strong>Likelihood:</strong> Very Low, Low, Medium, High, Very High
+            <strong>{t('riskAssessment.likelihoodLabel')}</strong> {t('riskAssessment.likelihoodValues')}
           </Typography>
           <Typography variant="body2" component="div">
-            <strong>Impact:</strong> Very Low, Low, Medium, High, Critical
+            <strong>{t('riskAssessment.impactLabel')}</strong> {t('riskAssessment.impactValues')}
           </Typography>
           <Typography variant="body2" component="div">
-            <strong>Residual Risk:</strong> Risk remaining after mitigations are applied
+            <strong>{t('riskAssessment.residualRiskLabel')}</strong> {t('riskAssessment.residualRiskDesc')}
           </Typography>
         </Box>
       </Paper>
 
       <Box>
         <Typography variant="h5" gutterBottom>
-          Identified Risks and Mitigations
+          {t('riskAssessment.threatsTitle')}
         </Typography>
 
         <TableContainer component={Paper}>
@@ -211,22 +201,22 @@ export default function RiskAssessment({}: RiskAssessmentProps = {}) {
             <TableHead>
               <TableRow>
                 <TableCell>
-                  <strong>Threat</strong>
+                  <strong>{t('riskAssessment.table.threat')}</strong>
                 </TableCell>
                 <TableCell>
-                  <strong>Description</strong>
+                  <strong>{t('riskAssessment.table.description')}</strong>
                 </TableCell>
                 <TableCell>
-                  <strong>Likelihood</strong>
+                  <strong>{t('riskAssessment.table.likelihood')}</strong>
                 </TableCell>
                 <TableCell>
-                  <strong>Impact</strong>
+                  <strong>{t('riskAssessment.table.impact')}</strong>
                 </TableCell>
                 <TableCell>
-                  <strong>Mitigation</strong>
+                  <strong>{t('riskAssessment.table.mitigation')}</strong>
                 </TableCell>
                 <TableCell>
-                  <strong>Residual Risk</strong>
+                  <strong>{t('riskAssessment.table.residualRisk')}</strong>
                 </TableCell>
               </TableRow>
             </TableHead>
@@ -250,48 +240,38 @@ export default function RiskAssessment({}: RiskAssessmentProps = {}) {
 
       <Paper sx={{ p: 3 }}>
         <Typography variant="h5" gutterBottom>
-          Security Architecture
+          {t('riskAssessment.securityArchitectureTitle')}
         </Typography>
 
-        <Typography variant="h6">Ballot Anonymization</Typography>
+        <Typography variant="h6">{t('riskAssessment.ballotAnonymizationTitle')}</Typography>
         <Typography variant="body2" paragraph>
-          The core security feature is the permanent erasure of the ballot token-to-ballot UUID
-          association. When a voter redeems their token, a new ballot UUID is generated and the link
-          between the token and ballot is never stored. This ensures voter anonymity while
-          maintaining ballot integrity.
+          {t('riskAssessment.ballotAnonymizationText')}
         </Typography>
 
-        <Typography variant="h6">No Authentication Required</Typography>
+        <Typography variant="h6">{t('riskAssessment.noAuthTitle')}</Typography>
         <Typography variant="body2" paragraph>
-          The system uses knowledge-based access control (UUID tokens) rather than traditional
-          authentication. This eliminates the need for user accounts, passwords, or personal data
-          collection, reducing both privacy risks and implementation complexity.
+          {t('riskAssessment.noAuthText')}
         </Typography>
 
-        <Typography variant="h6">Public Auditability</Typography>
+        <Typography variant="h6">{t('riskAssessment.publicAuditabilityTitle')}</Typography>
         <Typography variant="body2" paragraph>
-          After an election ends, all ballots are made public. Anyone can verify the counting
-          algorithm matches the published results. The complete source code for the counting
-          algorithm, backend, frontend, and infrastructure is open source and auditable.
+          {t('riskAssessment.publicAuditabilityText')}
         </Typography>
 
-        <Typography variant="h6">Single-Use Tokens</Typography>
+        <Typography variant="h6">{t('riskAssessment.singleUseTokensTitle')}</Typography>
         <Typography variant="body2" paragraph>
-          Each ballot token can only be redeemed once and only during the voting period. Tokens
-          cannot be redeemed after the election closes, preventing late manipulation attempts.
+          {t('riskAssessment.singleUseTokensText')}
         </Typography>
 
-        <Typography variant="h6">Election Locking</Typography>
+        <Typography variant="h6">{t('riskAssessment.electionLockingTitle')}</Typography>
         <Typography variant="body2" paragraph>
-          Once the first vote is cast, an election becomes "locked" and its configuration
-          (candidates, seats, times) cannot be modified. This prevents administrators from changing
-          election parameters after voting has begun.
+          {t('riskAssessment.electionLockingText')}
         </Typography>
       </Paper>
 
       <Paper sx={{ p: 3 }}>
         <Typography variant="h5" gutterBottom>
-          Technical Security Measures
+          {t('riskAssessment.technicalMeasuresTitle')}
         </Typography>
 
         <List>
@@ -299,7 +279,7 @@ export default function RiskAssessment({}: RiskAssessmentProps = {}) {
             <ListItemText
               primary={
                 <>
-                  <strong>Database:</strong> SQLite with file-system access controls
+                  <strong>{t('riskAssessment.technicalMeasures.database.label')}</strong> {t('riskAssessment.technicalMeasures.database.text')}
                 </>
               }
             />
@@ -308,7 +288,7 @@ export default function RiskAssessment({}: RiskAssessmentProps = {}) {
             <ListItemText
               primary={
                 <>
-                  <strong>Deployment:</strong> Docker containers running as non-root user (UID 1000)
+                  <strong>{t('riskAssessment.technicalMeasures.deployment.label')}</strong> {t('riskAssessment.technicalMeasures.deployment.text')}
                 </>
               }
             />
@@ -317,8 +297,7 @@ export default function RiskAssessment({}: RiskAssessmentProps = {}) {
             <ListItemText
               primary={
                 <>
-                  <strong>TLS/HTTPS:</strong> Automatic HTTPS via Caddy reverse proxy with Let's
-                  Encrypt
+                  <strong>{t('riskAssessment.technicalMeasures.tls.label')}</strong> {t('riskAssessment.technicalMeasures.tls.text')}
                 </>
               }
             />
@@ -327,8 +306,7 @@ export default function RiskAssessment({}: RiskAssessmentProps = {}) {
             <ListItemText
               primary={
                 <>
-                  <strong>Input Validation:</strong> All inputs validated for type safety and
-                  business logic
+                  <strong>{t('riskAssessment.technicalMeasures.inputValidation.label')}</strong> {t('riskAssessment.technicalMeasures.inputValidation.text')}
                 </>
               }
             />
@@ -337,8 +315,7 @@ export default function RiskAssessment({}: RiskAssessmentProps = {}) {
             <ListItemText
               primary={
                 <>
-                  <strong>Atomicity:</strong> Database transactions ensure consistency of critical
-                  operations
+                  <strong>{t('riskAssessment.technicalMeasures.atomicity.label')}</strong> {t('riskAssessment.technicalMeasures.atomicity.text')}
                 </>
               }
             />
@@ -347,7 +324,7 @@ export default function RiskAssessment({}: RiskAssessmentProps = {}) {
             <ListItemText
               primary={
                 <>
-                  <strong>Open Source:</strong> All code publicly available for security review
+                  <strong>{t('riskAssessment.technicalMeasures.openSource.label')}</strong> {t('riskAssessment.technicalMeasures.openSource.text')}
                 </>
               }
             />
@@ -357,11 +334,11 @@ export default function RiskAssessment({}: RiskAssessmentProps = {}) {
 
       <Paper sx={{ p: 3 }}>
         <Typography variant="h5" gutterBottom>
-          Recommendations for Electoral Commissions
+          {t('riskAssessment.recommendationsTitle')}
         </Typography>
 
         <Typography variant="body2" paragraph>
-          To minimize risks, electoral commissions should:
+          {t('riskAssessment.recommendationsIntro')}
         </Typography>
 
         <List sx={{ listStyleType: 'decimal', pl: 4 }}>
@@ -369,8 +346,7 @@ export default function RiskAssessment({}: RiskAssessmentProps = {}) {
             <ListItemText
               primary={
                 <>
-                  <strong>Distribute tokens securely:</strong> Use encrypted channels (Signal,
-                  secure email) to send ballot tokens to voters
+                  <strong>{t('riskAssessment.recommendation1.label')}</strong> {t('riskAssessment.recommendation1.text')}
                 </>
               }
             />
@@ -379,8 +355,7 @@ export default function RiskAssessment({}: RiskAssessmentProps = {}) {
             <ListItemText
               primary={
                 <>
-                  <strong>Keep admin UUIDs confidential:</strong> Only share admin URLs with trusted
-                  election administrators
+                  <strong>{t('riskAssessment.recommendation2.label')}</strong> {t('riskAssessment.recommendation2.text')}
                 </>
               }
             />
@@ -389,8 +364,7 @@ export default function RiskAssessment({}: RiskAssessmentProps = {}) {
             <ListItemText
               primary={
                 <>
-                  <strong>Assess coercion risk:</strong> Consider if voters might face pressure to
-                  vote certain ways. If high, use physical voting instead
+                  <strong>{t('riskAssessment.recommendation3.label')}</strong> {t('riskAssessment.recommendation3.text')}
                 </>
               }
             />
@@ -399,8 +373,7 @@ export default function RiskAssessment({}: RiskAssessmentProps = {}) {
             <ListItemText
               primary={
                 <>
-                  <strong>Communicate transparently:</strong> Inform voters about the security model
-                  and how their privacy is protected
+                  <strong>{t('riskAssessment.recommendation4.label')}</strong> {t('riskAssessment.recommendation4.text')}
                 </>
               }
             />
@@ -409,8 +382,7 @@ export default function RiskAssessment({}: RiskAssessmentProps = {}) {
             <ListItemText
               primary={
                 <>
-                  <strong>Plan for contingencies:</strong> Have backup plans if technical issues
-                  occur during voting period
+                  <strong>{t('riskAssessment.recommendation5.label')}</strong> {t('riskAssessment.recommendation5.text')}
                 </>
               }
             />
@@ -419,8 +391,7 @@ export default function RiskAssessment({}: RiskAssessmentProps = {}) {
             <ListItemText
               primary={
                 <>
-                  <strong>Self-hosting option:</strong> For maximum control and security, consider
-                  self-hosting using the open-source code
+                  <strong>{t('riskAssessment.recommendation6.label')}</strong> {t('riskAssessment.recommendation6.text')}
                 </>
               }
             />
@@ -430,44 +401,40 @@ export default function RiskAssessment({}: RiskAssessmentProps = {}) {
 
       <Paper sx={{ p: 3 }}>
         <Typography variant="h5" gutterBottom>
-          Open Source Transparency
+          {t('riskAssessment.openSourceTitle')}
         </Typography>
         <Typography variant="body2">
-          All source code is publicly available:{' '}
+          {t('riskAssessment.openSourcePrefix')}{' '}
           <Link href="https://github.com/jorgecarleitao/stv-app" target="_blank" rel="noopener noreferrer">
-            Backend
+            {t('riskAssessment.openSourceBackend')}
           </Link>
-          ,{' '}
+          {', '}
           <Link href="https://github.com/jorgecarleitao/stv-app-frontend" target="_blank" rel="noopener noreferrer">
-            Frontend
+            {t('riskAssessment.openSourceFrontend')}
           </Link>
-          ,{' '}
+          {', '}
           <Link href="https://github.com/jorgecarleitao/stv-app-infrastructure" target="_blank" rel="noopener noreferrer">
-            Infrastructure
+            {t('riskAssessment.openSourceInfrastructure')}
           </Link>
         </Typography>
       </Paper>
 
       <Paper sx={{ p: 3 }}>
         <Typography variant="h5" gutterBottom>
-          Conclusion
+          {t('riskAssessment.conclusionTitle')}
         </Typography>
         <Typography variant="body2" paragraph>
-          STVote.eu provides a secure and transparent platform for running STV elections in contexts
-          where electronic voting is appropriate. The system's security relies on cryptographic
-          randomness (UUIDs), permanent anonymization of votes, public auditability, and open-source
-          transparency.
+          {t('riskAssessment.conclusionPara1')}
         </Typography>
         <Typography variant="body2">
-          The platform is suitable for community organizations, clubs, associations, and small-scale
-          democratic processes. It is <strong>not suitable</strong> for high-stakes elections
-          requiring additional security measures, formal certifications, or protection against
-          nation-state level threats.
+          {t('riskAssessment.conclusionPara2Pre')}{' '}
+          <strong>{t('riskAssessment.conclusionPara2Bold')}</strong>
+          {t('riskAssessment.conclusionPara2Post')}
         </Typography>
       </Paper>
 
       <Typography variant="body2" color="text.secondary" align="center" sx={{ mt: 2 }}>
-        Last updated: January 2026
+        {t('riskAssessment.lastUpdated')}
       </Typography>
     </Page>
   );

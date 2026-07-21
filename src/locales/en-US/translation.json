@@ -126,7 +126,6 @@
   "Click to view ballot details": "Click to view ballot details",
   "Election closed without any vote": "Election closed without any vote",
   "Results will be available after voting is complete": "Results will be available after voting is complete",
-  // Elections-related keys removed for privacy
   "Meta description": "Secure, transparent, and auditable STV election platform. Run proportional representation elections with Meek's method, manage ballot tokens, and provide full result transparency.",
   "Meta description short": "Secure, transparent, and auditable STV election platform. Run proportional representation elections with Meek's method.",
   "heroSubtitle": "Fair, transparent, and proportional ranked-choice voting",

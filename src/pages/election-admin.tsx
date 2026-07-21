@@ -128,7 +128,7 @@ export default function ElectionAdmin({ electionId, adminUuid }: ElectionAdminPr
 
   const handleCancelEdit = () => {
     if (isCreateMode) {
-      window.location.href = '/elections';
+      window.location.href = '/';
     } else if (election) {
       initializeEditForm(election);
     }
@@ -314,8 +314,8 @@ export default function ElectionAdmin({ electionId, adminUuid }: ElectionAdminPr
   if (!isCreateMode && error && !election) {
     return (
       <Page title={t('Admin')} description={t('Election Admin meta description')} noIndex>
-        <Button component="a" href="/elections" startIcon={<ArrowBackIcon />}>
-          {t('Back to elections')}
+        <Button component="a" href="/" startIcon={<ArrowBackIcon />}>
+          {t('App title')}
         </Button>
         <Alert severity="error">
           {t('Error loading election')}: {error}
@@ -327,8 +327,8 @@ export default function ElectionAdmin({ electionId, adminUuid }: ElectionAdminPr
   if (!isCreateMode && !election) {
     return (
       <Page title={t('Admin')} description={t('Election Admin meta description')} noIndex>
-        <Button component="a" href="/elections" startIcon={<ArrowBackIcon />}>
-          {t('Back to elections')}
+        <Button component="a" href="/" startIcon={<ArrowBackIcon />}>
+          {t('App title')}
         </Button>
         <Alert severity="info">{t('Election not found')}</Alert>
       </Page>
@@ -342,8 +342,8 @@ export default function ElectionAdmin({ electionId, adminUuid }: ElectionAdminPr
       noIndex
     >
       <Stack direction="row" spacing={2}>
-        <Button component="a" href="/elections" startIcon={<ArrowBackIcon />}>
-          {t('Back to elections')}
+        <Button component="a" href="/" startIcon={<ArrowBackIcon />}>
+          {t('App title')}
         </Button>
         {!isCreateMode && (
           <>

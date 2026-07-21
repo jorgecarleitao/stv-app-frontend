@@ -77,7 +77,7 @@ export default function ElectionDetail({ electionId }: ElectionDetailProps) {
   };
 
   const handleBack = () => {
-    window.location.href = '/elections';
+    window.location.href = '/';
   };
 
   if (loading) {
@@ -100,7 +100,7 @@ export default function ElectionDetail({ electionId }: ElectionDetailProps) {
         description="View election details, candidates, and results for this STV election."
       >
         <Button startIcon={<ArrowBackIcon />} onClick={handleBack}>
-          {t('Back to elections')}
+          {t('App title')}
         </Button>
         <Alert severity="error">
           {t('Error loading election')}: {error}
@@ -116,7 +116,7 @@ export default function ElectionDetail({ electionId }: ElectionDetailProps) {
         description="View election details, candidates, and results for this STV election."
       >
         <Button startIcon={<ArrowBackIcon />} onClick={handleBack}>
-          {t('Back to elections')}
+          {t('App title')}
         </Button>
         <Alert severity="info">{t('Election not found')}</Alert>
       </Page>
@@ -133,7 +133,7 @@ export default function ElectionDetail({ electionId }: ElectionDetailProps) {
   return (
     <Page title={election.title} description={pageDescription}>
       <Button startIcon={<ArrowBackIcon />} onClick={handleBack}>
-        {t('Back to elections')}
+        {t('App title')}
       </Button>
       {/* Description */}
       {election.description && (

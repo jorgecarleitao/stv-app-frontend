@@ -10,10 +10,10 @@ import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import CardActions from '@mui/material/CardActions';
 import Divider from '@mui/material/Divider';
-import HowToVoteIcon from '@mui/icons-material/HowToVote';
 import ScienceIcon from '@mui/icons-material/Science';
 import TrendingUpIcon from '@mui/icons-material/TrendingUp';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
+import MenuBookIcon from '@mui/icons-material/MenuBook';
 
 interface HomeProps {
   path?: string;
@@ -51,19 +51,19 @@ export default function Home({}: HomeProps = {}) {
             variant="outlined"
             size="large"
             component="a"
-            href="/elections"
-            startIcon={<HowToVoteIcon />}
-          >
-            {t('View Elections')}
-          </Button>
-          <Button
-            variant="outlined"
-            size="large"
-            component="a"
             href="/simulate"
             startIcon={<ScienceIcon />}
           >
             {t('Try Simulator')}
+          </Button>
+          <Button
+            variant="text"
+            size="large"
+            component="a"
+            href="/admin-guide"
+            startIcon={<MenuBookIcon />}
+          >
+            {t('Admin Guide')}
           </Button>
         </Box>
       </Box>
@@ -72,7 +72,7 @@ export default function Home({}: HomeProps = {}) {
         <Grid
           size={{
             xs: 12,
-            md: 4
+            md: 6
           }}>
           <Card elevation={3} sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
             <CardContent sx={{ flexGrow: 1 }}>
@@ -97,32 +97,7 @@ export default function Home({}: HomeProps = {}) {
         <Grid
           size={{
             xs: 12,
-            md: 4
-          }}>
-          <Card elevation={3} sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
-            <CardContent sx={{ flexGrow: 1 }}>
-              <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-                <HowToVoteIcon sx={{ fontSize: 40, mr: 2, color: 'secondary.main' }} />
-                <Typography variant="h5" component="h2">
-                  {t('participateTitle')}
-                </Typography>
-              </Box>
-              <Typography variant="body2" color="text.secondary">
-                {t('participateDesc')}
-              </Typography>
-            </CardContent>
-            <CardActions sx={{ p: 2, pt: 0 }}>
-              <Button size="small" component="a" href="/elections">
-                {t('Go to Elections')}
-              </Button>
-            </CardActions>
-          </Card>
-        </Grid>
-
-        <Grid
-          size={{
-            xs: 12,
-            md: 4
+            md: 6
           }}>
           <Card elevation={3} sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
             <CardContent sx={{ flexGrow: 1 }}>
@@ -163,9 +138,6 @@ export default function Home({}: HomeProps = {}) {
           <Button variant="outlined" component="a" href="/simulate">
             {t('Try it yourself')}
           </Button>
-          <Button variant="text" component="a" href="/elections">
-            {t('View live elections')}
-          </Button>
         </Box>
       </Paper>
       {/* Technical Details Section */}
@@ -183,8 +155,8 @@ export default function Home({}: HomeProps = {}) {
           {t('technicalDetailsFooter')}
         </Typography>
         <Box sx={{ display: 'flex', gap: 2, mt: 3, flexWrap: 'wrap' }}>
-          <Button variant="contained" component="a" href="/elections">
-            {t('Participate Now')}
+          <Button variant="contained" component="a" href="/elections/create">
+            {t('Create Election')}
           </Button>
           <Button
             variant="outlined"
@@ -209,8 +181,8 @@ export default function Home({}: HomeProps = {}) {
           <Button variant="contained" size="large" component="a" href="/elections/create">
             {t('Create Election')}
           </Button>
-          <Button variant="outlined" size="large" component="a" href="/elections">
-            {t('Browse Elections')}
+          <Button variant="outlined" size="large" component="a" href="/admin-guide">
+            {t('Admin Guide')}
           </Button>
           <Button variant="outlined" size="large" component="a" href="/simulate">
             {t('Simulate')}

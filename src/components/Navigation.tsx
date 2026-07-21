@@ -41,7 +41,7 @@ export default function Navigation({ mode, toggleTheme }: NavigationProps) {
 
   const navItems = [
     { path: '/simulate', label: t('Simulate') },
-    { path: '/elections', label: t('Elections') },
+    { path: '/elections/create', label: t('Create Election') },
     { path: '/stv-explainer', label: t('STV guide') },
     { path: '/admin-guide', label: t('Admin Guide') },
     { path: '/risk-assessment', label: t('Risk Assessment') },

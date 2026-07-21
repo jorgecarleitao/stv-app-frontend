@@ -271,22 +271,6 @@ export type ElectionResponse =
     };
 
 /**
- * Fetch list of all available elections
- */
-export async function listElections(): Promise<ElectionConfig[]> {
-  const response = await fetch(`${BASE_URL}/elections`, {
-    method: 'GET',
-    mode: 'cors',
-  });
-
-  if (!response.ok) {
-    throw new Error(`Failed to list elections: ${await response.text()}`);
-  }
-
-  return response.json();
-}
-
-/**
  * Create a new election
  */
 export async function createElection(request: CreateElectionRequest): Promise<ElectionResponse> {

@@ -25,27 +25,25 @@ function CandidateStatusIcon({ status }: { status: CountingLogAction['candidate_
   return <HourglassEmptyIcon sx={{ fontSize: 18, color: '#0288d1', verticalAlign: 'middle', mr: 0.5 }} />;
 }
 
-function FinalRoundVotes({ log }: { log: CountingLog }) {
-  const lastAction = log.rounds[log.rounds.length - 1]?.actions?.slice(-1)[0];
-  if (!lastAction?.candidate_counts?.length) return null;
+function FirstPreferenceVotes({ log }: { log: CountingLog }) {
+  const { t } = useTranslation();
+  const firstAction = log.rounds[0]?.actions?.[0];
+  if (!firstAction?.candidate_counts?.length) return null;
 
-  const quota = parseFloat(lastAction.stats.quota) || 0;
-  const counts = lastAction.candidate_counts;
+  const counts = firstAction.candidate_counts;
   const votes = counts.map(c => parseFloat(c.votes) || 0);
-  const xMax = Math.max(...votes, quota) || 1;
+  const xMax = Math.max(...votes) || 1;
 
   return (
     <Box sx={{ mt: 2 }}>
       <Typography variant="subtitle2" gutterBottom>
-        Final round vote distribution
+        {t('First preference votes')}
       </Typography>
       <Paper variant="outlined" sx={{ p: 1.5 }}>
         <Box sx={{ display: 'grid', gridTemplateColumns: 'auto 1fr auto', alignItems: 'center', rowGap: 0.75 }}>
           {counts.map(c => {
             const v = parseFloat(c.votes) || 0;
-            const belowPct = (Math.min(v, quota) / xMax) * 100;
-            const abovePct = (Math.max(0, v - quota) / xMax) * 100;
-            const quotaPct = (quota / xMax) * 100;
+            const pct = (v / xMax) * 100;
 
             return (
               <Fragment key={c.name}>
@@ -55,9 +53,7 @@ function FinalRoundVotes({ log }: { log: CountingLog }) {
                 </Box>
                 <Tooltip title={c.votes}>
                   <Box sx={{ height: 22, bgcolor: 'action.hover', borderRadius: 1, position: 'relative', overflow: 'hidden' }}>
-                    {belowPct > 0 && <Box sx={{ position: 'absolute', left: 0, top: 0, bottom: 0, width: `${belowPct}%`, bgcolor: 'primary.light' }} />}
-                    {abovePct > 0 && <Box sx={{ position: 'absolute', left: `${belowPct}%`, top: 0, bottom: 0, width: `${abovePct}%`, bgcolor: 'primary.main' }} />}
-                    {quota > 0 && <Box sx={{ position: 'absolute', left: `${quotaPct}%`, top: 0, bottom: 0, width: 2, bgcolor: 'warning.main', zIndex: 1 }} />}
+                    {pct > 0 && <Box sx={{ position: 'absolute', left: 0, top: 0, bottom: 0, width: `${pct}%`, bgcolor: 'primary.main' }} />}
                   </Box>
                 </Tooltip>
                 <Typography variant="body2" sx={{ fontFamily: 'monospace', fontSize: 13, pl: 1 }}>{c.votes}</Typography>
@@ -82,12 +78,11 @@ export function ResultsSummary({ log, seats, numElected, groupName }: ResultsSum
         {groupName ? `${t('Group')}: ${groupName}` : t('Results')}
       </Typography>
       <Stack direction="row" flexWrap="wrap" gap={1} sx={{ mb: 1 }}>
-        <Chip label={`${t('Quota')}: ${header.quota}`} size="small" color="primary" variant="outlined" />
         <Chip label={`${t('Ballots')}: ${header.ballots}`} size="small" variant="outlined" />
         <Chip label={`${t('Rounds')}: ${numRounds}`} size="small" variant="outlined" />
         <Chip label={`${numElected} / ${seats} ${seatLabel}`} size="small" color={numElected >= seats ? 'success' : 'warning'} variant="outlined" />
       </Stack>
-      <FinalRoundVotes log={log} />
+      <FirstPreferenceVotes log={log} />
     </Paper>
   );
 }

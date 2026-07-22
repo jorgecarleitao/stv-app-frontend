@@ -91,23 +91,23 @@ function BallotTable() {
         <Table size="small">
           <TableHead>
             <TableRow>
-              <TableCell>{t('votes')}</TableCell>
               {DEFAULT_ELECTION.candidates.map(c => (
                 <Tooltip key={c} title={t('ballotRankTooltip')} arrow placement="top">
                   <TableCell align="center">{c}</TableCell>
                 </Tooltip>
               ))}
+              <TableCell>{t('votes')}</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
             {DEFAULT_ELECTION.ballots.map((b, i) => (
               <TableRow key={i}>
-                <TableCell sx={{ fontWeight: 'bold' }}>{b.votes}</TableCell>
                 {(b.ranks ?? []).map((r, ci) => (
                   <TableCell key={ci} align="center">
                     {r !== null ? r + 1 : <Tooltip title={t('ballotNoPreference')} arrow><Box component="span">—</Box></Tooltip>}
                   </TableCell>
                 ))}
+                <TableCell sx={{ fontWeight: 'bold' }}>{b.votes}</TableCell>
               </TableRow>
             ))}
           </TableBody>

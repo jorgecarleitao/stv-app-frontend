@@ -181,6 +181,7 @@
   "stvMd.liveExampleTitle": "Exemplo ao Vivo",
   "stvMd.liveExampleDescription": "Abaixo está uma eleição concreta com 5 candidatos a competir por 3 lugares. A simulação é executada automaticamente para mostrar exatamente como o STV funciona na prática.",
   "stvMd.inputsExampleDescription": "Neste exemplo, a eleição tem:",
+  "ballotExplanation": "Cada linha mostra um grupo de eleitores que classificaram os candidatos de forma idêntica. A seta (→) significa 'preferido em relação a'.",
   "stvMd.iterationsTitle": "Como o método funciona",
   "stvMd.iterationsIntro1": "O método funciona em iterações.",
   "stvMd.iterationsIntro2": "No início, cada voto conta 1, e este valor é atribuído à(s) preferência(s) mais alta(s). Em cada iteração, os candidatos são classificados como derrotados (menor contagem de preferência mais alta entre os votos) ou eleitos (acima do limiar para ser eleito). Quando derrotado ou eleito, o voto é transferido para o próximo candidato da seguinte forma:",

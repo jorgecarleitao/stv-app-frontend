@@ -180,6 +180,7 @@
   "stvMd.liveExampleTitle": "Live Example",
   "stvMd.liveExampleDescription": "Below is a concrete election with 5 candidates competing for 3 seats. The simulation runs automatically to show you exactly how STV works in practice.",
   "stvMd.inputsExampleDescription": "In this example, the election has:",
+  "ballotExplanation": "Each row shows a group of voters who ranked candidates identically. The arrow (→) means 'preferred over'.",
   "stvMd.iterationsTitle": "How the method works",
   "stvMd.iterationsIntro1": "The method works in iterations.",
   "stvMd.iterationsIntro2": "At the start, each vote counts 1, and this value is assigned to the highest preference(s). On each iteration, candidates are either classified as defeated (lowest tally of highest preference among votes) or elected (above the threshold to be elected). When defeated or elected, the vote is transferred to the next candidate as follows:",

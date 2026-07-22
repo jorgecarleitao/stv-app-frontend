@@ -70,7 +70,7 @@ export function ResultsSummary({ log, seats, numElected, groupName }: ResultsSum
   const { t } = useTranslation();
   const { header } = log;
   const numRounds = log.rounds.length;
-  const seatLabel = seats === 1 ? 'seat' : 'seats';
+  const seatLabel = t('seats');
 
   return (
     <Paper elevation={3} sx={{ p: 3 }}>

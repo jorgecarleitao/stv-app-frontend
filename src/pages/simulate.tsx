@@ -23,6 +23,7 @@ import LZString from 'lz-string';
 import * as yaml from 'js-yaml';
 
 import { Election, ElectionResult, simulateElection, ElectionType, isCopelandResult, isGroupedResult, GroupConfig } from '../data/api';
+import { DEFAULT_ELECTION } from '../data/defaults';
 import { BallotsEditor } from '../ballot';
 import { ElectionResults } from '../components/ElectionResults';
 import { PairwiseMatrix } from '../components/PairwiseMatrix';
@@ -42,40 +43,6 @@ function fromApiRanks(ranks: (number | null)[]): (number | null)[] {
   return ranks.map(r => (r === null ? null : r + 1));
 }
 
-const defaultElection: Election = {
-  candidates: ['Elena', 'Marco', 'Lucia', 'André', 'Sofia'],
-  seats: 3,
-  election_type: 'stv-md',
-  ballots: [
-    {
-      votes: 11,
-      ranks: [0, 3, 4, 1, 2],
-    },
-    {
-      votes: 4,
-      ranks: [0, 3, 4, 2, 1],
-    },
-    {
-      votes: 9,
-      ranks: [2, 0, 1, 3, 4],
-    },
-    {
-      votes: 8,
-      ranks: [2, 3, 0, 1, 4],
-    },
-    {
-      votes: 4,
-      ranks: [4, 3, 2, 1, 0],
-    },
-    {
-      votes: 3,
-      ranks: [3, 4, 2, 0, 1],
-    },
-  ],
-  groups: [],
-  candidate_groups: [],
-};
-
 const HEADER = 'h5';
 
 interface SimulateProps {
@@ -88,7 +55,7 @@ export default function Simulate({ path }: SimulateProps = {}) {
   const pageTitle = `${t('Simulate')} - ${t('App title')}`;
   const metaDescription = t('Simulate meta description');
 
-  const [election, setElection] = useState<Election>(defaultElection);
+  const [election, setElection] = useState<Election>(DEFAULT_ELECTION);
   const [yamlText, setYamlText] = useState('');
   const [yamlError, setYamlError] = useState<string | null>(null);
   const [result, setResult] = useState<ElectionResult | null>(null);

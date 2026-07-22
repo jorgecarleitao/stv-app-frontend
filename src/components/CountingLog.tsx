@@ -29,6 +29,7 @@ import type { CountingLog, CountingLogAction } from '../data/api';
 interface CountingLogProps {
   log: CountingLog;
   groupName?: string;
+  defaultExpanded?: boolean;
 }
 
 function formatActionType(
@@ -104,7 +105,7 @@ function CandidatesSection({ candidates }: { candidates: CountingLog['candidates
   );
 }
 
-function StatsRow({ stats }: { stats: CountingLog['rounds'][0]['actions'][0]['stats'] }) {
+export function StatsRow({ stats }: { stats: CountingLog['rounds'][0]['actions'][0]['stats'] }) {
   const { t } = useTranslation();
   const hasAny = stats.votes || stats.residual || stats.total || stats.surplus;
   if (!hasAny) return null;
@@ -172,21 +173,19 @@ function StatsRow({ stats }: { stats: CountingLog['rounds'][0]['actions'][0]['st
   );
 }
 
-function CandidateStatusIcon({ status }: { status: CountingLogAction['candidate_counts'][0]['status'] }) {
+export function CandidateStatusIcon({ status }: { status: CountingLogAction['candidate_counts'][0]['status'] }) {
   if (status === 'elected') return <ElectedIcon sx={{ fontSize: 18, color: '#2e7d32', verticalAlign: 'middle', mr: 0.5 }} />;
   if (status === 'defeated') return <DefeatedIcon sx={{ fontSize: 18, color: '#d32f2f', verticalAlign: 'middle', mr: 0.5 }} />;
   return <HopefulIcon sx={{ fontSize: 18, color: '#0288d1', verticalAlign: 'middle', mr: 0.5 }} />;
 }
 
-function CandidateCountsBarChart({
+export function CandidateCountsBarChart({
   counts,
   quota,
 }: {
   counts: CountingLogAction['candidate_counts'];
   quota: string;
 }) {
-  const { t } = useTranslation();
-
   if (counts.length === 0) return null;
 
   const quotaVal = parseFloat(quota) || 0;
@@ -201,6 +200,7 @@ function CandidateCountsBarChart({
           const belowPct = (Math.min(v, quotaVal) / xMax) * 100;
           const abovePct = (Math.max(0, v - quotaVal) / xMax) * 100;
           const quotaPct = (quotaVal / xMax) * 100;
+          const isDefeated = c.status === 'defeated';
 
           return (
             <Fragment key={c.name}>
@@ -210,7 +210,7 @@ function CandidateCountsBarChart({
               </Box>
               <Tooltip title={c.votes}>
                 <Box sx={{ height: 22, bgcolor: 'action.hover', borderRadius: 1, position: 'relative', overflow: 'hidden' }}>
-                  {belowPct > 0 && <Box sx={{ position: 'absolute', left: 0, top: 0, bottom: 0, width: `${belowPct}%`, bgcolor: 'primary.light' }} />}
+                  {belowPct > 0 && <Box sx={{ position: 'absolute', left: 0, top: 0, bottom: 0, width: `${belowPct}%`, bgcolor: isDefeated ? 'primary.main' : 'primary.light' }} />}
                   {abovePct > 0 && <Box sx={{ position: 'absolute', left: `${belowPct}%`, top: 0, bottom: 0, width: `${abovePct}%`, bgcolor: 'primary.main' }} />}
                   {quotaVal > 0 && <Box sx={{ position: 'absolute', left: `${quotaPct}%`, top: 0, bottom: 0, width: 2, bgcolor: 'warning.main', zIndex: 1 }} />}
                 </Box>
@@ -248,9 +248,9 @@ function RoundCard({ round }: { round: CountingLog['rounds'][0] }) {
   );
 }
 
-export function CountingLog({ log, groupName }: CountingLogProps) {
+export function CountingLog({ log, groupName, defaultExpanded }: CountingLogProps) {
   const { t } = useTranslation();
-  const [expanded, setExpanded] = useState(false);
+  const [expanded, setExpanded] = useState(defaultExpanded ?? false);
   const [roundPage, setRoundPage] = useState(0);
   const [roundsPerPage, setRoundsPerPage] = useState(5);
 

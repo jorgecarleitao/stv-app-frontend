@@ -172,6 +172,7 @@
   "stvMd.intro1": "The STV-MD (Single Transferable Vote with Meek counting and Droop quota) method is a unimonial proportional representation voting system for multi-winner elections, combining Meek's iterative transfer algorithm with the Droop quota to fairly allocate seats and accurately reflect the voters' ranked preferences.",
   "stvMd.intro2": "It is used to elect N seats out of M candidates.",
   "stvMd.keyFeaturesTitle": "Key properties",
+  "stvMd.exampleTitle": "Example",
   "stvMd.exampleIntro": "Let's walk through an example to see how STV works in practice.",
   "stvMd.outcomeTitle": "Election outcome",
   "ballotPreferenceTable": "How voters ranked the candidates",

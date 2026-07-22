@@ -173,6 +173,7 @@
   "stvMd.intro1": "O método STV-MD (Single Transferable Vote com contagem de Meek e quota de Droop) é um sistema unimonial de representação proporcional para eleições com múltiplos vencedores, que combina o algoritmo iterativo de transferência de Meek com a quota de Droop para atribuir lugares de forma justa e refletir com precisão as preferências ordenadas dos eleitores.",
   "stvMd.intro2": "É usado para eleger N lugares entre M candidatos.",
   "stvMd.keyFeaturesTitle": "Propriedades principais",
+  "stvMd.exampleTitle": "Exemplo",
   "stvMd.exampleIntro": "Vamos percorrer um exemplo para ver como o STV funciona na prática.",
   "stvMd.outcomeTitle": "Resultado da eleição",
   "ballotPreferenceTable": "Como os eleitores classificaram os candidatos",

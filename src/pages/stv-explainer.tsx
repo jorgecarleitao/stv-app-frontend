@@ -8,6 +8,13 @@ import CardContent from '@mui/material/CardContent';
 import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
 import Link from '@mui/material/Link';
+import Tooltip from '@mui/material/Tooltip';
+import Table from '@mui/material/Table';
+import TableBody from '@mui/material/TableBody';
+import TableCell from '@mui/material/TableCell';
+import TableContainer from '@mui/material/TableContainer';
+import TableHead from '@mui/material/TableHead';
+import TableRow from '@mui/material/TableRow';
 import Button from '@mui/material/Button';
 import CircularProgress from '@mui/material/CircularProgress';
 import Alert from '@mui/material/Alert';
@@ -71,17 +78,6 @@ function KeyFeaturesCard() {
   );
 }
 
-function preferenceString(ranks: (number | null)[]): string {
-  const pairs: { name: string; rank: number }[] = [];
-  for (let i = 0; i < ranks.length; i++) {
-    if (ranks[i] !== null) {
-      pairs.push({ name: DEFAULT_ELECTION.candidates[i], rank: ranks[i]! + 1 });
-    }
-  }
-  pairs.sort((a, b) => a.rank - b.rank);
-  return pairs.map(p => p.name).join(' → ');
-}
-
 function BallotTable() {
   const { t } = useTranslation();
   return (
@@ -92,16 +88,32 @@ function BallotTable() {
       <Typography variant="body2" color="text.secondary" paragraph>
         {t('ballotExplanation')}
       </Typography>
-      <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
-        {DEFAULT_ELECTION.ballots.map((b, i) => (
-          <Paper key={i} variant="outlined" sx={{ p: 1.5, display: 'flex', alignItems: 'center', gap: 1 }}>
-            <Chip label={b.votes} size="small" color="primary" />
-            <Typography variant="body2" sx={{ fontStyle: 'italic' }}>
-              {preferenceString(b.ranks ?? [])}
-            </Typography>
-          </Paper>
-        ))}
-      </Box>
+      <TableContainer component={Paper} variant="outlined">
+        <Table size="small">
+          <TableHead>
+            <TableRow>
+              <TableCell>{t('votes')}</TableCell>
+              {DEFAULT_ELECTION.candidates.map(c => (
+                <Tooltip key={c} title={t('ballotRankTooltip')} arrow placement="top">
+                  <TableCell align="center">{c}</TableCell>
+                </Tooltip>
+              ))}
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {DEFAULT_ELECTION.ballots.map((b, i) => (
+              <TableRow key={i}>
+                <TableCell sx={{ fontWeight: 'bold' }}>{b.votes}</TableCell>
+                {(b.ranks ?? []).map((r, ci) => (
+                  <TableCell key={ci} align="center">
+                    {r !== null ? r + 1 : <Tooltip title={t('ballotNoPreference')} arrow><Box component="span">—</Box></Tooltip>}
+                  </TableCell>
+                ))}
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </TableContainer>
     </>
   );
 }

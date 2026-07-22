@@ -35,7 +35,6 @@ const REFS = [
 ];
 
 const FETURES = ['stvMd.keyFeatureMinWaste', 'stvMd.keyFeatureMaxProp', 'stvMd.keyFeatureComplex', 'stvMd.keyFeatureMinTactical'];
-const INPUTS = ['stvMd.inputCandidates', 'stvMd.inputSeats', 'stvMd.inputVotes'];
 const TRANSFER_RULES = ['stvMd.transferDefeated', 'stvMd.transferElected'];
 const NO_WASTE_CASES = ['stvMd.noWasteCaseMajority', 'stvMd.noWasteCaseMinority'];
 
@@ -82,8 +81,8 @@ function BallotTable() {
   const { t } = useTranslation();
   return (
     <>
-      <Typography variant="subtitle1" sx={{ mt: 3, mb: 1 }}>
-        {t('Ballot groups')}
+      <Typography variant="subtitle1" sx={{ mt: 2, mb: 1 }}>
+        {t('ballotPreferenceTable')}
       </Typography>
       <Typography variant="body2" color="text.secondary" paragraph>
         {t('ballotExplanation')}
@@ -118,31 +117,18 @@ function BallotTable() {
   );
 }
 
-function InputsCard() {
+function ExampleSection() {
   const { t } = useTranslation();
   return (
     <Card elevation={3} sx={{ my: 3 }}>
       <CardContent>
         <Typography variant="h5" gutterBottom>
-          {t('stvMd.inputsTitle')}
+          {t('stvMd.exampleTitle')}
         </Typography>
         <Typography variant="body1" paragraph color="text.secondary">
-          {t('stvMd.inputsIntro')}
+          {t('stvMd.exampleIntro')}
         </Typography>
-        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, mt: 2 }}>
-          {INPUTS.map((key, i) => (
-            <Paper key={i} elevation={1} sx={{ p: 2, borderLeft: 3, borderColor: 'primary.main' }}>
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                <Chip label={i + 1} color="primary" size="small" />
-                <Typography variant="body2">{t(key)}</Typography>
-              </Box>
-            </Paper>
-          ))}
-        </Box>
-        <Typography variant="body1" paragraph color="text.secondary" sx={{ mt: 3 }}>
-          {t('stvMd.inputsExampleDescription')}
-        </Typography>
-        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5, pl: 2 }}>
+        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5, pl: 2, mb: 2 }}>
           <Typography variant="body2">
             <strong>{DEFAULT_ELECTION.candidates.length} {t('candidates')}:</strong>{' '}
             {DEFAULT_ELECTION.candidates.join(', ')}
@@ -160,62 +146,66 @@ function InputsCard() {
   );
 }
 
-function LiveExampleSection({ loading, error, result }: {
+function OutcomeSection({ loading, error, result }: {
   loading: boolean;
   error: string | null;
   result: any;
 }) {
   const { t } = useTranslation();
+  if (loading) {
+    return (
+      <Box sx={{ display: 'flex', justifyContent: 'center', py: 4 }}>
+        <CircularProgress />
+      </Box>
+    );
+  }
+  if (error) return <Alert severity="error">{error}</Alert>;
+  if (!result) return null;
   return (
-    <Paper elevation={2} sx={{ p: 3, my: 3, bgcolor: 'info.light', color: 'info.contrastText' }}>
-      <Typography variant="h5" gutterBottom>
-        {t('stvMd.liveExampleTitle')}
-      </Typography>
-      <Typography variant="body2" paragraph>
-        {t('stvMd.liveExampleDescription')}
-      </Typography>
-      {loading && (
-        <Box sx={{ display: 'flex', justifyContent: 'center', py: 4 }}>
-          <CircularProgress />
-        </Box>
-      )}
-      {error && <Alert severity="error">{error}</Alert>}
-      {result && (
-        <>
-          <ElectionResults
-            elected={result.elected}
-            electionType={DEFAULT_ELECTION.election_type}
-            groups={isGroupedResult(result) ? result.groups : undefined}
-            groupResults={isGroupedResult(result) ? result.group_results : undefined}
-          />
-          {isGroupedResult(result) ? (
-            result.group_results.map((gr: any) => (
-              <ResultsSummary key={gr.group} log={gr.log} seats={gr.seats} numElected={gr.elected.length} groupName={gr.group} />
-            ))
-          ) : (
-            <ResultsSummary log={result.log} seats={DEFAULT_ELECTION.seats} numElected={result.elected.length} />
-          )}
-        </>
-      )}
-    </Paper>
+    <Card elevation={3} sx={{ my: 3 }}>
+      <CardContent>
+        <Typography variant="h5" gutterBottom>
+          {t('stvMd.outcomeTitle')}
+        </Typography>
+        <ElectionResults
+          elected={result.elected}
+          electionType={DEFAULT_ELECTION.election_type}
+          groups={isGroupedResult(result) ? result.groups : undefined}
+          groupResults={isGroupedResult(result) ? result.group_results : undefined}
+        />
+        {isGroupedResult(result) ? (
+          result.group_results.map((gr: any) => (
+            <ResultsSummary key={gr.group} log={gr.log} seats={gr.seats} numElected={gr.elected.length} groupName={gr.group} />
+          ))
+        ) : (
+          <ResultsSummary log={result.log} seats={DEFAULT_ELECTION.seats} numElected={result.elected.length} />
+        )}
+      </CardContent>
+    </Card>
   );
 }
 
-function HowItWorksCard() {
+function WalkthroughSection({ result }: { result: any }) {
+  if (!result) return null;
+  return (
+    <Box sx={{ my: 3 }}>
+      {isGroupedResult(result) ? (
+        result.group_results.map((gr: any) => (
+          <CountingWalkthrough key={gr.group} log={gr.log} />
+        ))
+      ) : (
+        <CountingWalkthrough log={result.log} />
+      )}
+    </Box>
+  );
+}
+
+function TransferRulesSection() {
   const { t } = useTranslation();
   return (
     <Card elevation={3} sx={{ my: 3 }}>
       <CardContent>
         <Typography variant="h5" gutterBottom>
-          {t('stvMd.iterationsTitle')}
-        </Typography>
-        <Typography variant="body1" paragraph color="text.secondary">
-          {t('stvMd.iterationsIntro1')}
-        </Typography>
-        <Typography variant="body1" paragraph color="text.secondary">
-          {t('stvMd.iterationsIntro2')}
-        </Typography>
-        <Typography variant="h6" gutterBottom sx={{ mt: 3 }}>
           {t('stvMd.transferRulesTitle')}
         </Typography>
         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
@@ -243,22 +233,6 @@ function HowItWorksCard() {
         </Typography>
       </CardContent>
     </Card>
-  );
-}
-
-function WalkthroughSection({ result }: { result: any }) {
-  if (!result) return null;
-  const { t } = useTranslation();
-  return (
-    <Box>
-      {isGroupedResult(result) ? (
-        result.group_results.map((gr: any) => (
-          <CountingWalkthrough key={gr.group} log={gr.log} />
-        ))
-      ) : (
-        <CountingWalkthrough log={result.log} />
-      )}
-    </Box>
   );
 }
 
@@ -313,10 +287,10 @@ export default function StvExplainer({ path }: Props = {}) {
     <Page title={t('STV guide')} description={t('STV Explainer meta description')}>
       <IntroSection />
       <KeyFeaturesCard />
-      <InputsCard />
-      <LiveExampleSection loading={loading} error={error} result={result} />
-      <HowItWorksCard />
+      <ExampleSection />
       <WalkthroughSection result={result} />
+      <OutcomeSection loading={loading} error={error} result={result} />
+      <TransferRulesSection />
       <TrySimulatorButton />
       <ReferencesCard />
     </Page>

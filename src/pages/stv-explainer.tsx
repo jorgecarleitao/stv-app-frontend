@@ -19,6 +19,10 @@ import Button from '@mui/material/Button';
 import CircularProgress from '@mui/material/CircularProgress';
 import Alert from '@mui/material/Alert';
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
+import HowToVoteIcon from '@mui/icons-material/HowToVote';
+import BalanceIcon from '@mui/icons-material/Balance';
+import SchemaIcon from '@mui/icons-material/Schema';
+import GppGoodIcon from '@mui/icons-material/GppGood';
 
 import { simulateElection, isGroupedResult } from '../data/api';
 import { DEFAULT_ELECTION } from '../data/defaults';
@@ -58,27 +62,35 @@ function IntroSection() {
   );
 }
 
+const FEATURE_ICONS = [HowToVoteIcon, BalanceIcon, SchemaIcon, GppGoodIcon];
+
 function KeyFeaturesCard() {
   const { t } = useTranslation();
   return (
-    <Paper elevation={2} sx={{ p: 3, my: 3, bgcolor: 'success.light', color: 'success.contrastText' }}>
-      <Typography variant="h6" gutterBottom>
+    <Box sx={{ my: 3 }}>
+      <Typography variant="h6" gutterBottom sx={{ textAlign: 'center' }}>
         {t('stvMd.keyFeaturesTitle')}
       </Typography>
-      <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
-        {FETURES.map((key, i) => (
-          <Box key={i} sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-            <Chip label={i + 1} size="small" sx={{ minWidth: 32 }} />
-            <Typography variant="body2">{t(key)}</Typography>
-          </Box>
-        ))}
+      <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr 1fr', md: 'repeat(4, 1fr)' }, gap: 2 }}>
+        {FETURES.map((key, i) => {
+          const Icon = FEATURE_ICONS[i];
+          return (
+            <Paper key={i} elevation={2} sx={{ p: 2.5, textAlign: 'center' }}>
+              <Icon sx={{ fontSize: 40, color: 'primary.main', mb: 1 }} />
+              <Typography variant="body2">{t(key)}</Typography>
+            </Paper>
+          );
+        })}
       </Box>
-    </Paper>
+    </Box>
   );
 }
 
 function BallotTable() {
   const { t } = useTranslation();
+  const individualBallots = DEFAULT_ELECTION.ballots.flatMap(b =>
+    Array.from({ length: b.votes }, () => b.ranks)
+  ).sort(() => Math.random() - 0.5);
   return (
     <>
       <Typography variant="subtitle1" sx={{ mt: 2, mb: 1 }}>
@@ -87,32 +99,35 @@ function BallotTable() {
       <Typography variant="body2" color="text.secondary" paragraph>
         {t('ballotExplanation')}
       </Typography>
-      <TableContainer component={Paper} variant="outlined">
-        <Table size="small">
+      <TableContainer component={Paper} variant="outlined" sx={{ maxHeight: 400 }}>
+        <Table size="small" stickyHeader>
           <TableHead>
             <TableRow>
+              <TableCell sx={{ fontWeight: 'bold' }}>{t('ballotNumber')}</TableCell>
               {DEFAULT_ELECTION.candidates.map(c => (
                 <Tooltip key={c} title={t('ballotRankTooltip')} arrow placement="top">
                   <TableCell align="center">{c}</TableCell>
                 </Tooltip>
               ))}
-              <TableCell>{t('votes')}</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            {DEFAULT_ELECTION.ballots.map((b, i) => (
+            {individualBallots.map((ranks, i) => (
               <TableRow key={i}>
-                {(b.ranks ?? []).map((r, ci) => (
+                <TableCell sx={{ color: 'text.secondary', fontSize: 13 }}>#{i + 1}</TableCell>
+                {(ranks ?? []).map((r, ci) => (
                   <TableCell key={ci} align="center">
                     {r !== null ? r + 1 : <Tooltip title={t('ballotNoPreference')} arrow><Box component="span">—</Box></Tooltip>}
                   </TableCell>
                 ))}
-                <TableCell sx={{ fontWeight: 'bold' }}>{b.votes}</TableCell>
               </TableRow>
             ))}
           </TableBody>
         </Table>
       </TableContainer>
+      <Typography variant="caption" color="text.secondary" sx={{ mt: 1, display: 'block', textAlign: 'right' }}>
+        {individualBallots.length} {t('voters')} {t('ballotTotal')}
+      </Typography>
     </>
   );
 }

@@ -210,7 +210,7 @@
   "walkthrough.electRemaining": "Eleger restantes",
   "walkthrough.electRemainingDetail": "Apenas {{candidate}} resta para preencher o último lugar, sendo eleito(a) sem necessidade de atingir a quota.",
   "walkthrough.redistribute": "Redistribuir votos",
-  "walkthrough.iterateDetail": "Os votos são redistribuídos e a quota é recalculada com base no número reduzido de votos ativos.",
+  "walkthrough.iterateDetail": "Os votos são redistribuídos para os restantes candidatos com base na próxima preferência ativa de cada boletim.",
   "walkthrough.defeat": "Derrotar",
   "walkthrough.defeatDetail": "{{candidate}} tem o menor número de votos ({{reason}}) e é derrotado(a). Os seus votos são transferidos para a próxima preferência ativa de cada boletim.",
   "walkthrough.defeatRemaining": "Derrotar restantes",

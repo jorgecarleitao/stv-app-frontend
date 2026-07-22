@@ -209,7 +209,7 @@
   "walkthrough.electRemaining": "Elect remaining",
   "walkthrough.electRemainingDetail": "Only {{candidate}} remains to fill the last seat, so they are elected without needing to reach the quota.",
   "walkthrough.redistribute": "Redistribute votes",
-  "walkthrough.iterateDetail": "Votes are redistributed and the quota is recalculated based on the reduced number of active votes.",
+  "walkthrough.iterateDetail": "Votes are redistributed to remaining candidates based on each ballot's next active preference.",
   "walkthrough.defeat": "Defeat",
   "walkthrough.defeatDetail": "{{candidate}} has the fewest votes ({{reason}}) and is defeated. Their votes transfer to each ballot's next active preference.",
   "walkthrough.defeatRemaining": "Defeat remaining",

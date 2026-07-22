@@ -23,6 +23,10 @@ import HowToVoteIcon from '@mui/icons-material/HowToVote';
 import BalanceIcon from '@mui/icons-material/Balance';
 import SchemaIcon from '@mui/icons-material/Schema';
 import GppGoodIcon from '@mui/icons-material/GppGood';
+import PlayArrowIcon from '@mui/icons-material/PlayArrow';
+import AddIcon from '@mui/icons-material/Add';
+import MenuBookIcon from '@mui/icons-material/MenuBook';
+import Stack from '@mui/material/Stack';
 
 import { simulateElection, isGroupedResult } from '../data/api';
 import { DEFAULT_ELECTION } from '../data/defaults';
@@ -251,13 +255,21 @@ function TransferRulesSection() {
   );
 }
 
-function TrySimulatorButton() {
+function ActionButtons() {
   const { t } = useTranslation();
   return (
     <Box sx={{ textAlign: 'center', my: 4 }}>
-      <Button variant="contained" size="large" endIcon={<OpenInNewIcon />} href="/simulate">
-        {t('Try Simulator')}
-      </Button>
+      <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} justifyContent="center">
+        <Button variant="contained" size="large" startIcon={<PlayArrowIcon />} href="/simulate" target="_blank" rel="noopener">
+          {t('Try Simulator')}
+        </Button>
+        <Button variant="outlined" size="large" startIcon={<AddIcon />} href="/elections/create">
+          {t('Create Election')}
+        </Button>
+        <Button variant="outlined" size="large" startIcon={<MenuBookIcon />} href="/admin-guide">
+          {t('Admin Guide')}
+        </Button>
+      </Stack>
     </Box>
   );
 }
@@ -306,7 +318,7 @@ export default function StvExplainer({ path }: Props = {}) {
       <WalkthroughSection result={result} />
       <OutcomeSection loading={loading} error={error} result={result} />
       <TransferRulesSection />
-      <TrySimulatorButton />
+      <ActionButtons />
       <ReferencesCard />
     </Page>
   );

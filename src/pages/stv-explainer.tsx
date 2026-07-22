@@ -304,7 +304,7 @@ export default function StvExplainer({ path }: Props = {}) {
   }, []);
 
   return (
-    <Page title={`${t('STV guide')} - ${t('App title')}`} description={t('STV Explainer meta description')}>
+    <Page title={t('STV guide')} description={t('STV Explainer meta description')}>
       <IntroSection />
       <KeyFeaturesCard />
       <InputsCard />

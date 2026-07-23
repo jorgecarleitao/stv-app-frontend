@@ -79,6 +79,7 @@ export function ResultsSummary({ log, seats, numElected, groupName }: ResultsSum
       </Typography>
       <Stack direction="row" flexWrap="wrap" gap={1} sx={{ mb: 1 }}>
         <Chip label={`${t('Ballots')}: ${header.ballots}`} size="small" variant="outlined" />
+        <Chip label={`${t('Quota')}: ${header.quota}`} size="small" variant="outlined" color="warning" />
         <Chip label={`${t('Rounds')}: ${numRounds}`} size="small" variant="outlined" />
         <Chip label={`${numElected} / ${seats} ${seatLabel}`} size="small" color={numElected >= seats ? 'success' : 'warning'} variant="outlined" />
       </Stack>

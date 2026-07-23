@@ -8,6 +8,8 @@ import Paper from '@mui/material/Paper';
 import Alert from '@mui/material/Alert';
 import CircularProgress from '@mui/material/CircularProgress';
 import Button from '@mui/material/Button';
+import Checkbox from '@mui/material/Checkbox';
+import FormControlLabel from '@mui/material/FormControlLabel';
 import Grid from '@mui/material/Grid';
 import Avatar from '@mui/material/Avatar';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
@@ -37,6 +39,7 @@ export default function ElectionDetail({ electionId }: ElectionDetailProps) {
   const [electionState, setElectionState] = useState<ElectionState | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [includeEmails, setIncludeEmails] = useState(false);
 
   useEffect(() => {
     if (electionId) {
@@ -157,12 +160,18 @@ export default function ElectionDetail({ electionId }: ElectionDetailProps) {
         </Typography>
       </Alert>
       {/* Export Button */}
-      <Box sx={{ display: 'flex', justifyContent: 'flex-end', mb: 2 }}>
+      <Box sx={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', gap: 2, mb: 2 }}>
+        {votingClosed && (
+          <FormControlLabel
+            control={<Checkbox size="small" checked={includeEmails} onChange={(_, checked) => setIncludeEmails(checked)} />}
+            label="Include emails"
+          />
+        )}
         <Tooltip title={!votingClosed ? t('Export available after voting closes') : ''}>
           <span>
             <Button
               component="a"
-              href={votingClosed ? getExportUrl(electionId!) : undefined}
+              href={votingClosed ? getExportUrl(electionId!, includeEmails || undefined) : undefined}
               variant="outlined"
               startIcon={<DownloadIcon />}
               disabled={!votingClosed}

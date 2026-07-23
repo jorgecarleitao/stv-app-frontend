@@ -17,6 +17,7 @@ interface CountingWalkthroughProps {
 function describeAction(
   actionType: CountingLogActionType,
   t: (key: string, options?: any) => string,
+  quota?: string,
 ): { short: string; detailed: string } {
   if (typeof actionType === 'string') {
     if (actionType === 'begin_count') {
@@ -31,7 +32,7 @@ function describeAction(
     const c = actionType.elect.candidate;
     return {
       short: `${t('walkthrough.elect')}: ${c}`,
-      detailed: t('walkthrough.electDetail', { candidate: c }),
+      detailed: t('walkthrough.electDetail', { candidate: c, quota }),
     };
   }
   if ('elect_remaining' in actionType) {
@@ -101,7 +102,7 @@ function RoundWalkthrough({ round, roundNumber, log }: {
         </Box>
 
         {round.actions.map((action, idx) => {
-          const { short, detailed } = describeAction(action.action_type, t);
+          const { short, detailed } = describeAction(action.action_type, t, action.stats.quota);
 
           return (
             <Fragment key={idx}>

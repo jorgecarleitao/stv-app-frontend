@@ -156,7 +156,10 @@ function ExampleSection() {
             <strong>{DEFAULT_ELECTION.seats}</strong> {t('seats')}
           </Typography>
           <Typography variant="body2">
-            <strong>{TOTAL_VOTES}</strong> {t('voters')}, <strong>{DEFAULT_ELECTION.ballots.length}</strong> {t('unique patterns')}
+            <strong>{TOTAL_VOTES}</strong> {t('voters')}
+          </Typography>
+          <Typography variant="body2">
+            <strong>{t('Quota')}:</strong> {(TOTAL_VOTES / (DEFAULT_ELECTION.seats + 1)).toFixed(2)} {t('votes')}
           </Typography>
         </Box>
         <BallotTable />

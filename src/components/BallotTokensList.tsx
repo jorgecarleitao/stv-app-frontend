@@ -96,9 +96,17 @@ export function BallotTokensList({ electionId, adminUuid }: BallotTokensListProp
   // Confirm dialog
   const [confirmOpen, setConfirmOpen] = useState(false);
 
+  // Track radio button display separately from config state
+  const [radioValue, setRadioValue] = useState<'self' | 'email'>('self');
+
   const isEmail = config !== null;
 
   useEffect(() => { init(); }, [electionId, adminUuid]);
+
+  // Sync radio display with config changes
+  useEffect(() => {
+    setRadioValue(isEmail ? 'email' : 'self');
+  }, [isEmail]);
 
   async function init() {
     setLoading(true);
@@ -130,8 +138,12 @@ export function BallotTokensList({ electionId, adminUuid }: BallotTokensListProp
   }
 
   function handleRadioChange(_: unknown, value: string) {
-    if (value === 'self' && isEmail) {
+    if (value === 'email' && !isEmail) {
+      setRadioValue('email');
+    } else if (value === 'self' && isEmail) {
       setConfirmOpen(true);
+    } else if (value === 'self' && !isEmail) {
+      setRadioValue('self');
     }
   }
 
@@ -150,7 +162,7 @@ export function BallotTokensList({ electionId, adminUuid }: BallotTokensListProp
     setError(null);
     try {
       setCreating(true);
-      if (isEmail) {
+      if (radioValue === 'email') {
         const parsed = parseEmails(recipients);
         if (!parsed.length) { setError(t('Enter at least one email address')); return; }
         await createBallotTokens(electionId, adminUuid, parsed);
@@ -269,7 +281,7 @@ export function BallotTokensList({ electionId, adminUuid }: BallotTokensListProp
     });
   }
 
-  const pendingCount = isEmail
+  const pendingCount = radioValue === 'email'
     ? tokens.filter(t => t.email && !t.sent_at).length
     : tokens.filter(t => !t.sent_at && !t.converted_at).length;
 
@@ -297,10 +309,16 @@ export function BallotTokensList({ electionId, adminUuid }: BallotTokensListProp
         {error && <Alert severity="error" onClose={() => setError(null)}>{error}</Alert>}
 
         {/* Mode toggle */}
-        <RadioGroup row value={isEmail ? 'email' : 'self'} onChange={handleRadioChange}>
+        <RadioGroup row value={radioValue} onChange={handleRadioChange}>
           <FormControlLabel value="self" control={<Radio size="small" />} label={t('Self-delivered')} />
           <FormControlLabel value="email" control={<Radio size="small" />} label={t('By email')} />
         </RadioGroup>
+
+        {radioValue === 'email' && !config && (
+          <Alert severity="info">
+            {t('Configure email settings to send tokens directly to voters.')}
+          </Alert>
+        )}
 
         {/* Confirm dialog */}
         <Dialog open={confirmOpen} onClose={() => setConfirmOpen(false)}>
@@ -319,6 +337,7 @@ export function BallotTokensList({ electionId, adminUuid }: BallotTokensListProp
         </Dialog>
 
         {/* Email config */}
+        {radioValue === 'email' && (
         <Box sx={{ p: 2, bgcolor: 'background.default', borderRadius: 1 }}>
           <Stack spacing={2}>
             <Typography variant="subtitle2">{t('Email Configuration')}</Typography>
@@ -349,12 +368,13 @@ export function BallotTokensList({ electionId, adminUuid }: BallotTokensListProp
               </Stack>
             </Stack>
           </Box>
+        )}
 
         {/* Token creation */}
         <Box sx={{ p: 2, bgcolor: 'background.default', borderRadius: 1 }}>
           <Stack spacing={2}>
             <Typography variant="subtitle2">{t('Create New Tokens')}</Typography>
-            {isEmail ? (
+            {radioValue === 'email' ? (
               <Stack spacing={2}>
                 <TextField label={t('Email addresses (one per line or comma-separated)')} multiline rows={3}
                   value={recipients} onChange={e => setRecipients(e.target.value)} size="small" fullWidth disabled={creating}
@@ -379,12 +399,12 @@ export function BallotTokensList({ electionId, adminUuid }: BallotTokensListProp
         </Box>
 
         {/* Batch action */}
-        {pendingCount > 0 && !isEmail && (
+        {pendingCount > 0 && radioValue === 'self' && (
           <Button variant="outlined" size="small" onClick={handleMarkAllSent}>
             {t('Mark all as sent ({{count}})', { count: pendingCount })}
           </Button>
         )}
-        {pendingCount > 0 && isEmail && (
+        {pendingCount > 0 && radioValue === 'email' && (
           <Button variant="contained" size="small" startIcon={sending === '__all__' ? <CircularProgress size={16} /> : <SendIcon />}
             onClick={handleSendAll} disabled={sending === '__all__'}>
             {sending === '__all__' ? t('Sending...') : t('Send to All Pending ({{count}})', { count: pendingCount })}
@@ -404,10 +424,10 @@ export function BallotTokensList({ electionId, adminUuid }: BallotTokensListProp
                   {i > 0 && <Divider />}
                   <ListItem secondaryAction={
                     <Stack direction="row" spacing={0.5} alignItems="center">
-                      {!isEmail && !token.sent_at && !token.converted_at && (
+                      {radioValue === 'self' && !token.sent_at && !token.converted_at && (
                         <Button size="small" variant="outlined" onClick={() => handleMarkSent(token.id)}>{t('Mark sent')}</Button>
                       )}
-                      {isEmail && token.email && !token.sent_at && (
+                      {radioValue === 'email' && token.email && !token.sent_at && (
                         <IconButton size="small" onClick={() => handleSend(token.id)} disabled={sending === token.id}>
                           {sending === token.id ? <CircularProgress size={16} /> : <SendIcon fontSize="small" />}
                         </IconButton>
@@ -429,7 +449,7 @@ export function BallotTokensList({ electionId, adminUuid }: BallotTokensListProp
                               {token.email}{token.sent_at ? ` — ${t('Sent on {{date}}', { date: fmt(token.sent_at) })}` : ` — ${t('Not sent')}`}
                             </Typography>
                           )}
-                          {!isEmail && !token.email && token.sent_at && (
+                          {radioValue === 'self' && !token.email && token.sent_at && (
                             <Typography variant="caption" color="text.secondary">{t('Sent on {{date}}', { date: fmt(token.sent_at) })}</Typography>
                           )}
                         </Stack>

@@ -40,6 +40,7 @@ import {
   getEmailConfig,
   upsertEmailConfig,
   deleteEmailConfig,
+  sendTestEmail,
   patchToken,
   batchMarkSent,
   UpsertEmailConfigRequest,
@@ -79,12 +80,16 @@ export function BallotTokensList({ electionId, adminUuid }: BallotTokensListProp
   // Email config
   const [config, setConfig] = useState<EmailConfig | null>(null);
   const [smtpHost, setSmtpHost] = useState('');
-  const [smtpPort, setSmtpPort] = useState('587');
   const [smtpUser, setSmtpUser] = useState('');
   const [smtpPass, setSmtpPass] = useState('');
   const [fromName, setFromName] = useState('');
   const [fromEmail, setFromEmail] = useState('');
   const [savingConfig, setSavingConfig] = useState(false);
+
+  // Test email
+  const [testEmail, setTestEmail] = useState('');
+  const [testing, setTesting] = useState(false);
+  const [testSuccess, setTestSuccess] = useState<string | null>(null);
 
   // Send/mark
   const [sending, setSending] = useState<string | null>(null);
@@ -120,7 +125,6 @@ export function BallotTokensList({ electionId, adminUuid }: BallotTokensListProp
       setConfig(c);
       if (c) {
         setSmtpHost(c.smtp_host);
-        setSmtpPort(String(c.smtp_port));
         setSmtpUser(c.smtp_username);
         setFromName(c.from_name);
         setFromEmail(c.from_email);
@@ -181,7 +185,7 @@ export function BallotTokensList({ electionId, adminUuid }: BallotTokensListProp
   }
 
   async function handleSaveConfig() {
-    if (!smtpHost || !smtpPort || !smtpUser || !fromName || !fromEmail) {
+    if (!smtpHost || !smtpUser || !fromName || !fromEmail) {
       setError(t('All fields except password are required'));
       return;
     }
@@ -189,7 +193,7 @@ export function BallotTokensList({ electionId, adminUuid }: BallotTokensListProp
     try {
       setSavingConfig(true);
       const body: UpsertEmailConfigRequest = {
-        smtp_host: smtpHost.trim(), smtp_port: parseInt(smtpPort) || 587,
+        smtp_host: smtpHost.trim(),
         smtp_username: smtpUser.trim(),
         from_name: fromName.trim(), from_email: fromEmail.trim(),
         ...(smtpPass ? { smtp_password: smtpPass } : {}),
@@ -213,6 +217,24 @@ export function BallotTokensList({ electionId, adminUuid }: BallotTokensListProp
       setError(String(err));
     } finally {
       setSavingConfig(false);
+    }
+  }
+
+  async function handleSendTest() {
+    if (!testEmail || !testEmail.includes('@')) {
+      setError(t('Enter a valid email address'));
+      return;
+    }
+    setError(null);
+    setTestSuccess(null);
+    try {
+      setTesting(true);
+      await sendTestEmail(electionId, adminUuid, testEmail.trim());
+      setTestSuccess(t('Test email sent to {{email}}', { email: testEmail.trim() }));
+    } catch (err) {
+      setError(String(err));
+    } finally {
+      setTesting(false);
     }
   }
 
@@ -307,6 +329,7 @@ export function BallotTokensList({ electionId, adminUuid }: BallotTokensListProp
         </Stack>
 
         {error && <Alert severity="error" onClose={() => setError(null)}>{error}</Alert>}
+        {testSuccess && <Alert severity="success" onClose={() => setTestSuccess(null)}>{testSuccess}</Alert>}
 
         {/* Mode toggle */}
         <RadioGroup row value={radioValue} onChange={handleRadioChange}>
@@ -343,12 +366,11 @@ export function BallotTokensList({ electionId, adminUuid }: BallotTokensListProp
             <Typography variant="subtitle2">{t('Email Configuration')}</Typography>
                 {config && (
                 <Alert severity="info">
-                  {config.from_name} &lt;{config.from_email}&gt; via {config.smtp_host}:{config.smtp_port}
+                  {config.from_name} &lt;{config.from_email}&gt; via {config.smtp_host}
                 </Alert>
               )}
               <Stack direction="row" spacing={2}>
                 <TextField label={t('SMTP Host')} value={smtpHost} onChange={e => setSmtpHost(e.target.value)} size="small" fullWidth disabled={savingConfig} />
-                <TextField label={t('SMTP Port')} value={smtpPort} onChange={e => setSmtpPort(e.target.value)} size="small" type="number" sx={{ width: 120 }} disabled={savingConfig} />
               </Stack>
               <Stack direction="row" spacing={2}>
                 <TextField label={t('Username')} value={smtpUser} onChange={e => setSmtpUser(e.target.value)} size="small" fullWidth disabled={savingConfig} />
@@ -366,6 +388,18 @@ export function BallotTokensList({ electionId, adminUuid }: BallotTokensListProp
                   <Button variant="outlined" color="error" onClick={handleClearConfig} disabled={savingConfig}>{t('Clear')}</Button>
                 )}
               </Stack>
+              {config && (
+                <Stack direction="row" spacing={2} alignItems="center">
+                  <TextField label={t('Send Test Email to')} value={testEmail}
+                    onChange={e => setTestEmail(e.target.value)} size="small" type="email"
+                    sx={{ flexGrow: 1 }} disabled={testing}
+                    placeholder={config.from_email} />
+                  <Button variant="outlined" onClick={handleSendTest} disabled={testing || !testEmail.trim()}
+                    startIcon={testing ? <CircularProgress size={16} /> : undefined}>
+                    {testing ? t('Sending...') : t('Send Test')}
+                  </Button>
+                </Stack>
+              )}
             </Stack>
           </Box>
         )}

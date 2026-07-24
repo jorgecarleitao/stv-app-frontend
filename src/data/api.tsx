@@ -363,7 +363,6 @@ export interface CreateTokenResult {
 
 export interface EmailConfig {
   smtp_host: string;
-  smtp_port: number;
   smtp_username: string;
   from_name: string;
   from_email: string;
@@ -371,7 +370,6 @@ export interface EmailConfig {
 
 export interface UpsertEmailConfigRequest {
   smtp_host: string;
-  smtp_port: number;
   smtp_username: string;
   smtp_password?: string;
   from_name: string;
@@ -523,6 +521,29 @@ export async function upsertEmailConfig(
   }
 
   return response.json();
+}
+
+/**
+ * Send a test email using the saved SMTP configuration (admin only)
+ */
+export async function sendTestEmail(
+  electionId: string,
+  adminUuid: string,
+  toEmail: string
+): Promise<void> {
+  const response = await fetch(
+    `${BASE_URL}/elections/${electionId}/admin/${adminUuid}/email-config/test`,
+    {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ to_email: toEmail }),
+      mode: 'cors',
+    }
+  );
+
+  if (!response.ok) {
+    throw new Error(`Test email failed: ${await response.text()}`);
+  }
 }
 
 /**

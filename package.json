@@ -26,7 +26,7 @@
 		"react-i18next": "^17.0.9"
 	},
 	"devDependencies": {
-		"@preact/preset-vite": "^2.10.5",
+		"@preact/preset-vite": "^2.10.6",
 		"@types/js-yaml": "^4.0.9",
 		"i18next-parser": "^9.4.0",
 		"prettier": "^3.9.5",

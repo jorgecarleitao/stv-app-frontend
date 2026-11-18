@@ -42,13 +42,9 @@ function formatActionType(
     return actionType;
   }
   if ('elect' in actionType) return `${t('Elect')}: ${actionType.elect.candidate}`;
-  if ('elect_remaining' in actionType)
-    return `${t('Elect remaining')}: ${actionType.elect_remaining.candidate}`;
   if ('iterate' in actionType) return `${t('Iterate')}: ${actionType.iterate.reason}`;
   if ('defeat' in actionType)
     return `${t('Defeat')}: ${actionType.defeat.candidate} (${actionType.defeat.reason})`;
-  if ('defeat_remaining' in actionType)
-    return `${t('Defeat remaining')}: ${actionType.defeat_remaining.candidate}`;
   if ('break_tie' in actionType)
     return `${t('Break tie')}: ${actionType.break_tie.defeated} ${t('defeated from')} [${actionType.break_tie.candidates.join(', ')}]`;
   return '';
@@ -180,9 +176,11 @@ export function CandidateStatusIcon({ status }: { status: CountingLogAction['can
 }
 
 export function CandidateCountsBarChart({
+  candidates,
   counts,
   quota,
 }: {
+  candidates: CountingLog['candidates'];
   counts: CountingLogAction['candidate_counts'];
   quota: string;
 }) {
@@ -195,7 +193,8 @@ export function CandidateCountsBarChart({
   return (
     <Paper variant="outlined" sx={{ p: 1.5 }}>
       <Box sx={{ display: 'grid', gridTemplateColumns: 'auto 1fr auto', alignItems: 'center', rowGap: 0.75 }}>
-        {counts.map((c) => {
+        {counts.map((c, i) => {
+          const name = candidates[i]?.name ?? `#${i}`;
           const v = parseFloat(c.votes) || 0;
           const belowPct = (Math.min(v, quotaVal) / xMax) * 100;
           const abovePct = (Math.max(0, v - quotaVal) / xMax) * 100;
@@ -203,10 +202,10 @@ export function CandidateCountsBarChart({
           const isDefeated = c.status === 'defeated';
 
           return (
-            <Fragment key={c.name}>
+            <Fragment key={name}>
               <Box sx={{ display: 'flex', alignItems: 'center', pr: 1 }}>
                 <CandidateStatusIcon status={c.status} />
-                <Typography variant="body2" noWrap>{c.name}</Typography>
+                <Typography variant="body2" noWrap>{name}</Typography>
               </Box>
               <Tooltip title={c.votes}>
                 <Box sx={{ height: 22, bgcolor: 'action.hover', borderRadius: 1, position: 'relative', overflow: 'hidden' }}>
@@ -224,7 +223,7 @@ export function CandidateCountsBarChart({
   );
 }
 
-function RoundCard({ round }: { round: CountingLog['rounds'][0] }) {
+function RoundCard({ round, candidates }: { round: CountingLog['rounds'][0]; candidates: CountingLog['candidates'] }) {
   const { t } = useTranslation();
 
   return (
@@ -239,7 +238,7 @@ function RoundCard({ round }: { round: CountingLog['rounds'][0] }) {
             <Typography variant="subtitle2" fontWeight="bold" gutterBottom>
               {formatActionType(action.action_type, t)}
             </Typography>
-            <CandidateCountsBarChart counts={action.candidate_counts} quota={action.stats.quota} />
+            <CandidateCountsBarChart candidates={candidates} counts={action.candidate_counts} quota={action.stats.quota} />
             <StatsRow stats={action.stats} />
           </Box>
         ))}
@@ -274,7 +273,7 @@ export function CountingLog({ log, groupName, defaultExpanded }: CountingLogProp
             <HeaderSection log={log} />
             <CandidatesSection candidates={log.candidates} />
             {paginatedRounds.map(round => (
-              <RoundCard key={round.round_number} round={round} />
+              <RoundCard key={round.round_number} round={round} candidates={log.candidates} />
             ))}
             <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 2 }}>
               <TablePagination

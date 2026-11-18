@@ -29,24 +29,23 @@ function describeAction(
     return { short: actionType, detailed: '' };
   }
   if ('elect' in actionType) {
-    const c = actionType.elect.candidate;
+    const { candidate: c, reason } = actionType.elect;
+    if (reason === 'remaining') {
+      return {
+        short: `${t('walkthrough.electRemaining')}: ${c}`,
+        detailed: t('walkthrough.electRemainingDetail', { candidate: c }),
+      };
+    }
     return {
       short: `${t('walkthrough.elect')}: ${c}`,
       detailed: t('walkthrough.electDetail', { candidate: c, quota }),
-    };
-  }
-  if ('elect_remaining' in actionType) {
-    const c = actionType.elect_remaining.candidate;
-    return {
-      short: `${t('walkthrough.electRemaining')}: ${c}`,
-      detailed: t('walkthrough.electRemainingDetail', { candidate: c }),
     };
   }
   if ('iterate' in actionType) {
     const r = actionType.iterate.reason;
     const reason = r === 'elected'
       ? t('walkthrough.reasonElected')
-      : r === 'omega'
+      : r === 'low_surplus'
         ? t('walkthrough.reasonOmega')
         : r;
     return {
@@ -55,17 +54,16 @@ function describeAction(
     };
   }
   if ('defeat' in actionType) {
-    const c = actionType.defeat.candidate;
+    const { candidate: c, reason } = actionType.defeat;
+    if (reason === 'remaining') {
+      return {
+        short: `${t('walkthrough.defeatRemaining')}: ${c}`,
+        detailed: t('walkthrough.defeatRemainingDetail', { candidate: c }),
+      };
+    }
     return {
       short: `${t('walkthrough.defeat')}: ${c}`,
-      detailed: t('walkthrough.defeatDetail', { candidate: c, reason: actionType.defeat.reason }),
-    };
-  }
-  if ('defeat_remaining' in actionType) {
-    const c = actionType.defeat_remaining.candidate;
-    return {
-      short: `${t('walkthrough.defeatRemaining')}: ${c}`,
-      detailed: t('walkthrough.defeatRemainingDetail', { candidate: c }),
+      detailed: t('walkthrough.defeatDetail', { candidate: c, reason }),
     };
   }
   if ('break_tie' in actionType) {
@@ -116,7 +114,7 @@ function RoundWalkthrough({ round, roundNumber, log }: {
                 {detailed}
               </Typography>
 
-              <CandidateCountsBarChart counts={action.candidate_counts} quota={action.stats.quota} />
+              <CandidateCountsBarChart candidates={log.candidates} counts={action.candidate_counts} quota={action.stats.quota} />
               <StatsRow stats={action.stats} />
             </Fragment>
           );

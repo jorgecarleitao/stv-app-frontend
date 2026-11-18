@@ -41,15 +41,17 @@ function FirstPreferenceVotes({ log }: { log: CountingLog }) {
       </Typography>
       <Paper variant="outlined" sx={{ p: 1.5 }}>
         <Box sx={{ display: 'grid', gridTemplateColumns: 'auto 1fr auto', alignItems: 'center', rowGap: 0.75 }}>
-          {counts.map(c => {
+          {log.candidates.map((cand, i) => {
+            const c = counts[i];
+            if (!c) return null;
             const v = parseFloat(c.votes) || 0;
             const pct = (v / xMax) * 100;
 
             return (
-              <Fragment key={c.name}>
+              <Fragment key={cand.name}>
                 <Box sx={{ display: 'flex', alignItems: 'center', pr: 1 }}>
                   <CandidateStatusIcon status={c.status} />
-                  <Typography variant="body2" noWrap>{c.name}</Typography>
+                  <Typography variant="body2" noWrap>{cand.name}</Typography>
                 </Box>
                 <Tooltip title={c.votes}>
                   <Box sx={{ height: 22, bgcolor: 'action.hover', borderRadius: 1, position: 'relative', overflow: 'hidden' }}>

@@ -32,13 +32,11 @@ export interface Elected {
 
 export interface CountingLogHeader {
   title: string;
-  package_name: string;
   rule: string;
   arithmetic: string;
   seats: number;
   ballots: number;
   quota: string;
-  omega: string;
 }
 
 export interface CountingLogCandidate {
@@ -48,8 +46,8 @@ export interface CountingLogCandidate {
 
 export type CountingLogCandidateStatus = 'elected' | 'hopeful' | 'defeated';
 
+// Index-aligned with CountingLog.candidates
 export interface CountingLogCandidateCount {
-  name: string;
   status: CountingLogCandidateStatus;
   votes: string;
 }
@@ -65,11 +63,9 @@ export interface CountingLogStats {
 export type CountingLogActionType =
   | 'begin_count'
   | 'count_complete'
-  | { elect: { candidate: string } }
-  | { elect_remaining: { candidate: string } }
+  | { elect: { candidate: string; reason: string } }
   | { iterate: { reason: string } }
-  | { defeat: { reason: string; candidate: string } }
-  | { defeat_remaining: { candidate: string } }
+  | { defeat: { candidate: string; reason: string } }
   | { break_tie: { candidates: string[]; defeated: string } };
 
 export interface CountingLogAction {

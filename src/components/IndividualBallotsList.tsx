@@ -43,26 +43,28 @@ export function IndividualBallotsList({ electionId, ballots }: IndividualBallots
               </TableRow>
             </TableHead>
             <TableBody>
-              {ballots
-                .slice(page * rowsPerPage, (page + 1) * rowsPerPage)
-                .map((uuid, idx) => (
-                  <TableRow key={uuid} hover>
-                    <TableCell>{page * rowsPerPage + idx + 1}</TableCell>
-                    <TableCell sx={{ typography: 'body2' }}>
-                      <Box component="span" sx={{ display: { xs: 'none', sm: 'inline' } }}>{uuid}</Box>
-                      <Box component="span" sx={{ display: { xs: 'inline', sm: 'none' } }}>{uuid.substring(0, 5)}…</Box>
-                    </TableCell>
-                    <TableCell>
-                      <Button
-                        size="small"
-                        component="a"
-                        href={`/elections/${electionId}/ballot/${uuid}`}
-                      >
-                        {t('View')}
-                      </Button>
-                    </TableCell>
-                  </TableRow>
-                ))}
+              {ballots.slice(page * rowsPerPage, (page + 1) * rowsPerPage).map((uuid, idx) => (
+                <TableRow key={uuid} hover>
+                  <TableCell>{page * rowsPerPage + idx + 1}</TableCell>
+                  <TableCell sx={{ typography: 'body2' }}>
+                    <Box component="span" sx={{ display: { xs: 'none', sm: 'inline' } }}>
+                      {uuid}
+                    </Box>
+                    <Box component="span" sx={{ display: { xs: 'inline', sm: 'none' } }}>
+                      {uuid.substring(0, 5)}…
+                    </Box>
+                  </TableCell>
+                  <TableCell>
+                    <Button
+                      size="small"
+                      component="a"
+                      href={`/elections/${electionId}/ballot/${uuid}`}
+                    >
+                      {t('View')}
+                    </Button>
+                  </TableCell>
+                </TableRow>
+              ))}
             </TableBody>
           </Table>
         </TableContainer>
@@ -73,7 +75,10 @@ export function IndividualBallotsList({ electionId, ballots }: IndividualBallots
             page={page}
             onPageChange={(_, p) => setPage(p)}
             rowsPerPage={rowsPerPage}
-            onRowsPerPageChange={e => { setRowsPerPage(parseInt((e.target as HTMLInputElement).value, 10)); setPage(0); }}
+            onRowsPerPageChange={e => {
+              setRowsPerPage(parseInt((e.target as HTMLInputElement).value, 10));
+              setPage(0);
+            }}
             rowsPerPageOptions={[25, 50, 100]}
           />
         </Box>

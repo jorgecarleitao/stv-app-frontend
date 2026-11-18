@@ -27,7 +27,14 @@ import { PairwiseMatrix } from '../components/PairwiseMatrix';
 import { ResultsSummary } from '../components/ResultsSummary';
 import { CountingLog } from '../components/CountingLog';
 
-import { getElection, getExportUrl, ElectionState, isCopelandResult, isGroupedResult, ElectionResult } from '../data/api';
+import {
+  getElection,
+  getExportUrl,
+  ElectionState,
+  isCopelandResult,
+  isGroupedResult,
+  ElectionResult,
+} from '../data/api';
 
 interface ElectionDetailProps {
   path?: string;
@@ -140,7 +147,7 @@ export default function ElectionDetail({ electionId }: ElectionDetailProps) {
       </Button>
       {/* Description */}
       {election.description && (
-        <Typography variant="body1" color="text.secondary" paragraph>
+        <Typography variant="body1" color="text.secondary" gutterBottom>
           {election.description}
         </Typography>
       )}
@@ -160,10 +167,18 @@ export default function ElectionDetail({ electionId }: ElectionDetailProps) {
         </Typography>
       </Alert>
       {/* Export Button */}
-      <Box sx={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', gap: 2, mb: 2 }}>
+      <Box
+        sx={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', gap: 2, mb: 2 }}
+      >
         {votingClosed && (
           <FormControlLabel
-            control={<Checkbox size="small" checked={includeEmails} onChange={(_, checked) => setIncludeEmails(checked)} />}
+            control={
+              <Checkbox
+                size="small"
+                checked={includeEmails}
+                onChange={(_, checked) => setIncludeEmails(checked)}
+              />
+            }
             label="Include emails"
           />
         )}
@@ -171,7 +186,9 @@ export default function ElectionDetail({ electionId }: ElectionDetailProps) {
           <span>
             <Button
               component="a"
-              href={votingClosed ? getExportUrl(electionId!, includeEmails || undefined) : undefined}
+              href={
+                votingClosed ? getExportUrl(electionId!, includeEmails || undefined) : undefined
+              }
               variant="outlined"
               startIcon={<DownloadIcon />}
               disabled={!votingClosed}
@@ -194,7 +211,7 @@ export default function ElectionDetail({ electionId }: ElectionDetailProps) {
             groupResults={isGroupedResult(results) ? results.group_results : undefined}
           />
           {isGroupedResult(results) ? (
-            results.group_results.map((gr) => (
+            results.group_results.map(gr => (
               <ResultsSummary
                 key={gr.group}
                 log={gr.log}
@@ -228,8 +245,9 @@ export default function ElectionDetail({ electionId }: ElectionDetailProps) {
               size={{
                 xs: 12,
                 sm: 6,
-                md: 4
-              }}>
+                md: 4,
+              }}
+            >
               <Box
                 sx={{
                   display: 'flex',
@@ -257,10 +275,7 @@ export default function ElectionDetail({ electionId }: ElectionDetailProps) {
           order={results.order}
         />
       )}
-      <IndividualBallotsList
-        electionId={election.id}
-        ballots={election.ballots ?? []}
-      />
+      <IndividualBallotsList electionId={election.id} ballots={election.ballots ?? []} />
       {/* Election Log (Accordion) - collapsed by default */}
       {results && <CountingLogSection results={results} />}
       {!results && votingClosed && casted === 0 && (
@@ -277,7 +292,7 @@ function CountingLogSection({ results }: { results: ElectionResult }) {
   if (isGroupedResult(results)) {
     return (
       <>
-        {results.group_results.map((gr) => (
+        {results.group_results.map(gr => (
           <CountingLog key={gr.group} log={gr.log} groupName={gr.group} />
         ))}
       </>

@@ -129,7 +129,7 @@ export default function TokenRedeem({ electionId, tokenId }: TokenRedeemProps) {
                   {electionData.election.title}
                 </Typography>
                 {electionData.election.description && (
-                  <Typography variant="body1" color="text.secondary" paragraph>
+                  <Typography variant="body1" color="text.secondary" gutterBottom>
                     {electionData.election.description}
                   </Typography>
                 )}

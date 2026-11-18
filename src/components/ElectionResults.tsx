@@ -30,7 +30,7 @@ function ECard({ name, idx, isOrdered }: { name: string; idx: number; isOrdered:
   return (
     <Card elevation={2}>
       <CardContent>
-        <Stack direction="row" alignItems="center" spacing={2}>
+        <Stack direction="row" spacing={2} sx={{ alignItems: 'center' }}>
           <Avatar
             sx={{
               bgcolor: 'success.main',
@@ -72,7 +72,7 @@ export function ElectionResults({
 
   return (
     <Paper elevation={3}>
-      <Stack spacing={3} padding={4} bgcolor="success.50">
+      <Stack spacing={3} sx={{ p: 4, bgcolor: 'success.50' }}>
         <Typography variant="h4" component="h2">
           {t('Results')}
         </Typography>
@@ -80,9 +80,12 @@ export function ElectionResults({
         {isGrouped && groupResults && groups ? (
           // Grouped display
           <Stack spacing={3}>
-            {groupResults.map((gr) => (
+            {groupResults.map(gr => (
               <Paper key={gr.group} elevation={1} sx={{ p: 2 }}>
-                <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 2 }}>
+                <Stack
+                  direction="row"
+                  sx={{ justifyContent: 'space-between', alignItems: 'center', mb: 2 }}
+                >
                   <Typography variant="h5" component="h3">
                     {t('Group')}: {gr.group}
                   </Typography>
@@ -121,7 +124,7 @@ export function ElectionResults({
         )}
 
         {showSimulateButton && onSimulate && (
-          <Stack alignItems="center">
+          <Stack sx={{ alignItems: 'center' }}>
             <Button
               variant="outlined"
               size="large"

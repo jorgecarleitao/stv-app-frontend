@@ -58,7 +58,7 @@ export default function AdminUserGuide({ path }: Props = {}) {
   ];
   return (
     <Page title={t('Admin Guide')} description={metaDescription}>
-      <Typography variant="body1" paragraph>
+      <Typography variant="body1" gutterBottom>
         {t(
           'This guide is for election administrators - members of an electoral commission or individuals delegated by the commission to manage an election.'
         )}
@@ -68,7 +68,7 @@ export default function AdminUserGuide({ path }: Props = {}) {
         <Typography variant="h6" gutterBottom>
           {t('Understanding Election Pages')}
         </Typography>
-        <Typography variant="body2" paragraph>
+        <Typography variant="body2" gutterBottom>
           {t('Each election has two pages:')}
         </Typography>
         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
@@ -95,7 +95,7 @@ export default function AdminUserGuide({ path }: Props = {}) {
         <Typography variant="h6" gutterBottom>
           {t('Election Types')}
         </Typography>
-        <Typography variant="body2" paragraph>
+        <Typography variant="body2" gutterBottom>
           {t('When creating an election, you can choose the election type:')}
         </Typography>
         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
@@ -103,7 +103,7 @@ export default function AdminUserGuide({ path }: Props = {}) {
             <Typography variant="subtitle2" gutterBottom sx={{ fontWeight: 'bold' }}>
               {t('STV-MD (unordered)')}
             </Typography>
-            <Typography variant="body2" paragraph>
+            <Typography variant="body2" gutterBottom>
               {t(
                 'Winners are identified without ranking them. Use this when all elected candidates have equal status - for example, when filling multiple board member positions where all members have the same authority.'
               )}
@@ -113,7 +113,7 @@ export default function AdminUserGuide({ path }: Props = {}) {
             <Typography variant="subtitle2" gutterBottom sx={{ fontWeight: 'bold' }}>
               {t('STV-MD Copeland (ordered)')}
             </Typography>
-            <Typography variant="body2" paragraph>
+            <Typography variant="body2" gutterBottom>
               {t(
                 'Winners are ranked by position (1st, 2nd, 3rd place, etc.). Use this when the order matters - for example, when electing a president, vice-president, and secretary, or when determining seniority in a committee.'
               )}
@@ -128,14 +128,14 @@ export default function AdminUserGuide({ path }: Props = {}) {
             <Typography variant="subtitle2" gutterBottom sx={{ fontWeight: 'bold' }}>
               {t('STV-MD Grouped (by groups)')}
             </Typography>
-            <Typography variant="body2" paragraph>
+            <Typography variant="body2" gutterBottom>
               {t(
                 'Candidates are split into predefined groups (e.g., female/male) with a specific number of seats allocated to each group. STV is run independently within each group. Use this to guarantee representation for each group — for example, in parity elections where a certain number of seats must be filled by each group.'
               )}
             </Typography>
             <Typography variant="body2" color="text.secondary">
               {t(
-                'When using this type, you define the groups and their seat counts in the election setup, then assign each candidate to a group. A voter\'s ballot is evaluated separately per group: only candidates from that group are considered, preserving the voter\'s relative preference order.'
+                "When using this type, you define the groups and their seat counts in the election setup, then assign each candidate to a group. A voter's ballot is evaluated separately per group: only candidates from that group are considered, preserving the voter's relative preference order."
               )}
             </Typography>
           </Box>
@@ -164,7 +164,7 @@ export default function AdminUserGuide({ path }: Props = {}) {
                   <Typography variant="h6" gutterBottom>
                     {item.primary}
                   </Typography>
-                  <Typography variant="body2" color="text.secondary" paragraph>
+                  <Typography variant="body2" color="text.secondary" gutterBottom>
                     {item.secondary}
                   </Typography>
                   <Paper

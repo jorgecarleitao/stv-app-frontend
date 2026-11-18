@@ -1,5 +1,6 @@
 import { Fragment } from 'react';
 import { useTranslation } from 'react-i18next';
+import type { TFunction } from 'i18next';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Card from '@mui/material/Card';
@@ -16,8 +17,8 @@ interface CountingWalkthroughProps {
 
 function describeAction(
   actionType: CountingLogActionType,
-  t: (key: string, options?: any) => string,
-  quota?: string,
+  t: TFunction,
+  quota?: string
 ): { short: string; detailed: string } {
   if (typeof actionType === 'string') {
     if (actionType === 'begin_count') {
@@ -43,11 +44,12 @@ function describeAction(
   }
   if ('iterate' in actionType) {
     const r = actionType.iterate.reason;
-    const reason = r === 'elected'
-      ? t('walkthrough.reasonElected')
-      : r === 'low_surplus'
-        ? t('walkthrough.reasonOmega')
-        : r;
+    const reason =
+      r === 'elected'
+        ? t('walkthrough.reasonElected')
+        : r === 'low_surplus'
+          ? t('walkthrough.reasonOmega')
+          : r;
     return {
       short: `${t('walkthrough.redistribute')}: ${reason}`,
       detailed: t('walkthrough.iterateDetail'),
@@ -70,13 +72,20 @@ function describeAction(
     const d = actionType.break_tie.defeated;
     return {
       short: `${t('walkthrough.breakTie')}: ${d}`,
-      detailed: t('walkthrough.breakTieDetail', { defeated: d, candidates: actionType.break_tie.candidates.join(', ') }),
+      detailed: t('walkthrough.breakTieDetail', {
+        defeated: d,
+        candidates: actionType.break_tie.candidates.join(', '),
+      }),
     };
   }
   return { short: '', detailed: '' };
 }
 
-function RoundWalkthrough({ round, roundNumber, log }: {
+function RoundWalkthrough({
+  round,
+  roundNumber,
+  log,
+}: {
   round: CountingLog['rounds'][0];
   roundNumber: number;
   log: CountingLog;
@@ -86,7 +95,10 @@ function RoundWalkthrough({ round, roundNumber, log }: {
   const isLast = roundNumber === log.rounds.length - 1;
 
   return (
-    <Card variant="outlined" sx={{ mb: 3, borderColor: isFirst ? 'primary.main' : isLast ? 'success.main' : undefined }}>
+    <Card
+      variant="outlined"
+      sx={{ mb: 3, borderColor: isFirst ? 'primary.main' : isLast ? 'success.main' : undefined }}
+    >
       <CardContent>
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2 }}>
           <Typography variant="h6">
@@ -106,15 +118,19 @@ function RoundWalkthrough({ round, roundNumber, log }: {
             <Fragment key={idx}>
               {idx > 0 && <Divider sx={{ my: 2 }} />}
 
-              <Typography variant="subtitle1" fontWeight="bold" gutterBottom>
+              <Typography variant="subtitle1" gutterBottom sx={{ fontWeight: 'bold' }}>
                 {short}
               </Typography>
 
-              <Typography variant="body2" color="text.secondary" paragraph>
+              <Typography variant="body2" color="text.secondary" gutterBottom>
                 {detailed}
               </Typography>
 
-              <CandidateCountsBarChart candidates={log.candidates} counts={action.candidate_counts} quota={action.stats.quota} />
+              <CandidateCountsBarChart
+                candidates={log.candidates}
+                counts={action.candidate_counts}
+                quota={action.stats.quota}
+              />
               <StatsRow stats={action.stats} />
             </Fragment>
           );
@@ -132,11 +148,11 @@ export function CountingWalkthrough({ log }: CountingWalkthroughProps) {
       <Typography variant="h5" gutterBottom>
         {t('stepByStepTitle')}
       </Typography>
-      <Typography variant="body2" color="text.secondary" paragraph>
+      <Typography variant="body2" color="text.secondary" gutterBottom>
         {t('stepByStepIntro')}
       </Typography>
 
-      {log.rounds.map((round) => (
+      {log.rounds.map(round => (
         <RoundWalkthrough
           key={round.round_number}
           round={round}

@@ -72,18 +72,20 @@ export function PairwiseMatrix({ candidates, pairwiseMatrix, order }: PairwiseMa
     return comparisons.filter(
       c =>
         c.candidate.toLowerCase().includes(qCandidate) &&
-        c.opponent.toLowerCase().includes(qOpponent),
+        c.opponent.toLowerCase().includes(qOpponent)
     );
   }, [comparisons, candidateFilter, opponentFilter, candidates.length]);
 
   const paginated = useMemo(
     () => filtered.slice(page * rowsPerPage, (page + 1) * rowsPerPage),
-    [filtered, page, rowsPerPage],
+    [filtered, page, rowsPerPage]
   );
 
   const handleChangePage = (_: unknown, newPage: number) => setPage(newPage);
 
-  const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleChangeRowsPerPage = (
+    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
     setRowsPerPage(parseInt((event.target as HTMLInputElement).value, 10));
     setPage(0);
   };
@@ -91,22 +93,60 @@ export function PairwiseMatrix({ candidates, pairwiseMatrix, order }: PairwiseMa
   if (candidates.length <= 5) {
     return (
       <Paper elevation={2}>
-        <Stack spacing={2} padding={3}>
+        <Stack spacing={2} sx={{ p: 3 }}>
           <Typography variant="h5" gutterBottom>
             {t('Pairwise Comparison Matrix')}
           </Typography>
-          <Typography variant="body2" color="text.secondary" paragraph>
-            {t('Each cell shows how many voters preferred the row candidate over the column candidate')}
+          <Typography variant="body2" color="text.secondary" gutterBottom>
+            {t(
+              'Each cell shows how many voters preferred the row candidate over the column candidate'
+            )}
           </Typography>
           <TableContainer>
-            <Table size="small" sx={{ '& th, & td': { border: '1px solid', borderColor: 'divider', textAlign: 'center', p: 1.5 } }}>
+            <Table
+              size="small"
+              sx={{
+                '& th, & td': {
+                  border: '1px solid',
+                  borderColor: 'divider',
+                  textAlign: 'center',
+                  p: 1.5,
+                },
+              }}
+            >
               <TableHead>
                 <TableRow>
-                  <TableCell sx={{ minWidth: 120, fontWeight: 'bold', bgcolor: 'action.hover', position: 'sticky', left: 0, zIndex: 2 }} />
+                  <TableCell
+                    sx={{
+                      minWidth: 120,
+                      fontWeight: 'bold',
+                      bgcolor: 'action.hover',
+                      position: 'sticky',
+                      left: 0,
+                      zIndex: 2,
+                    }}
+                  />
                   {candidates.map((candidate, idx) => (
-                    <TableCell key={idx} sx={{ fontWeight: 'bold', bgcolor: 'action.hover', position: 'sticky', top: 0, zIndex: 1, minWidth: 100 }}>
-                      <Stack alignItems="center" spacing={0.5}>
-                        <Avatar sx={{ width: 24, height: 24, fontSize: '0.75rem', bgcolor: 'primary.main' }}>
+                    <TableCell
+                      key={idx}
+                      sx={{
+                        fontWeight: 'bold',
+                        bgcolor: 'action.hover',
+                        position: 'sticky',
+                        top: 0,
+                        zIndex: 1,
+                        minWidth: 100,
+                      }}
+                    >
+                      <Stack spacing={0.5} sx={{ alignItems: 'center' }}>
+                        <Avatar
+                          sx={{
+                            width: 24,
+                            height: 24,
+                            fontSize: '0.75rem',
+                            bgcolor: 'primary.main',
+                          }}
+                        >
                           {order[String(idx)] + 1}
                         </Avatar>
                         <Typography variant="caption">{candidate}</Typography>
@@ -118,9 +158,24 @@ export function PairwiseMatrix({ candidates, pairwiseMatrix, order }: PairwiseMa
               <TableBody>
                 {candidates.map((candidate, rowIdx) => (
                   <TableRow key={rowIdx}>
-                    <TableCell sx={{ fontWeight: 'bold', bgcolor: 'action.hover', position: 'sticky', left: 0, zIndex: 1 }}>
-                      <Stack direction="row" alignItems="center" spacing={1}>
-                        <Avatar sx={{ width: 24, height: 24, fontSize: '0.75rem', bgcolor: 'primary.main' }}>
+                    <TableCell
+                      sx={{
+                        fontWeight: 'bold',
+                        bgcolor: 'action.hover',
+                        position: 'sticky',
+                        left: 0,
+                        zIndex: 1,
+                      }}
+                    >
+                      <Stack direction="row" spacing={1} sx={{ alignItems: 'center' }}>
+                        <Avatar
+                          sx={{
+                            width: 24,
+                            height: 24,
+                            fontSize: '0.75rem',
+                            bgcolor: 'primary.main',
+                          }}
+                        >
                           {order[String(rowIdx)] + 1}
                         </Avatar>
                         <Typography variant="body2">{candidate}</Typography>
@@ -136,7 +191,13 @@ export function PairwiseMatrix({ candidates, pairwiseMatrix, order }: PairwiseMa
                         <TableCell
                           key={colIdx}
                           sx={{
-                            bgcolor: isDiagonal ? 'action.disabledBackground' : isWin ? 'success.50' : isTie ? 'warning.50' : 'inherit',
+                            bgcolor: isDiagonal
+                              ? 'action.disabledBackground'
+                              : isWin
+                                ? 'success.50'
+                                : isTie
+                                  ? 'warning.50'
+                                  : 'inherit',
                             fontWeight: isWin ? 'bold' : 'normal',
                           }}
                         >
@@ -150,7 +211,9 @@ export function PairwiseMatrix({ candidates, pairwiseMatrix, order }: PairwiseMa
             </Table>
           </TableContainer>
           <Typography variant="caption" color="text.secondary">
-            {t('Candidates are ordered by their final ranking (Copeland method). Green cells indicate wins, yellow indicates ties.')}
+            {t(
+              'Candidates are ordered by their final ranking (Copeland method). Green cells indicate wins, yellow indicates ties.'
+            )}
           </Typography>
         </Stack>
       </Paper>
@@ -159,28 +222,52 @@ export function PairwiseMatrix({ candidates, pairwiseMatrix, order }: PairwiseMa
 
   return (
     <Paper elevation={2}>
-      <Stack spacing={2} padding={3}>
+      <Stack spacing={2} sx={{ p: 3 }}>
         <Typography variant="h5" gutterBottom>
           {t('Pairwise Comparison Matrix')}
         </Typography>
-        <Typography variant="body2" color="text.secondary" paragraph>
-          {t('Each cell shows how many voters preferred the row candidate over the column candidate')}
+        <Typography variant="body2" color="text.secondary" gutterBottom>
+          {t(
+            'Each cell shows how many voters preferred the row candidate over the column candidate'
+          )}
         </Typography>
-        <Stack direction="row" spacing={2} flexWrap="wrap" useFlexGap>
+        <Stack direction="row" spacing={2} useFlexGap sx={{ flexWrap: 'wrap' }}>
           <TextField
             size="small"
             placeholder={t('Search candidate')}
             value={candidateFilter}
-            onChange={e => { setCandidateFilter((e.target as HTMLInputElement).value); setPage(0); }}
-            slotProps={{ input: { startAdornment: <InputAdornment position="start"><SearchIcon fontSize="small" /></InputAdornment> } }}
+            onChange={e => {
+              setCandidateFilter((e.target as HTMLInputElement).value);
+              setPage(0);
+            }}
+            slotProps={{
+              input: {
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <SearchIcon fontSize="small" />
+                  </InputAdornment>
+                ),
+              },
+            }}
             sx={{ minWidth: 200 }}
           />
           <TextField
             size="small"
             placeholder={t('Search opponent')}
             value={opponentFilter}
-            onChange={e => { setOpponentFilter((e.target as HTMLInputElement).value); setPage(0); }}
-            slotProps={{ input: { startAdornment: <InputAdornment position="start"><SearchIcon fontSize="small" /></InputAdornment> } }}
+            onChange={e => {
+              setOpponentFilter((e.target as HTMLInputElement).value);
+              setPage(0);
+            }}
+            slotProps={{
+              input: {
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <SearchIcon fontSize="small" />
+                  </InputAdornment>
+                ),
+              },
+            }}
             sx={{ minWidth: 200 }}
           />
         </Stack>
@@ -198,7 +285,9 @@ export function PairwiseMatrix({ candidates, pairwiseMatrix, order }: PairwiseMa
                   <TableRow>
                     <TableCell sx={{ fontWeight: 'bold' }}>{t('Candidate')}</TableCell>
                     <TableCell sx={{ fontWeight: 'bold' }}>{t('Opponent')}</TableCell>
-                    <TableCell sx={{ fontWeight: 'bold' }} align="right">{t('Preferences')}</TableCell>
+                    <TableCell sx={{ fontWeight: 'bold' }} align="right">
+                      {t('Preferences')}
+                    </TableCell>
                     <TableCell sx={{ fontWeight: 'bold' }}>{t('Result')}</TableCell>
                   </TableRow>
                 </TableHead>
@@ -220,7 +309,12 @@ export function PairwiseMatrix({ candidates, pairwiseMatrix, order }: PairwiseMa
                       </TableCell>
                       <TableCell
                         sx={{
-                          color: c.result === 'win' ? 'success.main' : c.result === 'tie' ? 'warning.main' : 'error.main',
+                          color:
+                            c.result === 'win'
+                              ? 'success.main'
+                              : c.result === 'tie'
+                                ? 'warning.main'
+                                : 'error.main',
                           fontWeight: 'bold',
                         }}
                       >

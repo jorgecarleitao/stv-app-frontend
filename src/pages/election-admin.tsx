@@ -231,11 +231,17 @@ export default function ElectionAdmin({ electionId, adminUuid }: ElectionAdminPr
         start_time: startDate.toISOString(),
         end_time: endDate.toISOString(),
       };
-      const request: CreateElectionRequest = editElectionType === 'stv-md-grouped'
-        ? { ...common, election_type: 'stv-md-grouped' as const, groups: editGroups, candidate_groups: editCandidateGroups }
-        : editElectionType === 'stv-md-coperland'
-          ? { ...common, election_type: 'stv-md-coperland' as const }
-          : { ...common, election_type: 'stv-md' as const };
+      const request: CreateElectionRequest =
+        editElectionType === 'stv-md-grouped'
+          ? {
+              ...common,
+              election_type: 'stv-md-grouped' as const,
+              groups: editGroups,
+              candidate_groups: editCandidateGroups,
+            }
+          : editElectionType === 'stv-md-coperland'
+            ? { ...common, election_type: 'stv-md-coperland' as const }
+            : { ...common, election_type: 'stv-md' as const };
 
       if (isCreateMode) {
         // Create new election
@@ -378,7 +384,7 @@ export default function ElectionAdmin({ electionId, adminUuid }: ElectionAdminPr
                 'This page allows full control over the election. Only share this URL with people you trust to administer this election.'
               )}
             </Typography>
-            <Stack direction="row" spacing={1} alignItems="center">
+            <Stack direction="row" spacing={1} sx={{ alignItems: 'center' }}>
               <Box
                 sx={{
                   flex: 1,
@@ -414,7 +420,7 @@ export default function ElectionAdmin({ electionId, adminUuid }: ElectionAdminPr
       )}
 
       {loading && (
-        <Stack alignItems="center" sx={{ py: 4 }}>
+        <Stack sx={{ py: 4, alignItems: 'center' }}>
           <CircularProgress />
         </Stack>
       )}
@@ -481,12 +487,15 @@ export default function ElectionAdmin({ electionId, adminUuid }: ElectionAdminPr
                 setEditNumSeats(value);
                 if (seatsError) setSeatsError(null);
               }}
-              onElectionTypeChange={(value) => {
+              onElectionTypeChange={value => {
                 setEditElectionType(value);
                 if (value === 'stv-md-grouped') {
                   // Initialize with default groups if empty
                   if (editGroups.length === 0) {
-                    setEditGroups([{ name: '', seats: 1 }, { name: '', seats: 1 }]);
+                    setEditGroups([
+                      { name: '', seats: 1 },
+                      { name: '', seats: 1 },
+                    ]);
                   }
                   // Ensure candidateGroups is in sync
                   if (editCandidateGroups.length < editCandidates.length) {
@@ -505,7 +514,9 @@ export default function ElectionAdmin({ electionId, adminUuid }: ElectionAdminPr
                 {t('Groups')}
               </Typography>
               <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-                {t('Define groups and seat allocation per group. Total group seats must equal total seats.')}
+                {t(
+                  'Define groups and seat allocation per group. Total group seats must equal total seats.'
+                )}
               </Typography>
               <GroupConfigList
                 groups={editGroups}
@@ -528,7 +539,9 @@ export default function ElectionAdmin({ electionId, adminUuid }: ElectionAdminPr
                 handleCandidateChange(index, value);
                 if (candidatesError) setCandidatesError(null);
               }}
-              onCandidateGroupChange={editElectionType === 'stv-md-grouped' ? handleCandidateGroupChange : undefined}
+              onCandidateGroupChange={
+                editElectionType === 'stv-md-grouped' ? handleCandidateGroupChange : undefined
+              }
               onAddCandidate={handleAddCandidate}
               onRemoveCandidate={handleRemoveCandidate}
               disabled={saving || election?.is_locked}

@@ -44,7 +44,7 @@ export function GroupConfigList({
   return (
     <Stack spacing={1}>
       {groups.map((g, idx) => (
-        <Stack key={idx} direction="row" spacing={1} alignItems="center">
+        <Stack key={idx} direction="row" spacing={1} sx={{ alignItems: 'center' }}>
           <TextField
             label={`${t('Group')} ${idx + 1}`}
             value={g.name}
@@ -57,10 +57,15 @@ export function GroupConfigList({
             label={t('Seats')}
             type="number"
             value={g.seats}
-            onChange={e => handleSeatsChange(idx, Math.max(1, parseInt((e.target as HTMLInputElement).value) || 1))}
+            onChange={e =>
+              handleSeatsChange(
+                idx,
+                Math.max(1, parseInt((e.target as HTMLInputElement).value) || 1)
+              )
+            }
             size="small"
             disabled={disabled}
-            inputProps={{ min: 1 }}
+            slotProps={{ htmlInput: { min: 1 } }}
             sx={{ width: 100 }}
           />
           <IconButton

@@ -50,7 +50,7 @@ export default function App() {
         <CssBaseline enableColorScheme />
         <Box>
           <Navigation mode={mode} toggleTheme={toggleTheme} />
-          <Stack component="main" padding={3}>
+          <Stack component="main" sx={{ p: 3 }}>
             <Toolbar />
             <Router>
               <Home path="/" />

@@ -106,7 +106,9 @@ export function BallotTokensList({ electionId, adminUuid }: BallotTokensListProp
 
   const isEmail = config !== null;
 
-  useEffect(() => { init(); }, [electionId, adminUuid]);
+  useEffect(() => {
+    init();
+  }, [electionId, adminUuid]);
 
   // Sync radio display with config changes
   useEffect(() => {
@@ -168,11 +170,17 @@ export function BallotTokensList({ electionId, adminUuid }: BallotTokensListProp
       setCreating(true);
       if (radioValue === 'email') {
         const parsed = parseEmails(recipients);
-        if (!parsed.length) { setError(t('Enter at least one email address')); return; }
+        if (!parsed.length) {
+          setError(t('Enter at least one email address'));
+          return;
+        }
         await createBallotTokens(electionId, adminUuid, parsed);
         setRecipients('');
       } else {
-        if (tokenCount < 1) { setError(t('Token count must be at least 1')); return; }
+        if (tokenCount < 1) {
+          setError(t('Token count must be at least 1'));
+          return;
+        }
         await createBallotTokens(electionId, adminUuid, tokenCount);
         setTokenCount(1);
       }
@@ -195,7 +203,8 @@ export function BallotTokensList({ electionId, adminUuid }: BallotTokensListProp
       const body: UpsertEmailConfigRequest = {
         smtp_host: smtpHost.trim(),
         smtp_username: smtpUser.trim(),
-        from_name: fromName.trim(), from_email: fromEmail.trim(),
+        from_name: fromName.trim(),
+        from_email: fromEmail.trim(),
         ...(smtpPass ? { smtp_password: smtpPass } : {}),
       };
       await upsertEmailConfig(electionId, adminUuid, body);
@@ -303,37 +312,59 @@ export function BallotTokensList({ electionId, adminUuid }: BallotTokensListProp
     });
   }
 
-  const pendingCount = radioValue === 'email'
-    ? tokens.filter(t => t.email && !t.sent_at).length
-    : tokens.filter(t => !t.sent_at && !t.converted_at).length;
+  const pendingCount =
+    radioValue === 'email'
+      ? tokens.filter(t => t.email && !t.sent_at).length
+      : tokens.filter(t => !t.sent_at && !t.converted_at).length;
 
   function fmt(d: string | null) {
     if (!d) return null;
-    try { return new Date(d).toLocaleString(); } catch { return d; }
+    try {
+      return new Date(d).toLocaleString();
+    } catch {
+      return d;
+    }
   }
 
   return (
     <Paper elevation={2}>
       <Stack spacing={3} sx={{ p: 3 }}>
         {/* Header */}
-        <Stack direction="row" justifyContent="space-between" alignItems="center">
-          <Stack direction="row" spacing={1} alignItems="center">
+        <Stack direction="row" sx={{ justifyContent: 'space-between', alignItems: 'center' }}>
+          <Stack direction="row" spacing={1} sx={{ alignItems: 'center' }}>
             <ConfirmationNumberIcon />
             <Typography variant="h5">{t('Ballot Tokens')}</Typography>
           </Stack>
           {tokens.length > 0 && (
-            <Button variant="outlined" size="small" startIcon={<ContentCopyIcon />} onClick={copyCsv}>
+            <Button
+              variant="outlined"
+              size="small"
+              startIcon={<ContentCopyIcon />}
+              onClick={copyCsv}
+            >
               {csvCopied ? t('Copied!') : t('Copy All as CSV')}
             </Button>
           )}
         </Stack>
 
-        {error && <Alert severity="error" onClose={() => setError(null)}>{error}</Alert>}
-        {testSuccess && <Alert severity="success" onClose={() => setTestSuccess(null)}>{testSuccess}</Alert>}
+        {error && (
+          <Alert severity="error" onClose={() => setError(null)}>
+            {error}
+          </Alert>
+        )}
+        {testSuccess && (
+          <Alert severity="success" onClose={() => setTestSuccess(null)}>
+            {testSuccess}
+          </Alert>
+        )}
 
         {/* Mode toggle */}
         <RadioGroup row value={radioValue} onChange={handleRadioChange}>
-          <FormControlLabel value="self" control={<Radio size="small" />} label={t('Self-delivered')} />
+          <FormControlLabel
+            value="self"
+            control={<Radio size="small" />}
+            label={t('Self-delivered')}
+          />
           <FormControlLabel value="email" control={<Radio size="small" />} label={t('By email')} />
         </RadioGroup>
 
@@ -348,7 +379,9 @@ export function BallotTokensList({ electionId, adminUuid }: BallotTokensListProp
           <DialogTitle>{t('Switch to self-delivered?')}</DialogTitle>
           <DialogContent>
             <DialogContentText>
-              {t('This will delete the email configuration and remove all email addresses from existing tokens.')}
+              {t(
+                'This will delete the email configuration and remove all email addresses from existing tokens.'
+              )}
             </DialogContentText>
           </DialogContent>
           <DialogActions>
@@ -361,41 +394,100 @@ export function BallotTokensList({ electionId, adminUuid }: BallotTokensListProp
 
         {/* Email config */}
         {radioValue === 'email' && (
-        <Box sx={{ p: 2, bgcolor: 'background.default', borderRadius: 1 }}>
-          <Stack spacing={2}>
-            <Typography variant="subtitle2">{t('Email Configuration')}</Typography>
-                {config && (
+          <Box sx={{ p: 2, bgcolor: 'background.default', borderRadius: 1 }}>
+            <Stack spacing={2}>
+              <Typography variant="subtitle2">{t('Email Configuration')}</Typography>
+              {config && (
                 <Alert severity="info">
                   {config.from_name} &lt;{config.from_email}&gt; via {config.smtp_host}
                 </Alert>
               )}
               <Stack direction="row" spacing={2}>
-                <TextField label={t('SMTP Host')} value={smtpHost} onChange={e => setSmtpHost(e.target.value)} size="small" fullWidth disabled={savingConfig} />
+                <TextField
+                  label={t('SMTP Host')}
+                  value={smtpHost}
+                  onChange={e => setSmtpHost((e.target as HTMLInputElement).value)}
+                  size="small"
+                  fullWidth
+                  disabled={savingConfig}
+                />
               </Stack>
               <Stack direction="row" spacing={2}>
-                <TextField label={t('Username')} value={smtpUser} onChange={e => setSmtpUser(e.target.value)} size="small" fullWidth disabled={savingConfig} />
-                <TextField label={t('Password')} value={smtpPass} onChange={e => setSmtpPass(e.target.value)} size="small" type="password" fullWidth disabled={savingConfig} placeholder={config ? t('Leave blank to keep current') : ''} />
+                <TextField
+                  label={t('Username')}
+                  value={smtpUser}
+                  onChange={e => setSmtpUser((e.target as HTMLInputElement).value)}
+                  size="small"
+                  fullWidth
+                  disabled={savingConfig}
+                />
+                <TextField
+                  label={t('Password')}
+                  value={smtpPass}
+                  onChange={e => setSmtpPass((e.target as HTMLInputElement).value)}
+                  size="small"
+                  type="password"
+                  fullWidth
+                  disabled={savingConfig}
+                  placeholder={config ? t('Leave blank to keep current') : ''}
+                />
               </Stack>
               <Stack direction="row" spacing={2}>
-                <TextField label={t('From Name')} value={fromName} onChange={e => setFromName(e.target.value)} size="small" fullWidth disabled={savingConfig} />
-                <TextField label={t('From Email')} value={fromEmail} onChange={e => setFromEmail(e.target.value)} size="small" fullWidth disabled={savingConfig} />
+                <TextField
+                  label={t('From Name')}
+                  value={fromName}
+                  onChange={e => setFromName((e.target as HTMLInputElement).value)}
+                  size="small"
+                  fullWidth
+                  disabled={savingConfig}
+                />
+                <TextField
+                  label={t('From Email')}
+                  value={fromEmail}
+                  onChange={e => setFromEmail((e.target as HTMLInputElement).value)}
+                  size="small"
+                  fullWidth
+                  disabled={savingConfig}
+                />
               </Stack>
               <Stack direction="row" spacing={2}>
-                <Button variant="contained" onClick={handleSaveConfig} disabled={savingConfig} startIcon={savingConfig ? <CircularProgress size={16} /> : undefined}>
+                <Button
+                  variant="contained"
+                  onClick={handleSaveConfig}
+                  disabled={savingConfig}
+                  startIcon={savingConfig ? <CircularProgress size={16} /> : undefined}
+                >
                   {t('Save Configuration')}
                 </Button>
-              {config && (
-                  <Button variant="outlined" color="error" onClick={handleClearConfig} disabled={savingConfig}>{t('Clear')}</Button>
+                {config && (
+                  <Button
+                    variant="outlined"
+                    color="error"
+                    onClick={handleClearConfig}
+                    disabled={savingConfig}
+                  >
+                    {t('Clear')}
+                  </Button>
                 )}
               </Stack>
               {config && (
-                <Stack direction="row" spacing={2} alignItems="center">
-                  <TextField label={t('Send Test Email to')} value={testEmail}
-                    onChange={e => setTestEmail(e.target.value)} size="small" type="email"
-                    sx={{ flexGrow: 1 }} disabled={testing}
-                    placeholder={config.from_email} />
-                  <Button variant="outlined" onClick={handleSendTest} disabled={testing || !testEmail.trim()}
-                    startIcon={testing ? <CircularProgress size={16} /> : undefined}>
+                <Stack direction="row" spacing={2} sx={{ alignItems: 'center' }}>
+                  <TextField
+                    label={t('Send Test Email to')}
+                    value={testEmail}
+                    onChange={e => setTestEmail((e.target as HTMLInputElement).value)}
+                    size="small"
+                    type="email"
+                    sx={{ flexGrow: 1 }}
+                    disabled={testing}
+                    placeholder={config.from_email}
+                  />
+                  <Button
+                    variant="outlined"
+                    onClick={handleSendTest}
+                    disabled={testing || !testEmail.trim()}
+                    startIcon={testing ? <CircularProgress size={16} /> : undefined}
+                  >
                     {testing ? t('Sending...') : t('Send Test')}
                   </Button>
                 </Stack>
@@ -410,21 +502,48 @@ export function BallotTokensList({ electionId, adminUuid }: BallotTokensListProp
             <Typography variant="subtitle2">{t('Create New Tokens')}</Typography>
             {radioValue === 'email' ? (
               <Stack spacing={2}>
-                <TextField label={t('Email addresses (one per line or comma-separated)')} multiline rows={3}
-                  value={recipients} onChange={e => setRecipients(e.target.value)} size="small" fullWidth disabled={creating}
-                  helperText={recipients.trim() ? `${parseEmails(recipients).length} ${t('token(s) will be created')}` : ''} />
-                <Button variant="contained" startIcon={creating ? <CircularProgress size={16} /> : <AddIcon />}
-                  onClick={handleCreate} disabled={creating || !recipients.trim()}>
+                <TextField
+                  label={t('Email addresses (one per line or comma-separated)')}
+                  multiline
+                  rows={3}
+                  value={recipients}
+                  onChange={e => setRecipients((e.target as HTMLInputElement).value)}
+                  size="small"
+                  fullWidth
+                  disabled={creating}
+                  helperText={
+                    recipients.trim()
+                      ? `${parseEmails(recipients).length} ${t('token(s) will be created')}`
+                      : ''
+                  }
+                />
+                <Button
+                  variant="contained"
+                  startIcon={creating ? <CircularProgress size={16} /> : <AddIcon />}
+                  onClick={handleCreate}
+                  disabled={creating || !recipients.trim()}
+                >
                   {creating ? t('Creating...') : t('Create Tokens')}
                 </Button>
               </Stack>
             ) : (
-              <Stack direction="row" spacing={2} alignItems="flex-start">
-                <TextField label={t('Number of tokens')} type="number" value={tokenCount}
-                  onChange={e => setTokenCount(parseInt(e.target.value) || 1)} size="small" inputProps={{ min: 1 }}
-                  disabled={creating} sx={{ width: 150 }} />
-                <Button variant="contained" startIcon={creating ? <CircularProgress size={16} /> : <AddIcon />}
-                  onClick={handleCreate} disabled={creating || tokenCount < 1}>
+              <Stack direction="row" spacing={2} sx={{ alignItems: 'flex-start' }}>
+                <TextField
+                  label={t('Number of tokens')}
+                  type="number"
+                  value={tokenCount}
+                  onChange={e => setTokenCount(parseInt((e.target as HTMLInputElement).value) || 1)}
+                  size="small"
+                  slotProps={{ htmlInput: { min: 1 } }}
+                  disabled={creating}
+                  sx={{ width: 150 }}
+                />
+                <Button
+                  variant="contained"
+                  startIcon={creating ? <CircularProgress size={16} /> : <AddIcon />}
+                  onClick={handleCreate}
+                  disabled={creating || tokenCount < 1}
+                >
                   {creating ? t('Creating...') : t('Create Tokens')}
                 </Button>
               </Stack>
@@ -439,15 +558,24 @@ export function BallotTokensList({ electionId, adminUuid }: BallotTokensListProp
           </Button>
         )}
         {pendingCount > 0 && radioValue === 'email' && (
-          <Button variant="contained" size="small" startIcon={sending === '__all__' ? <CircularProgress size={16} /> : <SendIcon />}
-            onClick={handleSendAll} disabled={sending === '__all__'}>
-            {sending === '__all__' ? t('Sending...') : t('Send to All Pending ({{count}})', { count: pendingCount })}
+          <Button
+            variant="contained"
+            size="small"
+            startIcon={sending === '__all__' ? <CircularProgress size={16} /> : <SendIcon />}
+            onClick={handleSendAll}
+            disabled={sending === '__all__'}
+          >
+            {sending === '__all__'
+              ? t('Sending...')
+              : t('Send to All Pending ({{count}})', { count: pendingCount })}
           </Button>
         )}
 
         {/* Token list */}
         {loading ? (
-          <Stack alignItems="center" sx={{ py: 2 }}><CircularProgress size={24} /></Stack>
+          <Stack sx={{ py: 2, alignItems: 'center' }}>
+            <CircularProgress size={24} />
+          </Stack>
         ) : tokens.length === 0 ? (
           <Alert severity="info">{t('No ballot tokens have been created yet.')}</Alert>
         ) : (
@@ -456,35 +584,69 @@ export function BallotTokensList({ electionId, adminUuid }: BallotTokensListProp
               {tokens.map((token, i) => (
                 <div key={token.id}>
                   {i > 0 && <Divider />}
-                  <ListItem secondaryAction={
-                    <Stack direction="row" spacing={0.5} alignItems="center">
-                      {radioValue === 'self' && !token.sent_at && !token.converted_at && (
-                        <Button size="small" variant="outlined" onClick={() => handleMarkSent(token.id)}>{t('Mark sent')}</Button>
-                      )}
-                      {radioValue === 'email' && token.email && !token.sent_at && (
-                        <IconButton size="small" onClick={() => handleSend(token.id)} disabled={sending === token.id}>
-                          {sending === token.id ? <CircularProgress size={16} /> : <SendIcon fontSize="small" />}
+                  <ListItem
+                    secondaryAction={
+                      <Stack direction="row" spacing={0.5} sx={{ alignItems: 'center' }}>
+                        {radioValue === 'self' && !token.sent_at && !token.converted_at && (
+                          <Button
+                            size="small"
+                            variant="outlined"
+                            onClick={() => handleMarkSent(token.id)}
+                          >
+                            {t('Mark sent')}
+                          </Button>
+                        )}
+                        {radioValue === 'email' && token.email && !token.sent_at && (
+                          <IconButton
+                            size="small"
+                            onClick={() => handleSend(token.id)}
+                            disabled={sending === token.id}
+                          >
+                            {sending === token.id ? (
+                              <CircularProgress size={16} />
+                            ) : (
+                              <SendIcon fontSize="small" />
+                            )}
+                          </IconButton>
+                        )}
+                        <IconButton
+                          size="small"
+                          onClick={() => copyUrl(token.id)}
+                          color={copied[token.id] ? 'success' : 'default'}
+                        >
+                          <ContentCopyIcon fontSize="small" />
                         </IconButton>
-                      )}
-                      <IconButton size="small" onClick={() => copyUrl(token.id)} color={copied[token.id] ? 'success' : 'default'}>
-                        <ContentCopyIcon fontSize="small" />
-                      </IconButton>
-                    </Stack>
-                  }>
+                      </Stack>
+                    }
+                  >
                     <ListItemText
-                      primary={<Typography variant="body2" sx={{ fontFamily: 'monospace', fontSize: '0.9rem' }}>{token.id}</Typography>}
+                      primary={
+                        <Typography
+                          variant="body2"
+                          sx={{ fontFamily: 'monospace', fontSize: '0.9rem' }}
+                        >
+                          {token.id}
+                        </Typography>
+                      }
                       secondary={
                         <Stack spacing={0.5}>
                           <Typography variant="caption" color="text.secondary">
-                            {token.converted_at ? t('Used on {{date}}', { date: fmt(token.converted_at) }) : t('Not used yet')}
+                            {token.converted_at
+                              ? t('Used on {{date}}', { date: fmt(token.converted_at) })
+                              : t('Not used yet')}
                           </Typography>
                           {token.email && (
                             <Typography variant="caption" color="text.secondary">
-                              {token.email}{token.sent_at ? ` — ${t('Sent on {{date}}', { date: fmt(token.sent_at) })}` : ` — ${t('Not sent')}`}
+                              {token.email}
+                              {token.sent_at
+                                ? ` — ${t('Sent on {{date}}', { date: fmt(token.sent_at) })}`
+                                : ` — ${t('Not sent')}`}
                             </Typography>
                           )}
                           {radioValue === 'self' && !token.email && token.sent_at && (
-                            <Typography variant="caption" color="text.secondary">{t('Sent on {{date}}', { date: fmt(token.sent_at) })}</Typography>
+                            <Typography variant="caption" color="text.secondary">
+                              {t('Sent on {{date}}', { date: fmt(token.sent_at) })}
+                            </Typography>
                           )}
                         </Stack>
                       }

@@ -19,8 +19,8 @@ export const Footer = () => {
       }}
     >
       <Container maxWidth="lg">
-        <Stack spacing={2} alignItems="center">
-          <Stack direction="row" spacing={3} alignItems="center">
+        <Stack spacing={2} sx={{ alignItems: 'center' }}>
+          <Stack direction="row" spacing={3} sx={{ alignItems: 'center' }}>
             <Link
               href="/swagger-ui"
               target="_blank"
@@ -43,8 +43,7 @@ export const Footer = () => {
             </Link>
           </Stack>
           <Typography color="textSecondary" variant="subtitle1" align="center">
-            © 2024 Jorge Leitão (
-            <a href="https://www.linkedin.com/in/jorgecarleitao/">Linkedin</a>)
+            © 2024 Jorge Leitão (<a href="https://www.linkedin.com/in/jorgecarleitao/">Linkedin</a>)
           </Typography>
         </Stack>
       </Container>

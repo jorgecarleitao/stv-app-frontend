@@ -34,7 +34,7 @@ export default function Home({}: HomeProps = {}) {
         <Typography variant="h2" component="h1" gutterBottom sx={{ fontWeight: 'bold' }}>
           {t('App title')}
         </Typography>
-        <Typography variant="h5" color="text.secondary" paragraph sx={{ mb: 4 }}>
+        <Typography variant="h5" color="text.secondary" gutterBottom sx={{ mb: 4 }}>
           {t('heroSubtitle')}
         </Typography>
         <Box sx={{ display: 'flex', gap: 2, justifyContent: 'center', flexWrap: 'wrap' }}>
@@ -72,8 +72,9 @@ export default function Home({}: HomeProps = {}) {
         <Grid
           size={{
             xs: 12,
-            md: 6
-          }}>
+            md: 6,
+          }}
+        >
           <Card elevation={3} sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
             <CardContent sx={{ flexGrow: 1 }}>
               <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
@@ -97,8 +98,9 @@ export default function Home({}: HomeProps = {}) {
         <Grid
           size={{
             xs: 12,
-            md: 6
-          }}>
+            md: 6,
+          }}
+        >
           <Card elevation={3} sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
             <CardContent sx={{ flexGrow: 1 }}>
               <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
@@ -128,10 +130,10 @@ export default function Home({}: HomeProps = {}) {
             {t('whatIsSTVTitle')}
           </Typography>
         </Box>
-        <Typography variant="body1" paragraph>
+        <Typography variant="body1" gutterBottom>
           {t('whatIsSTVPara1')}
         </Typography>
-        <Typography variant="body1" paragraph>
+        <Typography variant="body1" gutterBottom>
           {t('whatIsSTVPara2')}
         </Typography>
         <Box sx={{ display: 'flex', gap: 2, mt: 3, flexWrap: 'wrap' }}>
@@ -145,10 +147,10 @@ export default function Home({}: HomeProps = {}) {
         <Typography variant="h4" component="h2" gutterBottom>
           {t('technicalDetailsTitle')}
         </Typography>
-        <Typography variant="body1" paragraph>
+        <Typography variant="body1" gutterBottom>
           {t('technicalDetailsPara1')}
         </Typography>
-        <Typography variant="body1" paragraph>
+        <Typography variant="body1" gutterBottom>
           {t('technicalDetailsPara2')}
         </Typography>
         <Typography variant="body2" color="text.secondary" sx={{ mt: 2 }}>
@@ -174,7 +176,7 @@ export default function Home({}: HomeProps = {}) {
         <Typography variant="h4" gutterBottom>
           {t('readyToStartTitle')}
         </Typography>
-        <Typography variant="body1" color="text.secondary" paragraph>
+        <Typography variant="body1" color="text.secondary" gutterBottom>
           {t('readyToStartDesc')}
         </Typography>
         <Box sx={{ display: 'flex', gap: 2, justifyContent: 'center', mt: 3, flexWrap: 'wrap' }}>

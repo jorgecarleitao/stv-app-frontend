@@ -50,17 +50,16 @@ function formatActionType(
   return '';
 }
 
-
 function HeaderSection({ log }: { log: CountingLog }) {
   const { t } = useTranslation();
   const { header } = log;
 
   return (
     <Paper variant="outlined" sx={{ p: 2, mb: 3 }}>
-      <Typography variant="subtitle1" fontWeight="bold" gutterBottom>
+      <Typography variant="subtitle1" gutterBottom sx={{ fontWeight: 'bold' }}>
         {header.title || t('Counting Log')}
       </Typography>
-      <Stack direction="row" flexWrap="wrap" gap={1}>
+      <Stack direction="row" sx={{ flexWrap: 'wrap', gap: 1 }}>
         <Chip label={`${t('Rule')}: ${header.rule}`} size="small" />
         <Chip label={`${t('Arithmetic')}: ${header.arithmetic}`} size="small" />
         <Chip label={`${t('Seats')}: ${header.seats}`} size="small" />
@@ -77,7 +76,7 @@ function CandidatesSection({ candidates }: { candidates: CountingLog['candidates
   const withdrawn = candidates.filter(c => c.withdrawn);
 
   return (
-    <Stack direction="row" flexWrap="wrap" gap={1} sx={{ mb: 3 }}>
+    <Stack direction="row" sx={{ flexWrap: 'wrap', gap: 1, mb: 3 }}>
       {active.map(c => (
         <Chip key={c.name} label={c.name} size="small" color="primary" variant="outlined" />
       ))}
@@ -169,9 +168,19 @@ export function StatsRow({ stats }: { stats: CountingLog['rounds'][0]['actions']
   );
 }
 
-export function CandidateStatusIcon({ status }: { status: CountingLogAction['candidate_counts'][0]['status'] }) {
-  if (status === 'elected') return <ElectedIcon sx={{ fontSize: 18, color: '#2e7d32', verticalAlign: 'middle', mr: 0.5 }} />;
-  if (status === 'defeated') return <DefeatedIcon sx={{ fontSize: 18, color: '#d32f2f', verticalAlign: 'middle', mr: 0.5 }} />;
+export function CandidateStatusIcon({
+  status,
+}: {
+  status: CountingLogAction['candidate_counts'][0]['status'];
+}) {
+  if (status === 'elected')
+    return (
+      <ElectedIcon sx={{ fontSize: 18, color: '#2e7d32', verticalAlign: 'middle', mr: 0.5 }} />
+    );
+  if (status === 'defeated')
+    return (
+      <DefeatedIcon sx={{ fontSize: 18, color: '#d32f2f', verticalAlign: 'middle', mr: 0.5 }} />
+    );
   return <HopefulIcon sx={{ fontSize: 18, color: '#0288d1', verticalAlign: 'middle', mr: 0.5 }} />;
 }
 
@@ -192,7 +201,14 @@ export function CandidateCountsBarChart({
 
   return (
     <Paper variant="outlined" sx={{ p: 1.5 }}>
-      <Box sx={{ display: 'grid', gridTemplateColumns: 'auto 1fr auto', alignItems: 'center', rowGap: 0.75 }}>
+      <Box
+        sx={{
+          display: 'grid',
+          gridTemplateColumns: 'auto 1fr auto',
+          alignItems: 'center',
+          rowGap: 0.75,
+        }}
+      >
         {counts.map((c, i) => {
           const name = candidates[i]?.name ?? `#${i}`;
           const v = parseFloat(c.votes) || 0;
@@ -205,16 +221,62 @@ export function CandidateCountsBarChart({
             <Fragment key={name}>
               <Box sx={{ display: 'flex', alignItems: 'center', pr: 1 }}>
                 <CandidateStatusIcon status={c.status} />
-                <Typography variant="body2" noWrap>{name}</Typography>
+                <Typography variant="body2" noWrap>
+                  {name}
+                </Typography>
               </Box>
               <Tooltip title={c.votes}>
-                <Box sx={{ height: 22, bgcolor: 'action.hover', borderRadius: 1, position: 'relative', overflow: 'hidden' }}>
-                  {belowPct > 0 && <Box sx={{ position: 'absolute', left: 0, top: 0, bottom: 0, width: `${belowPct}%`, bgcolor: isDefeated ? 'primary.main' : 'primary.light' }} />}
-                  {abovePct > 0 && <Box sx={{ position: 'absolute', left: `${belowPct}%`, top: 0, bottom: 0, width: `${abovePct}%`, bgcolor: 'primary.main' }} />}
-                  {quotaVal > 0 && <Box sx={{ position: 'absolute', left: `${quotaPct}%`, top: 0, bottom: 0, width: 2, bgcolor: 'warning.main', zIndex: 1 }} />}
+                <Box
+                  sx={{
+                    height: 22,
+                    bgcolor: 'action.hover',
+                    borderRadius: 1,
+                    position: 'relative',
+                    overflow: 'hidden',
+                  }}
+                >
+                  {belowPct > 0 && (
+                    <Box
+                      sx={{
+                        position: 'absolute',
+                        left: 0,
+                        top: 0,
+                        bottom: 0,
+                        width: `${belowPct}%`,
+                        bgcolor: isDefeated ? 'primary.main' : 'primary.light',
+                      }}
+                    />
+                  )}
+                  {abovePct > 0 && (
+                    <Box
+                      sx={{
+                        position: 'absolute',
+                        left: `${belowPct}%`,
+                        top: 0,
+                        bottom: 0,
+                        width: `${abovePct}%`,
+                        bgcolor: 'primary.main',
+                      }}
+                    />
+                  )}
+                  {quotaVal > 0 && (
+                    <Box
+                      sx={{
+                        position: 'absolute',
+                        left: `${quotaPct}%`,
+                        top: 0,
+                        bottom: 0,
+                        width: 2,
+                        bgcolor: 'warning.main',
+                        zIndex: 1,
+                      }}
+                    />
+                  )}
                 </Box>
               </Tooltip>
-              <Typography variant="body2" sx={{ fontFamily: 'monospace', fontSize: 13, pl: 1 }}>{c.votes}</Typography>
+              <Typography variant="body2" sx={{ fontFamily: 'monospace', fontSize: 13, pl: 1 }}>
+                {c.votes}
+              </Typography>
             </Fragment>
           );
         })}
@@ -223,7 +285,13 @@ export function CandidateCountsBarChart({
   );
 }
 
-function RoundCard({ round, candidates }: { round: CountingLog['rounds'][0]; candidates: CountingLog['candidates'] }) {
+function RoundCard({
+  round,
+  candidates,
+}: {
+  round: CountingLog['rounds'][0];
+  candidates: CountingLog['candidates'];
+}) {
   const { t } = useTranslation();
 
   return (
@@ -235,10 +303,14 @@ function RoundCard({ round, candidates }: { round: CountingLog['rounds'][0]; can
         {round.actions.map((action, idx) => (
           <Box key={idx} sx={{ mb: 2 }}>
             {idx > 0 && <Divider sx={{ my: 1.5 }} />}
-            <Typography variant="subtitle2" fontWeight="bold" gutterBottom>
+            <Typography variant="subtitle2" gutterBottom sx={{ fontWeight: 'bold' }}>
               {formatActionType(action.action_type, t)}
             </Typography>
-            <CandidateCountsBarChart candidates={candidates} counts={action.candidate_counts} quota={action.stats.quota} />
+            <CandidateCountsBarChart
+              candidates={candidates}
+              counts={action.candidate_counts}
+              quota={action.stats.quota}
+            />
             <StatsRow stats={action.stats} />
           </Box>
         ))}
@@ -255,12 +327,10 @@ export function CountingLog({ log, groupName, defaultExpanded }: CountingLogProp
 
   const paginatedRounds = log.rounds.slice(
     roundPage * roundsPerPage,
-    (roundPage + 1) * roundsPerPage,
+    (roundPage + 1) * roundsPerPage
   );
 
-  const title = groupName
-    ? `${t('Counting Log')}: ${groupName}`
-    : t('Detailed Counting Log');
+  const title = groupName ? `${t('Counting Log')}: ${groupName}` : t('Detailed Counting Log');
 
   return (
     <Accordion elevation={2} expanded={expanded} onChange={(_, e) => setExpanded(e)}>
@@ -282,7 +352,10 @@ export function CountingLog({ log, groupName, defaultExpanded }: CountingLogProp
                 page={roundPage}
                 onPageChange={(_, p) => setRoundPage(p)}
                 rowsPerPage={roundsPerPage}
-                onRowsPerPageChange={e => { setRoundsPerPage(parseInt((e.target as HTMLInputElement).value, 10)); setRoundPage(0); }}
+                onRowsPerPageChange={e => {
+                  setRoundsPerPage(parseInt((e.target as HTMLInputElement).value, 10));
+                  setRoundPage(0);
+                }}
                 rowsPerPageOptions={[5, 10, 25]}
               />
             </Box>

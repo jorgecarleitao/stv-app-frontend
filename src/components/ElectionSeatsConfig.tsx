@@ -38,7 +38,7 @@ export function ElectionSeatsConfig({
         onChange={e => onNumSeatsChange(parseInt((e.target as HTMLInputElement).value) || 1)}
         fullWidth
         required
-        inputProps={{ min: 1, max: maxSeats }}
+        slotProps={{ htmlInput: { min: 1, max: maxSeats } }}
         disabled={disabled}
         error={!!seatsError}
         helperText={seatsError}
@@ -57,7 +57,9 @@ export function ElectionSeatsConfig({
             labelId="election-type-label"
             value={electionType}
             label={t('Election Type')}
-            onChange={e => onElectionTypeChange((e.target as HTMLSelectElement).value as ElectionType)}
+            onChange={e =>
+              onElectionTypeChange((e.target as HTMLSelectElement).value as ElectionType)
+            }
           >
             <MenuItem value="stv-md">{t('STV-MD (unordered)')}</MenuItem>
             <MenuItem value="stv-md-coperland">{t('STV-MD Copeland (ordered)')}</MenuItem>

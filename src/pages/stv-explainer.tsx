@@ -35,14 +35,25 @@ import { CountingWalkthrough } from '../components/CountingWalkthrough';
 import { ResultsSummary } from '../components/ResultsSummary';
 
 const REFS = [
-  { url: 'https://gendignoux.com/blog/2023/03/27/single-transferable-vote.html', labelKey: 'stvMd.refGendignoux' },
-  { url: "https://en.wikipedia.org/wiki/Single_transferable_vote#Meek's_method", labelKey: 'stvMd.refMeek' },
+  {
+    url: 'https://gendignoux.com/blog/2023/03/27/single-transferable-vote.html',
+    labelKey: 'stvMd.refGendignoux',
+  },
+  {
+    url: "https://en.wikipedia.org/wiki/Single_transferable_vote#Meek's_method",
+    labelKey: 'stvMd.refMeek',
+  },
   { url: 'https://en.wikipedia.org/wiki/Droop_quota', labelKey: 'stvMd.refDroop' },
   { url: 'https://www.youtube.com/watch?v=fZauud9CdcU', labelKey: 'stvMd.refUNSW' },
   { url: 'https://www.youtube.com/watch?v=P38Y4VG1Ibo', labelKey: 'stvMd.refElectoralCommission' },
 ];
 
-const FETURES = ['stvMd.keyFeatureMinWaste', 'stvMd.keyFeatureMaxProp', 'stvMd.keyFeatureComplex', 'stvMd.keyFeatureMinTactical'];
+const FETURES = [
+  'stvMd.keyFeatureMinWaste',
+  'stvMd.keyFeatureMaxProp',
+  'stvMd.keyFeatureComplex',
+  'stvMd.keyFeatureMinTactical',
+];
 const TRANSFER_RULES = ['stvMd.transferDefeated', 'stvMd.transferElected'];
 const NO_WASTE_CASES = ['stvMd.noWasteCaseMajority', 'stvMd.noWasteCaseMinority'];
 
@@ -56,10 +67,10 @@ function IntroSection() {
   const { t } = useTranslation();
   return (
     <>
-      <Typography variant="body1" paragraph>
+      <Typography variant="body1" gutterBottom>
         {t('stvMd.intro1')}
       </Typography>
-      <Typography variant="body1" paragraph>
+      <Typography variant="body1" gutterBottom>
         {t('stvMd.intro2')}
       </Typography>
     </>
@@ -75,7 +86,13 @@ function KeyFeaturesCard() {
       <Typography variant="h6" gutterBottom sx={{ textAlign: 'center' }}>
         {t('stvMd.keyFeaturesTitle')}
       </Typography>
-      <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr 1fr', md: 'repeat(4, 1fr)' }, gap: 2 }}>
+      <Box
+        sx={{
+          display: 'grid',
+          gridTemplateColumns: { xs: '1fr 1fr', md: 'repeat(4, 1fr)' },
+          gap: 2,
+        }}
+      >
         {FETURES.map((key, i) => {
           const Icon = FEATURE_ICONS[i];
           return (
@@ -92,15 +109,15 @@ function KeyFeaturesCard() {
 
 function BallotTable() {
   const { t } = useTranslation();
-  const individualBallots = DEFAULT_ELECTION.ballots.flatMap(b =>
-    Array.from({ length: b.votes }, () => b.ranks)
-  ).sort(() => Math.random() - 0.5);
+  const individualBallots = DEFAULT_ELECTION.ballots
+    .flatMap(b => Array.from({ length: b.votes }, () => b.ranks))
+    .sort(() => Math.random() - 0.5);
   return (
     <>
       <Typography variant="subtitle1" sx={{ mt: 2, mb: 1 }}>
         {t('ballotPreferenceTable')}
       </Typography>
-      <Typography variant="body2" color="text.secondary" paragraph>
+      <Typography variant="body2" color="text.secondary" gutterBottom>
         {t('ballotExplanation')}
       </Typography>
       <TableContainer component={Paper} variant="outlined" sx={{ maxHeight: 400 }}>
@@ -121,7 +138,13 @@ function BallotTable() {
                 <TableCell sx={{ color: 'text.secondary', fontSize: 13 }}>#{i + 1}</TableCell>
                 {(ranks ?? []).map((r, ci) => (
                   <TableCell key={ci} align="center">
-                    {r !== null ? r + 1 : <Tooltip title={t('ballotNoPreference')} arrow><Box component="span">—</Box></Tooltip>}
+                    {r !== null ? (
+                      r + 1
+                    ) : (
+                      <Tooltip title={t('ballotNoPreference')} arrow>
+                        <Box component="span">—</Box>
+                      </Tooltip>
+                    )}
                   </TableCell>
                 ))}
               </TableRow>
@@ -129,7 +152,11 @@ function BallotTable() {
           </TableBody>
         </Table>
       </TableContainer>
-      <Typography variant="caption" color="text.secondary" sx={{ mt: 1, display: 'block', textAlign: 'right' }}>
+      <Typography
+        variant="caption"
+        color="text.secondary"
+        sx={{ mt: 1, display: 'block', textAlign: 'right' }}
+      >
         {individualBallots.length} {t('voters')} {t('ballotTotal')}
       </Typography>
     </>
@@ -144,12 +171,14 @@ function ExampleSection() {
         <Typography variant="h5" gutterBottom>
           {t('stvMd.exampleTitle')}
         </Typography>
-        <Typography variant="body1" paragraph color="text.secondary">
+        <Typography variant="body1" gutterBottom color="text.secondary">
           {t('stvMd.exampleIntro')}
         </Typography>
         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5, pl: 2, mb: 2 }}>
           <Typography variant="body2">
-            <strong>{DEFAULT_ELECTION.candidates.length} {t('candidates')}:</strong>{' '}
+            <strong>
+              {DEFAULT_ELECTION.candidates.length} {t('candidates')}:
+            </strong>{' '}
             {DEFAULT_ELECTION.candidates.join(', ')}
           </Typography>
           <Typography variant="body2">
@@ -159,7 +188,8 @@ function ExampleSection() {
             <strong>{TOTAL_VOTES}</strong> {t('voters')}
           </Typography>
           <Typography variant="body2">
-            <strong>{t('Quota')}:</strong> {(TOTAL_VOTES / (DEFAULT_ELECTION.seats + 1)).toFixed(2)} {t('votes')}
+            <strong>{t('Quota')}:</strong> {(TOTAL_VOTES / (DEFAULT_ELECTION.seats + 1)).toFixed(2)}{' '}
+            {t('votes')}
           </Typography>
         </Box>
         <BallotTable />
@@ -168,7 +198,11 @@ function ExampleSection() {
   );
 }
 
-function OutcomeSection({ loading, error, result }: {
+function OutcomeSection({
+  loading,
+  error,
+  result,
+}: {
   loading: boolean;
   error: string | null;
   result: any;
@@ -197,10 +231,20 @@ function OutcomeSection({ loading, error, result }: {
         />
         {isGroupedResult(result) ? (
           result.group_results.map((gr: any) => (
-            <ResultsSummary key={gr.group} log={gr.log} seats={gr.seats} numElected={gr.elected.length} groupName={gr.group} />
+            <ResultsSummary
+              key={gr.group}
+              log={gr.log}
+              seats={gr.seats}
+              numElected={gr.elected.length}
+              groupName={gr.group}
+            />
           ))
         ) : (
-          <ResultsSummary log={result.log} seats={DEFAULT_ELECTION.seats} numElected={result.elected.length} />
+          <ResultsSummary
+            log={result.log}
+            seats={DEFAULT_ELECTION.seats}
+            numElected={result.elected.length}
+          />
         )}
       </CardContent>
     </Card>
@@ -212,9 +256,7 @@ function WalkthroughSection({ result }: { result: any }) {
   return (
     <Box sx={{ my: 3 }}>
       {isGroupedResult(result) ? (
-        result.group_results.map((gr: any) => (
-          <CountingWalkthrough key={gr.group} log={gr.log} />
-        ))
+        result.group_results.map((gr: any) => <CountingWalkthrough key={gr.group} log={gr.log} />)
       ) : (
         <CountingWalkthrough log={result.log} />
       )}
@@ -240,7 +282,7 @@ function TransferRulesSection() {
         <Typography variant="h6" gutterBottom sx={{ mt: 3 }}>
           {t('stvMd.noWasteTitle')}
         </Typography>
-        <Typography variant="body2" paragraph color="text.secondary">
+        <Typography variant="body2" gutterBottom color="text.secondary">
           {t('stvMd.noWasteIntro')}
         </Typography>
         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
@@ -250,7 +292,7 @@ function TransferRulesSection() {
             </Paper>
           ))}
         </Box>
-        <Typography variant="body2" paragraph color="text.secondary" sx={{ mt: 2 }}>
+        <Typography variant="body2" gutterBottom color="text.secondary" sx={{ mt: 2 }}>
           {t('stvMd.noWasteConclusion')}
         </Typography>
       </CardContent>
@@ -262,8 +304,15 @@ function ActionButtons() {
   const { t } = useTranslation();
   return (
     <Box sx={{ textAlign: 'center', my: 4 }}>
-      <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} justifyContent="center">
-        <Button variant="contained" size="large" startIcon={<PlayArrowIcon />} href="/simulate" target="_blank" rel="noopener">
+      <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} sx={{ justifyContent: 'center' }}>
+        <Button
+          variant="contained"
+          size="large"
+          startIcon={<PlayArrowIcon />}
+          href="/simulate"
+          target="_blank"
+          rel="noopener"
+        >
           {t('Try Simulator')}
         </Button>
         <Button variant="outlined" size="large" startIcon={<AddIcon />} href="/elections/create">
@@ -287,9 +336,17 @@ function ReferencesCard() {
         </Typography>
         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5, mt: 2 }}>
           {REFS.map((ref, i) => (
-            <Paper key={i} elevation={1} sx={{ p: 2, borderLeft: 3, borderColor: 'secondary.main' }}>
-              <Link href={ref.url} target="_blank" rel="noopener noreferrer"
-                sx={{ textDecoration: 'none', '&:hover': { textDecoration: 'underline' } }}>
+            <Paper
+              key={i}
+              elevation={1}
+              sx={{ p: 2, borderLeft: 3, borderColor: 'secondary.main' }}
+            >
+              <Link
+                href={ref.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                sx={{ textDecoration: 'none', '&:hover': { textDecoration: 'underline' } }}
+              >
                 {t(ref.labelKey)}
               </Link>
             </Paper>

@@ -22,7 +22,15 @@ import CircularProgress from '@mui/material/CircularProgress';
 import LZString from 'lz-string';
 import * as yaml from 'js-yaml';
 
-import { Election, ElectionResult, simulateElection, ElectionType, isCopelandResult, isGroupedResult, GroupConfig } from '../data/api';
+import {
+  Election,
+  ElectionResult,
+  simulateElection,
+  ElectionType,
+  isCopelandResult,
+  isGroupedResult,
+  GroupConfig,
+} from '../data/api';
 import { DEFAULT_ELECTION } from '../data/defaults';
 import { BallotsEditor } from '../ballot';
 import { ElectionResults } from '../components/ElectionResults';
@@ -75,7 +83,10 @@ export default function Simulate({ path }: SimulateProps = {}) {
         const yamlText = LZString.decompressFromEncodedURIComponent(encoded);
         if (yamlText) {
           const loaded = yaml.load(yamlText) as Election;
-          setElection({ ...loaded, election_type: (loaded.election_type ?? 'stv-md') as ElectionType } as Election);
+          setElection({
+            ...loaded,
+            election_type: (loaded.election_type ?? 'stv-md') as ElectionType,
+          } as Election);
           setYamlText(yamlText);
           setPendingYaml(yamlText);
           setYamlError(null);
@@ -208,9 +219,9 @@ export default function Simulate({ path }: SimulateProps = {}) {
       ballots: e.ballots.map((b, i) =>
         i === ballotIdx
           ? {
-            ...b,
-            ranks: (b.ranks ?? []).map((r, cIdx) => (cIdx === candIdx ? rank : r)),
-          }
+              ...b,
+              ranks: (b.ranks ?? []).map((r, cIdx) => (cIdx === candIdx ? rank : r)),
+            }
           : b
       ),
     }));
@@ -233,14 +244,18 @@ export default function Simulate({ path }: SimulateProps = {}) {
         setYamlError('YAML is parsed but not recognized as an election structure.');
         return;
       }
-      setElection({ ...loaded, election_type: ((loaded as any).election_type ?? 'stv-md') as ElectionType } as Election);
+      setElection({
+        ...loaded,
+        election_type: ((loaded as any).election_type ?? 'stv-md') as ElectionType,
+      } as Election);
       setYamlError(null);
     } catch (err: any) {
       setYamlError('YAML parse error: ' + err.message);
     }
   };
 
-  const canRun = election.candidates.length >= 2 && election.seats > 0 && election.ballots.length > 0;
+  const canRun =
+    election.candidates.length >= 2 && election.seats > 0 && election.ballots.length > 0;
   const totalVotes = election.ballots.reduce((sum, b) => sum + b.votes, 0);
 
   return (
@@ -261,16 +276,18 @@ export default function Simulate({ path }: SimulateProps = {}) {
             onChange={(e: any) => setPendingYaml(e.target.value)}
             placeholder={t('Edit election YAML here...')}
             error={!!yamlError}
-            InputProps={{
-              endAdornment: (
-                <InputAdornment position="end">
-                  <Tooltip title={t('loadSaveYamlInstructions')} placement="top" arrow>
-                    <IconButton tabIndex={-1}>
-                      <InfoOutlinedIcon fontSize="small" />
-                    </IconButton>
-                  </Tooltip>
-                </InputAdornment>
-              ),
+            slotProps={{
+              input: {
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <Tooltip title={t('loadSaveYamlInstructions')} placement="top" arrow>
+                      <IconButton tabIndex={-1}>
+                        <InfoOutlinedIcon fontSize="small" />
+                      </IconButton>
+                    </Tooltip>
+                  </InputAdornment>
+                ),
+              },
             }}
           />
           {yamlError && <Alert severity="error">{yamlError}</Alert>}
@@ -292,12 +309,17 @@ export default function Simulate({ path }: SimulateProps = {}) {
               return {
                 ...el,
                 election_type: val,
-                groups: isGrouped && el.groups?.length === 0
-                  ? [{ name: 'Group A', seats: 1 }, { name: 'Group B', seats: 1 }]
-                  : el.groups ?? [],
-                candidate_groups: isGrouped && el.candidate_groups?.length === 0
-                  ? el.candidates.map(() => '')
-                  : el.candidate_groups ?? [],
+                groups:
+                  isGrouped && el.groups?.length === 0
+                    ? [
+                        { name: 'Group A', seats: 1 },
+                        { name: 'Group B', seats: 1 },
+                      ]
+                    : (el.groups ?? []),
+                candidate_groups:
+                  isGrouped && el.candidate_groups?.length === 0
+                    ? el.candidates.map(() => '')
+                    : (el.candidate_groups ?? []),
               };
             });
           }}
@@ -309,10 +331,7 @@ export default function Simulate({ path }: SimulateProps = {}) {
           <Typography variant={HEADER} gutterBottom>
             {t('Groups')}
           </Typography>
-          <GroupConfigList
-            groups={election.groups ?? []}
-            onGroupsChange={handleGroupsChange}
-          />
+          <GroupConfigList groups={election.groups ?? []} onGroupsChange={handleGroupsChange} />
         </Paper>
       )}
 
@@ -326,14 +345,16 @@ export default function Simulate({ path }: SimulateProps = {}) {
           groups={election.election_type === 'stv-md-grouped' ? election.groups : undefined}
           candidateGroups={election.candidate_groups}
           onCandidateChange={handleRenameCandidate}
-          onCandidateGroupChange={election.election_type === 'stv-md-grouped' ? handleCandidateGroupChange : undefined}
+          onCandidateGroupChange={
+            election.election_type === 'stv-md-grouped' ? handleCandidateGroupChange : undefined
+          }
           onAddCandidate={handleAddCandidate}
           onRemoveCandidate={handleRemoveCandidate}
         />
       </Paper>
 
       <Paper elevation={2} sx={{ p: 3 }}>
-        <Stack direction="row" alignItems="center" spacing={1} sx={{ mb: 2 }}>
+        <Stack direction="row" spacing={1} sx={{ alignItems: 'center', mb: 2 }}>
           <Typography variant={HEADER} gutterBottom sx={{ mb: 0 }}>
             {t('Ballot groups')}
           </Typography>
@@ -367,13 +388,7 @@ export default function Simulate({ path }: SimulateProps = {}) {
         )}
       </Paper>
 
-      <Tooltip
-        title={
-          !canRun
-            ? `Need at least 2 candidates, 1 seat, and 1 ballot group`
-            : ''
-        }
-      >
+      <Tooltip title={!canRun ? `Need at least 2 candidates, 1 seat, and 1 ballot group` : ''}>
         <span>
           <Button
             fullWidth
@@ -408,7 +423,7 @@ export default function Simulate({ path }: SimulateProps = {}) {
 
       {/* Results Summary */}
       {result && isGroupedResult(result) ? (
-        result.group_results.map((gr) => (
+        result.group_results.map(gr => (
           <ResultsSummary
             key={gr.group}
             log={gr.log}
@@ -436,7 +451,7 @@ export default function Simulate({ path }: SimulateProps = {}) {
 
       {/* Detailed Counting Log (per group for grouped results) */}
       {result && isGroupedResult(result) ? (
-        result.group_results.map((gr) => (
+        result.group_results.map(gr => (
           <CountingLog key={gr.group} log={gr.log} groupName={gr.group} />
         ))
       ) : result ? (

@@ -138,11 +138,15 @@ export function isGroupedElectionRequest(
   return r.election_type === 'stv-md-grouped';
 }
 
-export function isCopelandResult(r: ElectionResult): r is Extract<ElectionResult, { type: 'stv-md-coperland' }> {
+export function isCopelandResult(
+  r: ElectionResult
+): r is Extract<ElectionResult, { type: 'stv-md-coperland' }> {
   return r.type === 'stv-md-coperland';
 }
 
-export function isGroupedResult(r: ElectionResult): r is Extract<ElectionResult, { type: 'stv-md-grouped' }> {
+export function isGroupedResult(
+  r: ElectionResult
+): r is Extract<ElectionResult, { type: 'stv-md-grouped' }> {
   return r.type === 'stv-md-grouped';
 }
 
@@ -484,10 +488,13 @@ export async function getEmailConfig(
   electionId: string,
   adminUuid: string
 ): Promise<EmailConfig | null> {
-  const response = await fetch(`${BASE_URL}/elections/${electionId}/admin/${adminUuid}/email-config`, {
-    method: 'GET',
-    mode: 'cors',
-  });
+  const response = await fetch(
+    `${BASE_URL}/elections/${electionId}/admin/${adminUuid}/email-config`,
+    {
+      method: 'GET',
+      mode: 'cors',
+    }
+  );
 
   if (response.status === 404) return null;
   if (!response.ok) {
@@ -505,12 +512,15 @@ export async function upsertEmailConfig(
   adminUuid: string,
   config: UpsertEmailConfigRequest
 ): Promise<EmailConfig> {
-  const response = await fetch(`${BASE_URL}/elections/${electionId}/admin/${adminUuid}/email-config`, {
-    method: 'PUT',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(config),
-    mode: 'cors',
-  });
+  const response = await fetch(
+    `${BASE_URL}/elections/${electionId}/admin/${adminUuid}/email-config`,
+    {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(config),
+      mode: 'cors',
+    }
+  );
 
   if (!response.ok) {
     throw new Error(`Failed to update email config: ${await response.text()}`);
@@ -545,14 +555,14 @@ export async function sendTestEmail(
 /**
  * Delete email SMTP configuration for an election (admin only)
  */
-export async function deleteEmailConfig(
-  electionId: string,
-  adminUuid: string
-): Promise<void> {
-  const response = await fetch(`${BASE_URL}/elections/${electionId}/admin/${adminUuid}/email-config`, {
-    method: 'DELETE',
-    mode: 'cors',
-  });
+export async function deleteEmailConfig(electionId: string, adminUuid: string): Promise<void> {
+  const response = await fetch(
+    `${BASE_URL}/elections/${electionId}/admin/${adminUuid}/email-config`,
+    {
+      method: 'DELETE',
+      mode: 'cors',
+    }
+  );
 
   if (!response.ok) {
     throw new Error(`Failed to delete email config: ${await response.text()}`);
@@ -573,12 +583,15 @@ export async function sendEmails(
   if (tokenIds && tokenIds.length > 0) {
     body.token_ids = tokenIds;
   }
-  const response = await fetch(`${BASE_URL}/elections/${electionId}/admin/${adminUuid}/tokens/send`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(body),
-    mode: 'cors',
-  });
+  const response = await fetch(
+    `${BASE_URL}/elections/${electionId}/admin/${adminUuid}/tokens/send`,
+    {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body),
+      mode: 'cors',
+    }
+  );
 
   if (!response.ok) {
     throw new Error(`Failed to send emails: ${await response.text()}`);

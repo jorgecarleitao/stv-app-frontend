@@ -48,13 +48,12 @@ export default function Navigation({ mode, toggleTheme }: NavigationProps) {
   ];
 
   const drawerContent = (
-    <Stack alignItems="center" sx={{ py: 2 }} onClick={handleDrawerToggle}>
+    <Stack sx={{ py: 2, alignItems: 'center' }} onClick={handleDrawerToggle}>
       <Typography
         variant="h6"
         component="a"
         href="/"
-        display="block"
-        sx={{ textDecoration: 'none', color: 'inherit' }}
+        sx={{ display: 'block', textDecoration: 'none', color: 'inherit' }}
       >
         {brandLabel}
       </Typography>
@@ -88,8 +87,8 @@ export default function Navigation({ mode, toggleTheme }: NavigationProps) {
             variant="h6"
             component="a"
             href="/"
-            flexGrow={1}
             sx={{
+              flexGrow: 1,
               display: { xs: 'none', sm: 'block' },
               textDecoration: 'none',
               color: 'inherit',
@@ -110,7 +109,7 @@ export default function Navigation({ mode, toggleTheme }: NavigationProps) {
           <Select
             variant="standard"
             value={i18n.language}
-            onChange={(e) => i18n.changeLanguage((e.target as HTMLSelectElement).value)}
+            onChange={e => i18n.changeLanguage((e.target as HTMLSelectElement).value)}
             sx={{ ml: 2, color: 'inherit' }}
           >
             {languages.map(lang => (

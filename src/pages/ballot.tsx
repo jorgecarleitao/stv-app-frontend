@@ -186,7 +186,7 @@ export default function BallotPage({ electionId, ballotUuid }: BallotPageProps) 
           <Typography variant="h6" gutterBottom>
             {t('Rank the candidates')}
           </Typography>
-          <Typography variant="body2" color="text.secondary" paragraph>
+          <Typography variant="body2" color="text.secondary" gutterBottom>
             {t('Select your preferred rank for each candidate. 1 is most preferred.')}
           </Typography>
 
@@ -205,7 +205,7 @@ export default function BallotPage({ electionId, ballotUuid }: BallotPageProps) 
         </Stack>
       </Paper>
 
-      <Stack alignItems="center">
+      <Stack sx={{ alignItems: 'center' }}>
         <Button
           variant="contained"
           size="large"

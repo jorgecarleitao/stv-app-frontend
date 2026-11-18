@@ -156,11 +156,8 @@ export default function RiskAssessment({}: RiskAssessmentProps = {}) {
   ];
 
   return (
-    <Page
-      title={t('riskAssessment.pageTitle')}
-      description={t('riskAssessment.pageDescription')}
-    >
-      <Typography variant="body1" paragraph>
+    <Page title={t('riskAssessment.pageTitle')} description={t('riskAssessment.pageDescription')}>
+      <Typography variant="body1" gutterBottom>
         {t('riskAssessment.intro')}
       </Typography>
 
@@ -175,18 +172,20 @@ export default function RiskAssessment({}: RiskAssessmentProps = {}) {
         <Typography variant="h5" gutterBottom>
           {t('riskAssessment.methodologyTitle')}
         </Typography>
-        <Typography variant="body2" paragraph>
+        <Typography variant="body2" gutterBottom>
           {t('riskAssessment.methodologyIntro')}
         </Typography>
         <Box>
           <Typography variant="body2" component="div">
-            <strong>{t('riskAssessment.likelihoodLabel')}</strong> {t('riskAssessment.likelihoodValues')}
+            <strong>{t('riskAssessment.likelihoodLabel')}</strong>{' '}
+            {t('riskAssessment.likelihoodValues')}
           </Typography>
           <Typography variant="body2" component="div">
             <strong>{t('riskAssessment.impactLabel')}</strong> {t('riskAssessment.impactValues')}
           </Typography>
           <Typography variant="body2" component="div">
-            <strong>{t('riskAssessment.residualRiskLabel')}</strong> {t('riskAssessment.residualRiskDesc')}
+            <strong>{t('riskAssessment.residualRiskLabel')}</strong>{' '}
+            {t('riskAssessment.residualRiskDesc')}
           </Typography>
         </Box>
       </Paper>
@@ -244,27 +243,27 @@ export default function RiskAssessment({}: RiskAssessmentProps = {}) {
         </Typography>
 
         <Typography variant="h6">{t('riskAssessment.ballotAnonymizationTitle')}</Typography>
-        <Typography variant="body2" paragraph>
+        <Typography variant="body2" gutterBottom>
           {t('riskAssessment.ballotAnonymizationText')}
         </Typography>
 
         <Typography variant="h6">{t('riskAssessment.noAuthTitle')}</Typography>
-        <Typography variant="body2" paragraph>
+        <Typography variant="body2" gutterBottom>
           {t('riskAssessment.noAuthText')}
         </Typography>
 
         <Typography variant="h6">{t('riskAssessment.publicAuditabilityTitle')}</Typography>
-        <Typography variant="body2" paragraph>
+        <Typography variant="body2" gutterBottom>
           {t('riskAssessment.publicAuditabilityText')}
         </Typography>
 
         <Typography variant="h6">{t('riskAssessment.singleUseTokensTitle')}</Typography>
-        <Typography variant="body2" paragraph>
+        <Typography variant="body2" gutterBottom>
           {t('riskAssessment.singleUseTokensText')}
         </Typography>
 
         <Typography variant="h6">{t('riskAssessment.electionLockingTitle')}</Typography>
-        <Typography variant="body2" paragraph>
+        <Typography variant="body2" gutterBottom>
           {t('riskAssessment.electionLockingText')}
         </Typography>
       </Paper>
@@ -279,7 +278,8 @@ export default function RiskAssessment({}: RiskAssessmentProps = {}) {
             <ListItemText
               primary={
                 <>
-                  <strong>{t('riskAssessment.technicalMeasures.database.label')}</strong> {t('riskAssessment.technicalMeasures.database.text')}
+                  <strong>{t('riskAssessment.technicalMeasures.database.label')}</strong>{' '}
+                  {t('riskAssessment.technicalMeasures.database.text')}
                 </>
               }
             />
@@ -288,7 +288,8 @@ export default function RiskAssessment({}: RiskAssessmentProps = {}) {
             <ListItemText
               primary={
                 <>
-                  <strong>{t('riskAssessment.technicalMeasures.deployment.label')}</strong> {t('riskAssessment.technicalMeasures.deployment.text')}
+                  <strong>{t('riskAssessment.technicalMeasures.deployment.label')}</strong>{' '}
+                  {t('riskAssessment.technicalMeasures.deployment.text')}
                 </>
               }
             />
@@ -297,7 +298,8 @@ export default function RiskAssessment({}: RiskAssessmentProps = {}) {
             <ListItemText
               primary={
                 <>
-                  <strong>{t('riskAssessment.technicalMeasures.tls.label')}</strong> {t('riskAssessment.technicalMeasures.tls.text')}
+                  <strong>{t('riskAssessment.technicalMeasures.tls.label')}</strong>{' '}
+                  {t('riskAssessment.technicalMeasures.tls.text')}
                 </>
               }
             />
@@ -306,7 +308,8 @@ export default function RiskAssessment({}: RiskAssessmentProps = {}) {
             <ListItemText
               primary={
                 <>
-                  <strong>{t('riskAssessment.technicalMeasures.inputValidation.label')}</strong> {t('riskAssessment.technicalMeasures.inputValidation.text')}
+                  <strong>{t('riskAssessment.technicalMeasures.inputValidation.label')}</strong>{' '}
+                  {t('riskAssessment.technicalMeasures.inputValidation.text')}
                 </>
               }
             />
@@ -315,7 +318,8 @@ export default function RiskAssessment({}: RiskAssessmentProps = {}) {
             <ListItemText
               primary={
                 <>
-                  <strong>{t('riskAssessment.technicalMeasures.atomicity.label')}</strong> {t('riskAssessment.technicalMeasures.atomicity.text')}
+                  <strong>{t('riskAssessment.technicalMeasures.atomicity.label')}</strong>{' '}
+                  {t('riskAssessment.technicalMeasures.atomicity.text')}
                 </>
               }
             />
@@ -324,7 +328,8 @@ export default function RiskAssessment({}: RiskAssessmentProps = {}) {
             <ListItemText
               primary={
                 <>
-                  <strong>{t('riskAssessment.technicalMeasures.openSource.label')}</strong> {t('riskAssessment.technicalMeasures.openSource.text')}
+                  <strong>{t('riskAssessment.technicalMeasures.openSource.label')}</strong>{' '}
+                  {t('riskAssessment.technicalMeasures.openSource.text')}
                 </>
               }
             />
@@ -337,7 +342,7 @@ export default function RiskAssessment({}: RiskAssessmentProps = {}) {
           {t('riskAssessment.recommendationsTitle')}
         </Typography>
 
-        <Typography variant="body2" paragraph>
+        <Typography variant="body2" gutterBottom>
           {t('riskAssessment.recommendationsIntro')}
         </Typography>
 
@@ -346,7 +351,8 @@ export default function RiskAssessment({}: RiskAssessmentProps = {}) {
             <ListItemText
               primary={
                 <>
-                  <strong>{t('riskAssessment.recommendation1.label')}</strong> {t('riskAssessment.recommendation1.text')}
+                  <strong>{t('riskAssessment.recommendation1.label')}</strong>{' '}
+                  {t('riskAssessment.recommendation1.text')}
                 </>
               }
             />
@@ -355,7 +361,8 @@ export default function RiskAssessment({}: RiskAssessmentProps = {}) {
             <ListItemText
               primary={
                 <>
-                  <strong>{t('riskAssessment.recommendation2.label')}</strong> {t('riskAssessment.recommendation2.text')}
+                  <strong>{t('riskAssessment.recommendation2.label')}</strong>{' '}
+                  {t('riskAssessment.recommendation2.text')}
                 </>
               }
             />
@@ -364,7 +371,8 @@ export default function RiskAssessment({}: RiskAssessmentProps = {}) {
             <ListItemText
               primary={
                 <>
-                  <strong>{t('riskAssessment.recommendation3.label')}</strong> {t('riskAssessment.recommendation3.text')}
+                  <strong>{t('riskAssessment.recommendation3.label')}</strong>{' '}
+                  {t('riskAssessment.recommendation3.text')}
                 </>
               }
             />
@@ -373,7 +381,8 @@ export default function RiskAssessment({}: RiskAssessmentProps = {}) {
             <ListItemText
               primary={
                 <>
-                  <strong>{t('riskAssessment.recommendation4.label')}</strong> {t('riskAssessment.recommendation4.text')}
+                  <strong>{t('riskAssessment.recommendation4.label')}</strong>{' '}
+                  {t('riskAssessment.recommendation4.text')}
                 </>
               }
             />
@@ -382,7 +391,8 @@ export default function RiskAssessment({}: RiskAssessmentProps = {}) {
             <ListItemText
               primary={
                 <>
-                  <strong>{t('riskAssessment.recommendation5.label')}</strong> {t('riskAssessment.recommendation5.text')}
+                  <strong>{t('riskAssessment.recommendation5.label')}</strong>{' '}
+                  {t('riskAssessment.recommendation5.text')}
                 </>
               }
             />
@@ -391,7 +401,8 @@ export default function RiskAssessment({}: RiskAssessmentProps = {}) {
             <ListItemText
               primary={
                 <>
-                  <strong>{t('riskAssessment.recommendation6.label')}</strong> {t('riskAssessment.recommendation6.text')}
+                  <strong>{t('riskAssessment.recommendation6.label')}</strong>{' '}
+                  {t('riskAssessment.recommendation6.text')}
                 </>
               }
             />
@@ -405,15 +416,27 @@ export default function RiskAssessment({}: RiskAssessmentProps = {}) {
         </Typography>
         <Typography variant="body2">
           {t('riskAssessment.openSourcePrefix')}{' '}
-          <Link href="https://github.com/jorgecarleitao/stv-app" target="_blank" rel="noopener noreferrer">
+          <Link
+            href="https://github.com/jorgecarleitao/stv-app"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
             {t('riskAssessment.openSourceBackend')}
           </Link>
           {', '}
-          <Link href="https://github.com/jorgecarleitao/stv-app-frontend" target="_blank" rel="noopener noreferrer">
+          <Link
+            href="https://github.com/jorgecarleitao/stv-app-frontend"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
             {t('riskAssessment.openSourceFrontend')}
           </Link>
           {', '}
-          <Link href="https://github.com/jorgecarleitao/stv-app-infrastructure" target="_blank" rel="noopener noreferrer">
+          <Link
+            href="https://github.com/jorgecarleitao/stv-app-infrastructure"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
             {t('riskAssessment.openSourceInfrastructure')}
           </Link>
         </Typography>
@@ -423,7 +446,7 @@ export default function RiskAssessment({}: RiskAssessmentProps = {}) {
         <Typography variant="h5" gutterBottom>
           {t('riskAssessment.conclusionTitle')}
         </Typography>
-        <Typography variant="body2" paragraph>
+        <Typography variant="body2" gutterBottom>
           {t('riskAssessment.conclusionPara1')}
         </Typography>
         <Typography variant="body2">

@@ -42,7 +42,7 @@ export function CandidatesList({
 
   return (
     <Stack spacing={2}>
-      <Stack direction="row" justifyContent="space-between" alignItems="center">
+      <Stack direction="row" sx={{ justifyContent: 'space-between', alignItems: 'center' }}>
         <Tooltip
           title={<span style={{ whiteSpace: 'pre-line' }}>{t('addCandidatesInstructions')}</span>}
           arrow
@@ -59,7 +59,7 @@ export function CandidatesList({
 
       <Stack spacing={1}>
         {candidates.map((candidate, index) => (
-          <Stack key={index} direction="row" spacing={1} alignItems="center">
+          <Stack key={index} direction="row" spacing={1} sx={{ alignItems: 'center' }}>
             <TextField
               label={`${t('Candidate')} ${index + 1}`}
               value={candidate}
@@ -70,24 +70,30 @@ export function CandidatesList({
             />
             {isGrouped && groups && onCandidateGroupChange && (
               <Tooltip
-                title={t('Assign each candidate to a group. Candidates in each group compete only for the seats allocated to that group.')}
+                title={t(
+                  'Assign each candidate to a group. Candidates in each group compete only for the seats allocated to that group.'
+                )}
                 arrow
                 placement="left"
               >
                 <Select
                   value={candidateGroups?.[index] ?? ''}
-                  onChange={e => onCandidateGroupChange(index, (e.target as HTMLSelectElement).value)}
+                  onChange={e =>
+                    onCandidateGroupChange(index, (e.target as HTMLSelectElement).value)
+                  }
                   displayEmpty
                   size="small"
                   disabled={disabled}
                   sx={{ minWidth: 120 }}
-                  renderValue={(selected) => {
+                  renderValue={selected => {
                     if (!selected) return <em style={{ color: '#999' }}>{t('Group')}</em>;
                     return selected;
                   }}
                 >
-                  {groups.map((g) => (
-                    <MenuItem key={g.name} value={g.name}>{g.name}</MenuItem>
+                  {groups.map(g => (
+                    <MenuItem key={g.name} value={g.name}>
+                      {g.name}
+                    </MenuItem>
                   ))}
                 </Select>
               </Tooltip>
@@ -103,7 +109,7 @@ export function CandidatesList({
         ))}
       </Stack>
       {candidatesError && (
-        <Typography variant="caption" color="error" display="block">
+        <Typography variant="caption" color="error" sx={{ display: 'block' }}>
           {candidatesError}
         </Typography>
       )}

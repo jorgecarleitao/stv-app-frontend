@@ -31,7 +31,7 @@ export function ElectionTimeConfig({
         onChange={e => onStartTimeChange((e.target as HTMLInputElement).value)}
         fullWidth
         required
-        InputLabelProps={{ shrink: true }}
+        slotProps={{ inputLabel: { shrink: true } }}
         disabled={disabled}
         error={!!dateTimeError}
       />
@@ -43,13 +43,13 @@ export function ElectionTimeConfig({
         onChange={e => onEndTimeChange((e.target as HTMLInputElement).value)}
         fullWidth
         required
-        InputLabelProps={{ shrink: true }}
+        slotProps={{ inputLabel: { shrink: true } }}
         disabled={disabled}
         error={!!dateTimeError}
       />
 
       {dateTimeError && (
-        <Typography variant="caption" color="error" display="block">
+        <Typography variant="caption" color="error" sx={{ display: 'block' }}>
           {dateTimeError}
         </Typography>
       )}

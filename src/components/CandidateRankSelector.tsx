@@ -52,7 +52,7 @@ export const CandidateRankSelector = memo(function CandidateRankSelector({
           borderRadius: 1,
         }}
       >
-        <Typography fontWeight="medium" flexGrow={1} noWrap>
+        <Typography noWrap sx={{ fontWeight: 'medium', flexGrow: 1 }}>
           {candidate}
         </Typography>
         <FormControl size="small" sx={{ minWidth: 130 }} disabled={readOnly}>
@@ -87,11 +87,9 @@ export const CandidateRankSelector = memo(function CandidateRankSelector({
         borderRadius: 1,
       }}
     >
-      <Stack direction="row" spacing={2} alignItems="center" flexWrap="wrap">
-        <Typography fontWeight="medium" flexGrow={1}>
-          {candidate}
-        </Typography>
-        <Stack direction="row" spacing={1} flexWrap="wrap">
+      <Stack direction="row" spacing={2} sx={{ alignItems: 'center', flexWrap: 'wrap' }}>
+        <Typography sx={{ fontWeight: 'medium', flexGrow: 1 }}>{candidate}</Typography>
+        <Stack direction="row" spacing={1} sx={{ flexWrap: 'wrap' }}>
           <Button
             variant={rank === null || rank === undefined ? 'contained' : 'outlined'}
             size="small"

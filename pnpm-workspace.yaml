@@ -1,2 +1,8 @@
 allowBuilds:
   esbuild: true
+# Security overrides (Dependabot): rollup >= 4.59.0, browserslist >= 4.28.7,
+# minimatch v9 line -> >= 11.0.1 (v3 line left untouched for legacy glob)
+overrides:
+  rollup: ^4.59.0
+  browserslist: ^4.28.7
+  minimatch@^9.0.0: ^11.0.1

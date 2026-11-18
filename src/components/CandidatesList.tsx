@@ -10,7 +10,7 @@ import Tooltip from '@mui/material/Tooltip';
 import AddIcon from '@mui/icons-material/Add';
 import DeleteIcon from '@mui/icons-material/Delete';
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
-import type { ElectionType, GroupConfig } from '../data/api';
+import { ElectionType, GroupConfig } from '../data/types';
 
 interface CandidatesListProps {
   candidates: string[];

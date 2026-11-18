@@ -1,0 +1,2500 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "STV Election API",
+    "description": "API for Single Transferable Vote (STV) election system",
+    "license": {
+      "name": ""
+    },
+    "version": "0.1.0"
+  },
+  "paths": {
+    "/api/elections": {
+      "post": {
+        "tags": [
+          "elections"
+        ],
+        "operationId": "create_election",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateElectionRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Election created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ElectionResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
+    },
+    "/api/elections/{election_id}/admin/{admin_uuid}": {
+      "get": {
+        "tags": [
+          "elections"
+        ],
+        "operationId": "get_election_by_admin",
+        "parameters": [
+          {
+            "name": "election_id",
+            "in": "path",
+            "description": "Election UUID",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "admin_uuid",
+            "in": "path",
+            "description": "Admin UUID for authorization",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Election details retrieved",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ElectionResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Election not found"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "elections"
+        ],
+        "operationId": "update_election_by_admin",
+        "parameters": [
+          {
+            "name": "election_id",
+            "in": "path",
+            "description": "Election UUID",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "admin_uuid",
+            "in": "path",
+            "description": "Admin UUID for authorization",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateElectionRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Election updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ElectionResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request - election is locked or invalid data"
+          },
+          "404": {
+            "description": "Election not found"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
+    },
+    "/api/elections/{election_id}/admin/{admin_uuid}/email-config": {
+      "get": {
+        "tags": [
+          "email-config"
+        ],
+        "operationId": "get_email_config",
+        "parameters": [
+          {
+            "name": "election_id",
+            "in": "path",
+            "description": "Election UUID",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "admin_uuid",
+            "in": "path",
+            "description": "Admin UUID for authorization",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Email config (password omitted)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EmailConfigResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Election not found or config not found"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "email-config"
+        ],
+        "operationId": "upsert_email_config",
+        "parameters": [
+          {
+            "name": "election_id",
+            "in": "path",
+            "description": "Election UUID",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "admin_uuid",
+            "in": "path",
+            "description": "Admin UUID for authorization",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpsertEmailConfigRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Email config created or updated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EmailConfigResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request"
+          },
+          "404": {
+            "description": "Election not found"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "email-config"
+        ],
+        "operationId": "delete_email_config",
+        "parameters": [
+          {
+            "name": "election_id",
+            "in": "path",
+            "description": "Election UUID",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "admin_uuid",
+            "in": "path",
+            "description": "Admin UUID for authorization",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Email config deleted"
+          },
+          "404": {
+            "description": "Election not found"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
+    },
+    "/api/elections/{election_id}/admin/{admin_uuid}/email-config/test": {
+      "post": {
+        "tags": [
+          "email-config"
+        ],
+        "operationId": "send_test_email",
+        "parameters": [
+          {
+            "name": "election_id",
+            "in": "path",
+            "description": "Election UUID",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "admin_uuid",
+            "in": "path",
+            "description": "Admin UUID for authorization",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TestEmailRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Test email sent"
+          },
+          "400": {
+            "description": "Email not configured or invalid request"
+          },
+          "404": {
+            "description": "Election not found"
+          },
+          "500": {
+            "description": "Internal server error or SMTP failure"
+          }
+        }
+      }
+    },
+    "/api/elections/{election_id}/admin/{admin_uuid}/tokens": {
+      "get": {
+        "tags": [
+          "ballot-tokens"
+        ],
+        "operationId": "get_ballot_tokens",
+        "parameters": [
+          {
+            "name": "election_id",
+            "in": "path",
+            "description": "Election UUID",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "admin_uuid",
+            "in": "path",
+            "description": "Admin UUID for authorization",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of ballot tokens"
+          },
+          "404": {
+            "description": "Election not found"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "ballot-tokens"
+        ],
+        "operationId": "create_ballot_tokens",
+        "parameters": [
+          {
+            "name": "election_id",
+            "in": "path",
+            "description": "Election UUID",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "admin_uuid",
+            "in": "path",
+            "description": "Admin UUID for authorization",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateTokensBody"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "List of generated tokens",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/CreateTokenResult"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Election not found"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
+    },
+    "/api/elections/{election_id}/admin/{admin_uuid}/tokens/mark-sent": {
+      "post": {
+        "tags": [
+          "ballot-tokens"
+        ],
+        "operationId": "batch_mark_sent",
+        "parameters": [
+          {
+            "name": "election_id",
+            "in": "path",
+            "description": "Election UUID",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "admin_uuid",
+            "in": "path",
+            "description": "Admin UUID for authorization",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BatchMarkSentBody"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Tokens marked as sent",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/MarkSentResult"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Election not found"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
+    },
+    "/api/elections/{election_id}/admin/{admin_uuid}/tokens/send": {
+      "post": {
+        "tags": [
+          "ballot-tokens"
+        ],
+        "operationId": "send_emails",
+        "parameters": [
+          {
+            "name": "election_id",
+            "in": "path",
+            "description": "Election UUID",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "admin_uuid",
+            "in": "path",
+            "description": "Admin UUID for authorization",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SendEmailsRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Email send results",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/SendEmailResult"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Email not configured or token already sent"
+          },
+          "404": {
+            "description": "Election not found"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
+    },
+    "/api/elections/{election_id}/admin/{admin_uuid}/tokens/{token_id}": {
+      "patch": {
+        "tags": [
+          "ballot-tokens"
+        ],
+        "operationId": "patch_token",
+        "parameters": [
+          {
+            "name": "election_id",
+            "in": "path",
+            "description": "Election UUID",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "admin_uuid",
+            "in": "path",
+            "description": "Admin UUID for authorization",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "token_id",
+            "in": "path",
+            "description": "Token ID to mark as sent",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MarkSentBody"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Token marked as sent",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MarkSentResult"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Election or token not found"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
+    },
+    "/api/elections/{election_id}/admin/{admin_uuid}/tokens/{token_id}/send": {
+      "post": {
+        "tags": [
+          "ballot-tokens"
+        ],
+        "operationId": "send_single_token",
+        "parameters": [
+          {
+            "name": "election_id",
+            "in": "path",
+            "description": "Election UUID",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "admin_uuid",
+            "in": "path",
+            "description": "Admin UUID for authorization",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "token_id",
+            "in": "path",
+            "description": "Token ID to send email to",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SendEmailsRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Email send result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SendEmailResult"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Email not configured or token already sent"
+          },
+          "404": {
+            "description": "Election or token not found"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
+    },
+    "/api/elections/{election_id}/ballot/{uuid}": {
+      "get": {
+        "tags": [
+          "ballots"
+        ],
+        "operationId": "get_ballot",
+        "parameters": [
+          {
+            "name": "election_id",
+            "in": "path",
+            "description": "Election UUID",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "uuid",
+            "in": "path",
+            "description": "Ballot UUID",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Ballot details"
+          },
+          "404": {
+            "description": "Ballot not found"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "ballots"
+        ],
+        "operationId": "put_ballot",
+        "parameters": [
+          {
+            "name": "election_id",
+            "in": "path",
+            "description": "Election UUID",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "uuid",
+            "in": "path",
+            "description": "Ballot UUID",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Ballot"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Ballot updated successfully"
+          },
+          "400": {
+            "description": "Invalid ballot data or voting period constraints"
+          },
+          "404": {
+            "description": "Ballot or election not found"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
+    },
+    "/api/elections/{election_id}/ballots": {
+      "get": {
+        "tags": [
+          "ballots"
+        ],
+        "operationId": "get_ballots_by_election",
+        "parameters": [
+          {
+            "name": "election_id",
+            "in": "path",
+            "description": "Election UUID",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of ballots for the election"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
+    },
+    "/api/elections/{election_id}/tokens/{token_id}": {
+      "get": {
+        "tags": [
+          "ballot-tokens"
+        ],
+        "summary": "Get token info (without redeeming it) - voter can check if already redeemed",
+        "operationId": "get_token_info",
+        "parameters": [
+          {
+            "name": "election_id",
+            "in": "path",
+            "description": "Election UUID",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "token_id",
+            "in": "path",
+            "description": "Ballot token ID",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Token information"
+          },
+          "404": {
+            "description": "Token not found"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
+    },
+    "/api/elections/{election_id}/tokens/{token_id}/redeem": {
+      "post": {
+        "tags": [
+          "ballot-tokens"
+        ],
+        "operationId": "redeem_token",
+        "parameters": [
+          {
+            "name": "election_id",
+            "in": "path",
+            "description": "Election UUID",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "token_id",
+            "in": "path",
+            "description": "Ballot token ID to redeem",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Ballot ID created",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Token already redeemed or election closed"
+          },
+          "404": {
+            "description": "Token or election not found"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
+    },
+    "/api/elections/{election_uuid}": {
+      "get": {
+        "tags": [
+          "elections"
+        ],
+        "operationId": "get_election",
+        "parameters": [
+          {
+            "name": "election_uuid",
+            "in": "path",
+            "description": "Election UUID",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Election state with results if available",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ElectionState"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Election not found"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
+    },
+    "/api/health": {
+      "get": {
+        "tags": [
+          "system"
+        ],
+        "operationId": "health",
+        "responses": {
+          "200": {
+            "description": "Service is healthy"
+          }
+        }
+      }
+    },
+    "/api/simulate": {
+      "post": {
+        "tags": [
+          "simulation"
+        ],
+        "operationId": "simulate",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Election"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Election simulation results",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ElectionResult"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid election data"
+          },
+          "500": {
+            "description": "Simulation failed"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Ballot": {
+        "type": "object",
+        "required": [
+          "ranks"
+        ],
+        "properties": {
+          "ranks": {
+            "type": "array",
+            "items": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "minimum": 0
+            },
+            "description": "Ranked preferences as indices into the candidates list. None indicates no preference for that position.",
+            "example": [
+              0,
+              2,
+              1
+            ]
+          }
+        }
+      },
+      "BatchMarkSentBody": {
+        "type": "object",
+        "required": [
+          "sent_at",
+          "token_ids"
+        ],
+        "properties": {
+          "sent_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "token_ids": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "uniqueItems": true
+          }
+        }
+      },
+      "CombinedBallot": {
+        "type": "object",
+        "required": [
+          "votes",
+          "ranks"
+        ],
+        "properties": {
+          "ranks": {
+            "type": "array",
+            "items": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "minimum": 0
+            },
+            "description": "Ranked preferences as indices into the candidates list"
+          },
+          "votes": {
+            "type": "integer",
+            "description": "Number of identical ballots with these rankings",
+            "minimum": 0
+          }
+        }
+      },
+      "CountingLog": {
+        "type": "object",
+        "description": "Parsed STV counting log output",
+        "required": [
+          "header",
+          "candidates",
+          "rounds"
+        ],
+        "properties": {
+          "candidates": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CountingLogCandidate"
+            },
+            "description": "Candidates participating in the election"
+          },
+          "header": {
+            "$ref": "#/components/schemas/CountingLogHeader",
+            "description": "Election metadata extracted from the log header"
+          },
+          "rounds": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CountingLogRound"
+            },
+            "description": "Sequential rounds of the counting process"
+          }
+        }
+      },
+      "CountingLogAction": {
+        "type": "object",
+        "description": "An action taken during a counting round",
+        "required": [
+          "action_type",
+          "candidate_counts",
+          "stats"
+        ],
+        "properties": {
+          "action_type": {
+            "$ref": "#/components/schemas/CountingLogActionType",
+            "description": "The type of action performed"
+          },
+          "candidate_counts": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CountingLogCandidateCount"
+            },
+            "description": "Candidate vote counts at the time of this action"
+          },
+          "stats": {
+            "$ref": "#/components/schemas/CountingLogStats",
+            "description": "Election statistics at the time of this action"
+          }
+        }
+      },
+      "CountingLogActionType": {
+        "oneOf": [
+          {
+            "type": "string",
+            "description": "Begin the count",
+            "enum": [
+              "begin_count"
+            ]
+          },
+          {
+            "type": "object",
+            "description": "A candidate has been elected, with the reason\n(`exceeds_quota` or `remaining`)",
+            "required": [
+              "elect"
+            ],
+            "properties": {
+              "elect": {
+                "type": "object",
+                "description": "A candidate has been elected, with the reason\n(`exceeds_quota` or `remaining`)",
+                "required": [
+                  "candidate",
+                  "reason"
+                ],
+                "properties": {
+                  "candidate": {
+                    "type": "string"
+                  },
+                  "reason": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          },
+          {
+            "type": "object",
+            "description": "Surplus votes have been redistributed; the reason says how the\niteration ended (`elected`, `stable_surplus`, `low_surplus`)",
+            "required": [
+              "iterate"
+            ],
+            "properties": {
+              "iterate": {
+                "type": "object",
+                "description": "Surplus votes have been redistributed; the reason says how the\niteration ended (`elected`, `stable_surplus`, `low_surplus`)",
+                "required": [
+                  "reason"
+                ],
+                "properties": {
+                  "reason": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          },
+          {
+            "type": "object",
+            "description": "A candidate has been defeated, with the reason\n(`stable_surplus`, `low_surplus` or `remaining`)",
+            "required": [
+              "defeat"
+            ],
+            "properties": {
+              "defeat": {
+                "type": "object",
+                "description": "A candidate has been defeated, with the reason\n(`stable_surplus`, `low_surplus` or `remaining`)",
+                "required": [
+                  "candidate",
+                  "reason"
+                ],
+                "properties": {
+                  "candidate": {
+                    "type": "string"
+                  },
+                  "reason": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          },
+          {
+            "type": "object",
+            "description": "A tie between candidates was broken by random selection",
+            "required": [
+              "break_tie"
+            ],
+            "properties": {
+              "break_tie": {
+                "type": "object",
+                "description": "A tie between candidates was broken by random selection",
+                "required": [
+                  "candidates",
+                  "defeated"
+                ],
+                "properties": {
+                  "candidates": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "defeated": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          },
+          {
+            "type": "string",
+            "description": "The count is complete",
+            "enum": [
+              "count_complete"
+            ]
+          }
+        ],
+        "description": "The type of action performed during a counting round"
+      },
+      "CountingLogCandidate": {
+        "type": "object",
+        "description": "A candidate in the election",
+        "required": [
+          "name",
+          "withdrawn"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Candidate name"
+          },
+          "withdrawn": {
+            "type": "boolean",
+            "description": "Whether the candidate has withdrawn from the election"
+          }
+        }
+      },
+      "CountingLogCandidateCount": {
+        "type": "object",
+        "description": "Vote count for a single candidate at a point in the count.\nIndex-aligned with [`CountingLog::candidates`].",
+        "required": [
+          "status",
+          "votes"
+        ],
+        "properties": {
+          "status": {
+            "$ref": "#/components/schemas/CountingLogCandidateStatus",
+            "description": "Candidate status at this point in the count"
+          },
+          "votes": {
+            "type": "string",
+            "description": "Number of votes (as a decimal string)"
+          }
+        }
+      },
+      "CountingLogCandidateStatus": {
+        "type": "string",
+        "description": "Status of a candidate during the count",
+        "enum": [
+          "elected",
+          "hopeful",
+          "defeated"
+        ]
+      },
+      "CountingLogHeader": {
+        "type": "object",
+        "description": "Election metadata extracted from the log header",
+        "required": [
+          "title",
+          "rule",
+          "arithmetic",
+          "seats",
+          "ballots",
+          "quota"
+        ],
+        "properties": {
+          "arithmetic": {
+            "type": "string",
+            "description": "Arithmetic precision description"
+          },
+          "ballots": {
+            "type": "integer",
+            "description": "Total number of ballots cast",
+            "minimum": 0
+          },
+          "quota": {
+            "type": "string",
+            "description": "Quota required for election"
+          },
+          "rule": {
+            "type": "string",
+            "description": "Counting rule used (e.g. Droop)"
+          },
+          "seats": {
+            "type": "integer",
+            "description": "Number of seats to be filled",
+            "minimum": 0
+          },
+          "title": {
+            "type": "string",
+            "description": "Title of the election"
+          }
+        }
+      },
+      "CountingLogRound": {
+        "type": "object",
+        "description": "A single round of the counting process",
+        "required": [
+          "round_number",
+          "actions"
+        ],
+        "properties": {
+          "actions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CountingLogAction"
+            },
+            "description": "Actions taken during this round"
+          },
+          "round_number": {
+            "type": "integer",
+            "description": "Zero-based round number",
+            "minimum": 0
+          }
+        }
+      },
+      "CountingLogStats": {
+        "type": "object",
+        "description": "Aggregate election statistics at a point in the count",
+        "required": [
+          "quota",
+          "votes",
+          "residual",
+          "total",
+          "surplus"
+        ],
+        "properties": {
+          "quota": {
+            "type": "string",
+            "description": "Current quota for election"
+          },
+          "residual": {
+            "type": "string",
+            "description": "Residual (exhausted) votes"
+          },
+          "surplus": {
+            "type": "string",
+            "description": "Current surplus votes to transfer"
+          },
+          "total": {
+            "type": "string",
+            "description": "Total votes including residual"
+          },
+          "votes": {
+            "type": "string",
+            "description": "Total valid votes"
+          }
+        }
+      },
+      "CreateElectionRequest": {
+        "oneOf": [
+          {
+            "type": "object",
+            "required": [
+              "title",
+              "candidates",
+              "num_seats",
+              "start_time",
+              "end_time",
+              "election_type"
+            ],
+            "properties": {
+              "candidates": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "example": [
+                  "Alice",
+                  "Bob",
+                  "Charlie"
+                ]
+              },
+              "description": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "election_type": {
+                "type": "string",
+                "enum": [
+                  "stv-md"
+                ]
+              },
+              "end_time": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "num_seats": {
+                "type": "integer",
+                "format": "int32",
+                "example": 3,
+                "minimum": 0
+              },
+              "start_time": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "title": {
+                "type": "string",
+                "example": "Student Council Election 2026"
+              }
+            }
+          },
+          {
+            "type": "object",
+            "required": [
+              "title",
+              "candidates",
+              "num_seats",
+              "start_time",
+              "end_time",
+              "election_type"
+            ],
+            "properties": {
+              "candidates": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "example": [
+                  "Alice",
+                  "Bob",
+                  "Charlie"
+                ]
+              },
+              "description": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "election_type": {
+                "type": "string",
+                "enum": [
+                  "stv-md-coperland"
+                ]
+              },
+              "end_time": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "num_seats": {
+                "type": "integer",
+                "format": "int32",
+                "example": 3,
+                "minimum": 0
+              },
+              "start_time": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "title": {
+                "type": "string"
+              }
+            }
+          },
+          {
+            "type": "object",
+            "required": [
+              "title",
+              "candidates",
+              "num_seats",
+              "start_time",
+              "end_time",
+              "groups",
+              "candidate_groups",
+              "election_type"
+            ],
+            "properties": {
+              "candidate_groups": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "candidates": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "example": [
+                  "Alice",
+                  "Bob",
+                  "Carol",
+                  "Dave"
+                ]
+              },
+              "description": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "election_type": {
+                "type": "string",
+                "enum": [
+                  "stv-md-grouped"
+                ]
+              },
+              "end_time": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "groups": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/GroupConfig"
+                }
+              },
+              "num_seats": {
+                "type": "integer",
+                "format": "int32",
+                "example": 4,
+                "minimum": 0
+              },
+              "start_time": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "title": {
+                "type": "string"
+              }
+            }
+          }
+        ]
+      },
+      "CreateTokenResult": {
+        "type": "object",
+        "required": [
+          "id"
+        ],
+        "properties": {
+          "email": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "id": {
+            "type": "string"
+          }
+        }
+      },
+      "CreateTokensBody": {
+        "type": "object",
+        "properties": {
+          "count": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "format": "int64",
+            "minimum": 0
+          },
+          "recipients": {
+            "type": [
+              "array",
+              "null"
+            ],
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "Elected": {
+        "type": "object",
+        "required": [
+          "candidate",
+          "id"
+        ],
+        "properties": {
+          "candidate": {
+            "type": "string",
+            "description": "Name of the elected candidate"
+          },
+          "id": {
+            "type": "integer",
+            "description": "Index/ID of the candidate in the candidates list",
+            "minimum": 0
+          }
+        }
+      },
+      "Election": {
+        "oneOf": [
+          {
+            "type": "object",
+            "required": [
+              "candidates",
+              "seats",
+              "ballots",
+              "election_type"
+            ],
+            "properties": {
+              "ballots": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/CombinedBallot"
+                }
+              },
+              "candidates": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "election_type": {
+                "type": "string",
+                "enum": [
+                  "stv-md"
+                ]
+              },
+              "seats": {
+                "type": "integer",
+                "minimum": 0
+              }
+            }
+          },
+          {
+            "type": "object",
+            "required": [
+              "candidates",
+              "seats",
+              "ballots",
+              "election_type"
+            ],
+            "properties": {
+              "ballots": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/CombinedBallot"
+                }
+              },
+              "candidates": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "election_type": {
+                "type": "string",
+                "enum": [
+                  "stv-md-coperland"
+                ]
+              },
+              "seats": {
+                "type": "integer",
+                "minimum": 0
+              }
+            }
+          },
+          {
+            "type": "object",
+            "required": [
+              "candidates",
+              "seats",
+              "ballots",
+              "groups",
+              "candidate_groups",
+              "election_type"
+            ],
+            "properties": {
+              "ballots": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/CombinedBallot"
+                }
+              },
+              "candidate_groups": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "candidates": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "election_type": {
+                "type": "string",
+                "enum": [
+                  "stv-md-grouped"
+                ]
+              },
+              "groups": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/GroupConfig"
+                }
+              },
+              "seats": {
+                "type": "integer",
+                "minimum": 0
+              }
+            }
+          }
+        ]
+      },
+      "ElectionConfig": {
+        "oneOf": [
+          {
+            "type": "object",
+            "required": [
+              "id",
+              "title",
+              "candidates",
+              "seats",
+              "start_time",
+              "end_time",
+              "number_of_ballots",
+              "election_type"
+            ],
+            "properties": {
+              "ballots": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "items": {
+                  "type": "string"
+                }
+              },
+              "candidates": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "description": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "election_type": {
+                "type": "string",
+                "enum": [
+                  "stv-md"
+                ]
+              },
+              "end_time": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "id": {
+                "type": "string"
+              },
+              "number_of_ballots": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "seats": {
+                "type": "integer",
+                "format": "int32",
+                "minimum": 0
+              },
+              "start_time": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "title": {
+                "type": "string"
+              }
+            }
+          },
+          {
+            "type": "object",
+            "required": [
+              "id",
+              "title",
+              "candidates",
+              "seats",
+              "start_time",
+              "end_time",
+              "number_of_ballots",
+              "election_type"
+            ],
+            "properties": {
+              "ballots": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "items": {
+                  "type": "string"
+                }
+              },
+              "candidates": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "description": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "election_type": {
+                "type": "string",
+                "enum": [
+                  "stv-md-coperland"
+                ]
+              },
+              "end_time": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "id": {
+                "type": "string"
+              },
+              "number_of_ballots": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "seats": {
+                "type": "integer",
+                "format": "int32",
+                "minimum": 0
+              },
+              "start_time": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "title": {
+                "type": "string"
+              }
+            }
+          },
+          {
+            "type": "object",
+            "required": [
+              "id",
+              "title",
+              "candidates",
+              "seats",
+              "start_time",
+              "end_time",
+              "number_of_ballots",
+              "groups",
+              "candidate_groups",
+              "election_type"
+            ],
+            "properties": {
+              "ballots": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "items": {
+                  "type": "string"
+                }
+              },
+              "candidate_groups": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "candidates": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "description": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "election_type": {
+                "type": "string",
+                "enum": [
+                  "stv-md-grouped"
+                ]
+              },
+              "end_time": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "groups": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/GroupConfig"
+                }
+              },
+              "id": {
+                "type": "string"
+              },
+              "number_of_ballots": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "seats": {
+                "type": "integer",
+                "format": "int32",
+                "minimum": 0
+              },
+              "start_time": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "title": {
+                "type": "string"
+              }
+            }
+          }
+        ],
+        "description": "ElectionConfig - what gets sent to the API (no sensitive info)"
+      },
+      "ElectionResponse": {
+        "oneOf": [
+          {
+            "type": "object",
+            "required": [
+              "uuid",
+              "admin_uuid",
+              "title",
+              "candidates",
+              "num_seats",
+              "start_time",
+              "end_time",
+              "is_locked",
+              "election_type"
+            ],
+            "properties": {
+              "admin_uuid": {
+                "type": "string"
+              },
+              "candidates": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "description": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "election_type": {
+                "type": "string",
+                "enum": [
+                  "stv-md"
+                ]
+              },
+              "end_time": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "is_locked": {
+                "type": "boolean"
+              },
+              "num_seats": {
+                "type": "integer",
+                "format": "int32",
+                "minimum": 0
+              },
+              "start_time": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "title": {
+                "type": "string"
+              },
+              "uuid": {
+                "type": "string"
+              }
+            }
+          },
+          {
+            "type": "object",
+            "required": [
+              "uuid",
+              "admin_uuid",
+              "title",
+              "candidates",
+              "num_seats",
+              "start_time",
+              "end_time",
+              "is_locked",
+              "election_type"
+            ],
+            "properties": {
+              "admin_uuid": {
+                "type": "string"
+              },
+              "candidates": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "description": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "election_type": {
+                "type": "string",
+                "enum": [
+                  "stv-md-coperland"
+                ]
+              },
+              "end_time": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "is_locked": {
+                "type": "boolean"
+              },
+              "num_seats": {
+                "type": "integer",
+                "format": "int32",
+                "minimum": 0
+              },
+              "start_time": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "title": {
+                "type": "string"
+              },
+              "uuid": {
+                "type": "string"
+              }
+            }
+          },
+          {
+            "type": "object",
+            "required": [
+              "uuid",
+              "admin_uuid",
+              "title",
+              "candidates",
+              "num_seats",
+              "start_time",
+              "end_time",
+              "is_locked",
+              "groups",
+              "candidate_groups",
+              "election_type"
+            ],
+            "properties": {
+              "admin_uuid": {
+                "type": "string"
+              },
+              "candidate_groups": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "candidates": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "description": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "election_type": {
+                "type": "string",
+                "enum": [
+                  "stv-md-grouped"
+                ]
+              },
+              "end_time": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "groups": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/GroupConfig"
+                }
+              },
+              "is_locked": {
+                "type": "boolean"
+              },
+              "num_seats": {
+                "type": "integer",
+                "format": "int32",
+                "minimum": 0
+              },
+              "start_time": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "title": {
+                "type": "string"
+              },
+              "uuid": {
+                "type": "string"
+              }
+            }
+          }
+        ]
+      },
+      "ElectionResult": {
+        "oneOf": [
+          {
+            "type": "object",
+            "required": [
+              "election",
+              "log",
+              "elected",
+              "type"
+            ],
+            "properties": {
+              "elected": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/Elected"
+                }
+              },
+              "election": {
+                "$ref": "#/components/schemas/Election"
+              },
+              "log": {
+                "$ref": "#/components/schemas/CountingLog"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "stv-md"
+                ]
+              }
+            }
+          },
+          {
+            "type": "object",
+            "required": [
+              "election",
+              "log",
+              "elected",
+              "order",
+              "pairwise_matrix",
+              "type"
+            ],
+            "properties": {
+              "elected": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/Elected"
+                }
+              },
+              "election": {
+                "$ref": "#/components/schemas/Election"
+              },
+              "log": {
+                "$ref": "#/components/schemas/CountingLog"
+              },
+              "order": {
+                "type": "object",
+                "additionalProperties": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "propertyNames": {
+                  "type": "string"
+                }
+              },
+              "pairwise_matrix": {
+                "type": "array",
+                "items": {
+                  "type": "array",
+                  "items": {
+                    "type": "integer",
+                    "minimum": 0
+                  }
+                }
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "stv-md-coperland"
+                ]
+              }
+            }
+          },
+          {
+            "type": "object",
+            "required": [
+              "election",
+              "groups",
+              "group_results",
+              "elected",
+              "type"
+            ],
+            "properties": {
+              "elected": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/Elected"
+                }
+              },
+              "election": {
+                "$ref": "#/components/schemas/Election"
+              },
+              "group_results": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/GroupResult"
+                }
+              },
+              "groups": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/GroupConfig"
+                }
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "stv-md-grouped"
+                ]
+              }
+            }
+          }
+        ]
+      },
+      "ElectionState": {
+        "type": "object",
+        "required": [
+          "election",
+          "potential_voters",
+          "casted"
+        ],
+        "properties": {
+          "casted": {
+            "type": "integer",
+            "description": "Number of ballots that have been cast",
+            "minimum": 0
+          },
+          "election": {
+            "$ref": "#/components/schemas/ElectionConfig",
+            "description": "Election configuration and metadata"
+          },
+          "potential_voters": {
+            "type": "integer",
+            "description": "Number of ballot tokens issued (potential voters)",
+            "minimum": 0
+          },
+          "results": {
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/ElectionResult",
+                "description": "Election results (only available after election ends)"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        }
+      },
+      "ElectionType": {
+        "type": "string",
+        "enum": [
+          "stv-md",
+          "stv-md-coperland",
+          "stv-md-grouped"
+        ]
+      },
+      "EmailConfigResponse": {
+        "type": "object",
+        "required": [
+          "smtp_host",
+          "smtp_username",
+          "from_name",
+          "from_email"
+        ],
+        "properties": {
+          "from_email": {
+            "type": "string"
+          },
+          "from_name": {
+            "type": "string"
+          },
+          "smtp_host": {
+            "type": "string"
+          },
+          "smtp_username": {
+            "type": "string"
+          }
+        }
+      },
+      "GroupConfig": {
+        "type": "object",
+        "required": [
+          "name",
+          "seats"
+        ],
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "seats": {
+            "type": "integer",
+            "format": "int32",
+            "minimum": 0
+          }
+        }
+      },
+      "GroupResult": {
+        "type": "object",
+        "required": [
+          "group",
+          "seats",
+          "election",
+          "log",
+          "elected"
+        ],
+        "properties": {
+          "elected": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Elected"
+            },
+            "description": "Candidates elected from this group"
+          },
+          "election": {
+            "$ref": "#/components/schemas/Election",
+            "description": "Sub-election for this group (filtered candidates and ballots)"
+          },
+          "group": {
+            "type": "string",
+            "description": "Name of the group"
+          },
+          "log": {
+            "$ref": "#/components/schemas/CountingLog",
+            "description": "Detailed counting log for this group"
+          },
+          "seats": {
+            "type": "integer",
+            "description": "Number of seats allocated to this group",
+            "minimum": 0
+          }
+        }
+      },
+      "MarkSentBody": {
+        "type": "object",
+        "required": [
+          "sent_at"
+        ],
+        "properties": {
+          "sent_at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "MarkSentResult": {
+        "type": "object",
+        "required": [
+          "token_id",
+          "sent_at"
+        ],
+        "properties": {
+          "sent_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "token_id": {
+            "type": "string"
+          }
+        }
+      },
+      "SendEmailResult": {
+        "type": "object",
+        "required": [
+          "token_id"
+        ],
+        "properties": {
+          "error": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "token_id": {
+            "type": "string"
+          }
+        }
+      },
+      "SendEmailsRequest": {
+        "type": "object",
+        "required": [
+          "base_url"
+        ],
+        "properties": {
+          "base_url": {
+            "type": "string"
+          },
+          "token_ids": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "TestEmailRequest": {
+        "type": "object",
+        "required": [
+          "to_email"
+        ],
+        "properties": {
+          "to_email": {
+            "type": "string"
+          }
+        }
+      },
+      "UpsertEmailConfigRequest": {
+        "type": "object",
+        "required": [
+          "smtp_host",
+          "smtp_username",
+          "from_name",
+          "from_email"
+        ],
+        "properties": {
+          "from_email": {
+            "type": "string"
+          },
+          "from_name": {
+            "type": "string"
+          },
+          "smtp_host": {
+            "type": "string"
+          },
+          "smtp_password": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "smtp_username": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  },
+  "tags": [
+    {
+      "name": "system",
+      "description": "System health endpoints"
+    },
+    {
+      "name": "elections",
+      "description": "Election management endpoints"
+    },
+    {
+      "name": "ballot-tokens",
+      "description": "Ballot token management endpoints"
+    },
+    {
+      "name": "email-config",
+      "description": "Email SMTP configuration endpoints"
+    },
+    {
+      "name": "ballots",
+      "description": "Ballot management endpoints"
+    },
+    {
+      "name": "simulation",
+      "description": "Election simulation endpoints"
+    }
+  ]
+}

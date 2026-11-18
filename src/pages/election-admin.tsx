@@ -16,21 +16,15 @@ import CancelIcon from '@mui/icons-material/Cancel';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 
-import {
-  getElectionByAdmin,
-  updateElectionByAdmin,
-  createElection,
-  CreateElectionRequest,
-  ElectionResponse,
-  ElectionType,
-} from '../data/api';
+import { getElectionByAdmin, updateElectionByAdmin, createElection } from '../data/api';
+import { CreateElectionRequest, ElectionResponse, ElectionType } from '../data/types';
 import { BallotTokensList } from '../components/BallotTokensList';
 import { ElectionBasicInfo } from '../components/ElectionBasicInfo';
 import { ElectionSeatsConfig } from '../components/ElectionSeatsConfig';
 import { CandidatesList } from '../components/CandidatesList';
 import { GroupConfigList } from '../components/GroupConfigList';
 import { ElectionTimeConfig } from '../components/ElectionTimeConfig';
-import type { GroupConfig } from '../data/api';
+import { GroupConfig } from '../data/types';
 
 interface ElectionAdminProps {
   path?: string;

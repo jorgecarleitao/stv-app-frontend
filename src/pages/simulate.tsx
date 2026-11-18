@@ -22,15 +22,15 @@ import CircularProgress from '@mui/material/CircularProgress';
 import LZString from 'lz-string';
 import * as yaml from 'js-yaml';
 
+import { simulateElection } from '../data/api';
 import {
   Election,
   ElectionResult,
-  simulateElection,
   ElectionType,
   isCopelandResult,
   isGroupedResult,
   GroupConfig,
-} from '../data/api';
+} from '../data/types';
 import { DEFAULT_ELECTION } from '../data/defaults';
 import { BallotsEditor } from '../ballot';
 import { ElectionResults } from '../components/ElectionResults';

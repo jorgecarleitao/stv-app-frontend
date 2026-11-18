@@ -8,7 +8,7 @@ import CardContent from '@mui/material/CardContent';
 import Divider from '@mui/material/Divider';
 import Chip from '@mui/material/Chip';
 
-import type { CountingLog, CountingLogActionType } from '../data/api';
+import { CountingLog, CountingLogActionType } from '../data/types';
 import { CandidateCountsBarChart, StatsRow } from './CountingLog';
 
 interface CountingWalkthroughProps {

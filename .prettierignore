@@ -5,3 +5,5 @@ coverage
 .vite
 *.min.js
 pnpm-lock.yaml
+src/data/api.types.ts
+src/data/openapi.json

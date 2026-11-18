@@ -10,7 +10,7 @@ import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import CancelIcon from '@mui/icons-material/Cancel';
 import HourglassEmptyIcon from '@mui/icons-material/HourglassEmpty';
 
-import type { CountingLog, CountingLogAction } from '../data/api';
+import { CountingLog, CountingLogAction } from '../data/types';
 
 interface ResultsSummaryProps {
   log: CountingLog;

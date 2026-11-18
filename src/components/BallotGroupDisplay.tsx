@@ -11,7 +11,7 @@ import Chip from '@mui/material/Chip';
 
 import DeleteIcon from '@mui/icons-material/Delete';
 
-import { Ballot } from '../data/api';
+import { Ballot } from '../data/types';
 import { CandidateRankSelector } from './CandidateRankSelector';
 
 interface BallotGroupDisplayProps {

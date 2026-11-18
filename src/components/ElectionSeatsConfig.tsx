@@ -6,7 +6,7 @@ import FormControl from '@mui/material/FormControl';
 import InputLabel from '@mui/material/InputLabel';
 import Select from '@mui/material/Select';
 import Tooltip from '@mui/material/Tooltip';
-import type { ElectionType } from '../data/api';
+import { ElectionType } from '../data/types';
 
 interface ElectionSeatsConfigProps {
   numSeats: number;

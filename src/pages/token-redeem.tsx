@@ -15,7 +15,8 @@ import ListItem from '@mui/material/ListItem';
 import ListItemText from '@mui/material/ListItemText';
 import Divider from '@mui/material/Divider';
 
-import { redeemToken, getTokenInfo, getElection, ElectionState } from '../data/api';
+import { redeemToken, getTokenInfo, getElection } from '../data/api';
+import { ElectionState } from '../data/types';
 
 interface TokenRedeemProps {
   path?: string;

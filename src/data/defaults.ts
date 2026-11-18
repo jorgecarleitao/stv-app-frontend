@@ -1,4 +1,4 @@
-import { Election } from './api';
+import { Election } from './types';
 
 export const DEFAULT_ELECTION: Election = {
   candidates: ['Elena', 'Marco', 'Lucia', 'André', 'Sofia'],

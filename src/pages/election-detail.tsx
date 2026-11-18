@@ -27,14 +27,8 @@ import { PairwiseMatrix } from '../components/PairwiseMatrix';
 import { ResultsSummary } from '../components/ResultsSummary';
 import { CountingLog } from '../components/CountingLog';
 
-import {
-  getElection,
-  getExportUrl,
-  ElectionState,
-  isCopelandResult,
-  isGroupedResult,
-  ElectionResult,
-} from '../data/api';
+import { getElection, getExportUrl } from '../data/api';
+import { ElectionState, isCopelandResult, isGroupedResult, ElectionResult } from '../data/types';
 
 interface ElectionDetailProps {
   path?: string;

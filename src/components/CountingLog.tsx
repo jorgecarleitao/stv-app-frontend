@@ -24,7 +24,7 @@ import ElectedIcon from '@mui/icons-material/CheckCircle';
 import DefeatedIcon from '@mui/icons-material/Cancel';
 import HopefulIcon from '@mui/icons-material/HourglassEmpty';
 
-import type { CountingLog, CountingLogAction } from '../data/api';
+import { CountingLog, CountingLogAction } from '../data/types';
 
 interface CountingLogProps {
   log: CountingLog;

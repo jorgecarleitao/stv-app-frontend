@@ -31,8 +31,6 @@ import AddIcon from '@mui/icons-material/Add';
 import ConfirmationNumberIcon from '@mui/icons-material/ConfirmationNumber';
 
 import {
-  BallotToken,
-  EmailConfig,
   getBallotTokens,
   createBallotTokens,
   sendEmails,
@@ -43,8 +41,8 @@ import {
   sendTestEmail,
   patchToken,
   batchMarkSent,
-  UpsertEmailConfigRequest,
 } from '../data/api';
+import { BallotToken, EmailConfig, UpsertEmailConfigRequest } from '../data/types';
 
 function parseEmails(input: string): string[] {
   const parts = input.split(/[,\n\r]+/);

@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import Button from '@mui/material/Button';
 import Stack from '@mui/material/Stack';
 
-import { Ballot } from './data/api';
+import { Ballot } from './data/types';
 import { BallotGroupDisplay } from './components/BallotGroupDisplay';
 
 export function BallotsEditor({

@@ -28,7 +28,8 @@ import AddIcon from '@mui/icons-material/Add';
 import MenuBookIcon from '@mui/icons-material/MenuBook';
 import Stack from '@mui/material/Stack';
 
-import { simulateElection, isGroupedResult } from '../data/api';
+import { simulateElection } from '../data/api';
+import { isGroupedResult } from '../data/types';
 import { DEFAULT_ELECTION } from '../data/defaults';
 import { ElectionResults } from '../components/ElectionResults';
 import { CountingWalkthrough } from '../components/CountingWalkthrough';

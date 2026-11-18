@@ -10,7 +10,7 @@ import Button from '@mui/material/Button';
 import Divider from '@mui/material/Divider';
 import Chip from '@mui/material/Chip';
 import ScienceIcon from '@mui/icons-material/Science';
-import type { ElectionType, GroupConfig, GroupResult } from '../data/api';
+import { ElectionType, GroupConfig, GroupResult } from '../data/types';
 
 interface Elected {
   id: number;

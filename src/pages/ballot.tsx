@@ -11,7 +11,8 @@ import CircularProgress from '@mui/material/CircularProgress';
 import Stack from '@mui/material/Stack';
 import SaveIcon from '@mui/icons-material/Save';
 
-import { getBallot, putBallot, getElection, Ballot as ApiBallot, ElectionState } from '../data/api';
+import { getBallot, putBallot, getElection } from '../data/api';
+import { Ballot as ApiBallot, ElectionState } from '../data/types';
 import { CandidateRankSelector } from '../components/CandidateRankSelector';
 
 interface BallotPageProps {

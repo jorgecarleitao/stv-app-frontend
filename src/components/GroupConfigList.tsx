@@ -6,7 +6,7 @@ import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import AddIcon from '@mui/icons-material/Add';
 import DeleteIcon from '@mui/icons-material/Delete';
-import type { GroupConfig } from '../data/api';
+import { GroupConfig } from '../data/types';
 
 interface GroupConfigListProps {
   groups: GroupConfig[];

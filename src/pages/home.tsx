@@ -9,12 +9,23 @@ import Grid from '@mui/material/Grid';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import CardActions from '@mui/material/CardActions';
+import Chip from '@mui/material/Chip';
 import Divider from '@mui/material/Divider';
 import ScienceIcon from '@mui/icons-material/Science';
-import TrendingUpIcon from '@mui/icons-material/TrendingUp';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import MenuBookIcon from '@mui/icons-material/MenuBook';
-import { systems } from '../systems';
+import PersonIcon from '@mui/icons-material/Person';
+import FormatListNumberedIcon from '@mui/icons-material/FormatListNumbered';
+import GroupsIcon from '@mui/icons-material/Groups';
+import BalanceIcon from '@mui/icons-material/Balance';
+import { getSystem, goals, GoalId } from '../systems';
+
+const GOAL_ICONS: Record<GoalId, typeof PersonIcon> = {
+  single: PersonIcon,
+  ordered: FormatListNumberedIcon,
+  multi: GroupsIcon,
+  parity: BalanceIcon,
+};
 
 interface HomeProps {
   path?: string;
@@ -25,7 +36,6 @@ export default function Home({}: HomeProps = {}) {
 
   const appTitle = t('App title');
   const metaDescription = t('Meta description');
-  const metaDescriptionShort = t('Meta description short');
 
   return (
     <Container maxWidth="lg">
@@ -68,103 +78,82 @@ export default function Home({}: HomeProps = {}) {
           </Button>
         </Box>
       </Box>
-      {/* Feature Cards */}
-      <Grid container spacing={3} sx={{ my: 4 }}>
-        <Grid
-          size={{
-            xs: 12,
-            md: 6,
-          }}
-        >
-          <Card elevation={3} sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
-            <CardContent sx={{ flexGrow: 1 }}>
-              <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-                <AddCircleIcon sx={{ fontSize: 40, mr: 2, color: 'primary.main' }} />
-                <Typography variant="h5" component="h2">
-                  {t('createElectionTitle')}
-                </Typography>
-              </Box>
-              <Typography variant="body2" color="text.secondary">
-                {t('createElectionDesc')}
-              </Typography>
-            </CardContent>
-            <CardActions sx={{ p: 2, pt: 0 }}>
-              <Button size="small" component="a" href="/elections/create">
-                {t('Create Election')}
-              </Button>
-            </CardActions>
-          </Card>
-        </Grid>
 
-        <Grid
-          size={{
-            xs: 12,
-            md: 6,
-          }}
-        >
-          <Card elevation={3} sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
-            <CardContent sx={{ flexGrow: 1 }}>
-              <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-                <ScienceIcon sx={{ fontSize: 40, mr: 2, color: 'success.main' }} />
-                <Typography variant="h5" component="h2">
-                  {t('experimentTitle')}
-                </Typography>
-              </Box>
-              <Typography variant="body2" color="text.secondary">
-                {t('experimentDesc')}
-              </Typography>
-            </CardContent>
-            <CardActions sx={{ p: 2, pt: 0 }}>
-              <Button size="small" component="a" href="/simulate">
-                {t('Try Simulator')}
-              </Button>
-            </CardActions>
-          </Card>
-        </Grid>
-      </Grid>
-      <Divider sx={{ my: 6 }} />
-      {/* Voting Systems Section */}
-      <Paper elevation={2} sx={{ p: 4, my: 4 }}>
-        <Box sx={{ display: 'flex', alignItems: 'center', mb: 3 }}>
-          <TrendingUpIcon sx={{ fontSize: 36, mr: 2, color: 'primary.main' }} />
-          <Typography variant="h4" component="h2">
-            {t('Voting systems')}
-          </Typography>
-        </Box>
-        <Typography variant="body1" gutterBottom>
-          {t('systemsSectionIntro')}
+      {/* Goals Section — the primary organization of the site */}
+      <Box sx={{ my: 6 }}>
+        <Typography variant="h4" component="h2" align="center" gutterBottom>
+          {t('What do you want to elect?')}
         </Typography>
-        <Grid container spacing={2} sx={{ mt: 1 }}>
-          {Object.values(systems).map(s => (
-            <Grid key={s.id} size={{ xs: 12, sm: 6 }}>
-              <Card elevation={2} sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
-                <CardContent sx={{ flexGrow: 1 }}>
-                  <Typography variant="h6" component="h3" gutterBottom>
-                    {t(s.label)}
-                  </Typography>
-                  <Typography variant="body2" color="text.secondary">
-                    {t(`systemsCard.${s.id}`)}
-                  </Typography>
-                </CardContent>
-                <CardActions sx={{ p: 2, pt: 0 }}>
-                  <Button size="small" component="a" href="/systems">
-                    {t('Learn more')}
-                  </Button>
-                </CardActions>
-              </Card>
-            </Grid>
-          ))}
+        <Typography
+          variant="body1"
+          color="text.secondary"
+          align="center"
+          sx={{ mb: 4, maxWidth: 720, mx: 'auto' }}
+        >
+          {t('goalSectionIntro')}
+        </Typography>
+        <Grid container spacing={3}>
+          {goals.map(goal => {
+            const system = getSystem(goal.systemId);
+            const Icon = GOAL_ICONS[goal.id];
+            return (
+              <Grid key={goal.id} size={{ xs: 12, sm: 6, md: 3 }}>
+                <Card
+                  elevation={3}
+                  sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}
+                >
+                  <CardContent sx={{ flexGrow: 1 }}>
+                    <Box sx={{ display: 'flex', alignItems: 'center', mb: 1.5 }}>
+                      <Icon sx={{ fontSize: 36, mr: 1.5, color: 'primary.main' }} />
+                      <Typography variant="h6" component="h3">
+                        {t(goal.titleKey)}
+                      </Typography>
+                    </Box>
+                    <Typography variant="body2" color="text.secondary" gutterBottom>
+                      {t(goal.descKey)}
+                    </Typography>
+                    <Typography
+                      variant="body2"
+                      sx={{ fontStyle: 'italic', color: 'text.secondary', mb: 2 }}
+                    >
+                      {t(goal.exampleKey)}
+                    </Typography>
+                    <Chip
+                      size="small"
+                      variant="outlined"
+                      label={t('Counted with: {{method}}', { method: t(system.label) })}
+                    />
+                  </CardContent>
+                  <CardActions
+                    sx={{ p: 2, pt: 0, flexDirection: 'column', alignItems: 'stretch', gap: 1 }}
+                  >
+                    <Button
+                      variant="contained"
+                      fullWidth
+                      component="a"
+                      href={`/elections/create?goal=${goal.id}`}
+                    >
+                      {t('Start this election')}
+                    </Button>
+                    <Button
+                      variant="outlined"
+                      fullWidth
+                      component="a"
+                      href={`/simulate?goal=${goal.id}`}
+                    >
+                      {t('Try in simulator')}
+                    </Button>
+                  </CardActions>
+                </Card>
+              </Grid>
+            );
+          })}
         </Grid>
-        <Box sx={{ display: 'flex', gap: 2, mt: 3, flexWrap: 'wrap' }}>
-          <Button variant="outlined" component="a" href="/simulate">
-            {t('Try it yourself')}
-          </Button>
-          <Button variant="outlined" component="a" href="/systems">
-            {t('Voting systems')}
-          </Button>
-        </Box>
-      </Paper>
-      {/* Technical Details Section */}
+      </Box>
+
+      <Divider sx={{ my: 6 }} />
+
+      {/* How it works — the methods, demoted to secondary detail */}
       <Paper elevation={2} sx={{ p: 4, my: 4 }}>
         <Typography variant="h4" component="h2" gutterBottom>
           {t('technicalDetailsTitle')}
@@ -182,6 +171,9 @@ export default function Home({}: HomeProps = {}) {
           <Button variant="contained" component="a" href="/elections/create">
             {t('Create Election')}
           </Button>
+          <Button variant="outlined" component="a" href="/goals">
+            {t('See how each goal is counted')}
+          </Button>
           <Button
             variant="outlined"
             onClick={() => window.open('https://github.com/jorgecarleitao/stv-app', '_blank')}
@@ -193,6 +185,7 @@ export default function Home({}: HomeProps = {}) {
           </Button>
         </Box>
       </Paper>
+
       {/* Call to Action */}
       <Box sx={{ textAlign: 'center', my: 6, p: 4, bgcolor: 'action.hover', borderRadius: 2 }}>
         <Typography variant="h4" gutterBottom>

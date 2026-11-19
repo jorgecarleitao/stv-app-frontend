@@ -5,6 +5,7 @@ import Typography from '@mui/material/Typography';
 import Paper from '@mui/material/Paper';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
+import Chip from '@mui/material/Chip';
 import Box from '@mui/material/Box';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
@@ -37,7 +38,7 @@ import {
   isSchulzeResult,
 } from '../data/types';
 import { EXAMPLE_ELECTIONS } from '../data/defaults';
-import { getSystem, systems } from '../systems';
+import { getSystem, getGoal, goals, GoalId } from '../systems';
 import { ElectionResults } from '../components/ElectionResults';
 import { CountingWalkthrough } from '../components/CountingWalkthrough';
 import { SchulzeWalkthrough } from '../components/SchulzeWalkthrough';
@@ -195,8 +196,10 @@ function BallotTable({ example }: { example: Election }) {
   );
 }
 
-function SystemSection({ systemId }: { systemId: ElectionType }) {
+function SystemSection({ goalId }: { goalId: GoalId }) {
   const { t } = useTranslation();
+  const goal = getGoal(goalId)!;
+  const systemId = goal.systemId;
   const example = EXAMPLE_ELECTIONS[systemId];
   const section = SECTIONS[systemId];
   const system = getSystem(systemId);
@@ -221,8 +224,21 @@ function SystemSection({ systemId }: { systemId: ElectionType }) {
 
   return (
     <Box sx={{ mt: 3 }}>
+      <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, flexWrap: 'wrap', mb: 2 }}>
+        <Typography variant="h5" component="h2">
+          {t(goal.titleKey)}
+        </Typography>
+        <Chip
+          size="small"
+          variant="outlined"
+          label={t('Counted with: {{method}}', { method: t(system.label) })}
+        />
+      </Box>
+      <Typography variant="body1" color="text.secondary" gutterBottom>
+        {t(goal.descKey)}
+      </Typography>
       {section.intro.map((key, i) => (
-        <Typography key={i} variant="body1" gutterBottom>
+        <Typography key={i} variant="body1" gutterBottom sx={{ mt: 2 }}>
           {t(key)}
         </Typography>
       ))}
@@ -404,21 +420,24 @@ function SystemSection({ systemId }: { systemId: ElectionType }) {
 
 export default function SystemsPage({ path }: Props = {}) {
   const { t } = useTranslation();
-  const [tab, setTab] = useState<ElectionType>('stv-md');
+  const [tab, setTab] = useState<GoalId>('single');
 
   return (
-    <Page title={t('Voting systems')} description={t('Systems meta description')}>
+    <Page title={t('Election goals')} description={t('Election goals meta description')}>
+      <Typography variant="body1" gutterBottom>
+        {t('goalsPageIntro')}
+      </Typography>
       <Tabs
         value={tab}
-        onChange={(_, v) => setTab(v as ElectionType)}
+        onChange={(_, v) => setTab(v as GoalId)}
         variant="scrollable"
         scrollButtons="auto"
       >
-        {Object.values(systems).map(s => (
-          <Tab key={s.id} value={s.id} label={t(s.label)} />
+        {goals.map(g => (
+          <Tab key={g.id} value={g.id} label={t(g.titleKey)} />
         ))}
       </Tabs>
-      <SystemSection key={tab} systemId={tab} />
+      <SystemSection key={tab} goalId={tab} />
     </Page>
   );
 }

@@ -61,6 +61,7 @@ export default function App() {
               <TokenRedeem path="/elections/:electionId/tokens/:tokenId" />
               <BallotPage path="/elections/:electionId/ballot/:ballotUuid" />
               <AdminUserGuide path="/admin-guide" />
+              <SystemsPage path="/goals" />
               <SystemsPage path="/systems" />
               <SystemsPage path="/stv-explainer" />
               <RiskAssessment path="/risk-assessment" />

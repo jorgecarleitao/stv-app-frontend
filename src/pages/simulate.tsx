@@ -28,7 +28,7 @@ import { DEFAULT_ELECTION } from '../data/defaults';
 import { ElectionResults } from '../components/ElectionResults';
 import { ElectionSeatsConfig } from '../components/ElectionSeatsConfig';
 import { CandidatesList } from '../components/CandidatesList';
-import { getSystem } from '../systems';
+import { getSystem, getGoal } from '../systems';
 
 // Convert UI ranks (1-based) to API ranks (0-based)
 function toApiRanks(ranks: (number | null)[]): (number | null)[] {
@@ -67,6 +67,25 @@ export default function Simulate({ path }: SimulateProps = {}) {
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const encoded = params.get('data');
+    if (!encoded) {
+      // No full election in the URL: a ?goal=... param (from the home page
+      // goal cards) preselects the counting method for that goal.
+      const goal = getGoal(params.get('goal'));
+      if (goal) {
+        setElection(el => {
+          const sys = getSystem(goal.systemId);
+          const extras = sys.defaultExtras(el.candidates);
+          return {
+            ...el,
+            election_type: goal.systemId,
+            seats: sys.fixedSeats ?? el.seats,
+            tie_break_seed: goal.systemId === 'schulze' ? (el.tie_break_seed ?? 42) : undefined,
+            groups: extras.groups,
+            candidate_groups: extras.candidateGroups,
+          };
+        });
+      }
+    }
     if (encoded) {
       try {
         const yamlText = LZString.decompressFromEncodedURIComponent(encoded);
@@ -286,7 +305,7 @@ export default function Simulate({ path }: SimulateProps = {}) {
 
       <Paper elevation={4} sx={{ p: 3 }}>
         <Typography variant={HEADER} gutterBottom>
-          {t('Number of seats to elect')}
+          {t('What do you want to elect?')}
         </Typography>
         <ElectionSeatsConfig
           numSeats={election.seats}
@@ -313,7 +332,10 @@ export default function Simulate({ path }: SimulateProps = {}) {
 
       {SystemConfigSection && (
         <SystemConfigSection
-          extras={{ groups: election.groups ?? [], candidateGroups: election.candidate_groups ?? [] }}
+          extras={{
+            groups: election.groups ?? [],
+            candidateGroups: election.candidate_groups ?? [],
+          }}
           onExtrasChange={extras =>
             setElection(el => ({
               ...el,
@@ -400,9 +422,7 @@ export default function Simulate({ path }: SimulateProps = {}) {
       {error && <Alert severity="error">{error}</Alert>}
 
       {/* Results */}
-      {result && (
-        <ElectionResults result={result} electionType={election.election_type} />
-      )}
+      {result && <ElectionResults result={result} electionType={election.election_type} />}
 
       {result && (
         <SystemResultSections

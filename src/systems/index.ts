@@ -21,3 +21,4 @@ export function getSystem(type: ElectionType): ElectionSystemUI {
 }
 
 export type { ElectionSystemUI } from './types';
+export * from './goals';

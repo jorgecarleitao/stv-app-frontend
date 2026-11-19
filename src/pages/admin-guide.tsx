@@ -2,6 +2,7 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Page } from '../components/Page';
 import { Typography, Box, Paper, Card, CardContent, Chip } from '@mui/material';
+import { getSystem, goals } from '../systems';
 
 interface Props {
   path?: string;
@@ -93,67 +94,41 @@ export default function AdminUserGuide({ path }: Props = {}) {
 
       <Paper elevation={2} sx={{ p: 3, my: 3, bgcolor: 'background.paper' }}>
         <Typography variant="h6" gutterBottom>
-          {t('Election Types')}
+          {t('What do you want to elect?')}
         </Typography>
         <Typography variant="body2" gutterBottom>
-          {t('When creating an election, you can choose the election type:')}
+          {t(
+            'When creating an election, you first choose what you want to elect. The platform automatically uses the right counting method for that goal:'
+          )}
         </Typography>
         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-          <Box>
-            <Typography variant="subtitle2" gutterBottom sx={{ fontWeight: 'bold' }}>
-              {t('STV-MD (unordered)')}
-            </Typography>
-            <Typography variant="body2" gutterBottom>
-              {t(
-                'Winners are identified without ranking them. Use this when all elected candidates have equal status - for example, when filling multiple board member positions where all members have the same authority.'
-              )}
-            </Typography>
-          </Box>
-          <Box>
-            <Typography variant="subtitle2" gutterBottom sx={{ fontWeight: 'bold' }}>
-              {t('STV-MD Copeland (ordered)')}
-            </Typography>
-            <Typography variant="body2" gutterBottom>
-              {t(
-                'Winners are ranked by position (1st, 2nd, 3rd place, etc.). Use this when the order matters - for example, when electing a president, vice-president, and secretary, or when determining seniority in a committee.'
-              )}
-            </Typography>
-            <Typography variant="body2" color="text.secondary">
-              {t(
-                "Technical note: After STV determines the winners, they are ranked using Copeland's pairwise comparison method based on voter preferences."
-              )}
-            </Typography>
-          </Box>
-          <Box>
-            <Typography variant="subtitle2" gutterBottom sx={{ fontWeight: 'bold' }}>
-              {t('STV-MD Grouped (by groups)')}
-            </Typography>
-            <Typography variant="body2" gutterBottom>
-              {t(
-                'Candidates are split into predefined groups (e.g., female/male) with a specific number of seats allocated to each group. STV is run independently within each group. Use this to guarantee representation for each group — for example, in parity elections where a certain number of seats must be filled by each group.'
-              )}
-            </Typography>
-            <Typography variant="body2" color="text.secondary">
-              {t(
-                "When using this type, you define the groups and their seat counts in the election setup, then assign each candidate to a group. A voter's ballot is evaluated separately per group: only candidates from that group are considered, preserving the voter's relative preference order."
-              )}
-            </Typography>
-          </Box>
-          <Box>
-            <Typography variant="subtitle2" gutterBottom sx={{ fontWeight: 'bold' }}>
-              {t('Schulze (single winner)')}
-            </Typography>
-            <Typography variant="body2" gutterBottom>
-              {t(
-                'A single best option is elected, not a list of winners. Use this when the election must pick one winner - for example, choosing between proposals or candidates for a single role.'
-              )}
-            </Typography>
-            <Typography variant="body2" color="text.secondary">
-              {t(
-                "Technical note: Schulze's beatpath method elects the candidate who beats every other candidate in pairwise comparison (Condorcet winner). If several candidates are tied on the strongest paths, the winner is drawn by a random lot whose seed is fixed when the election is created, so the result is reproducible and auditable. The number of seats is fixed to 1."
-              )}
-            </Typography>
-          </Box>
+          {goals.map(goal => {
+            const system = getSystem(goal.systemId);
+            return (
+              <Box key={goal.id}>
+                <Typography variant="subtitle2" gutterBottom sx={{ fontWeight: 'bold' }}>
+                  {t(goal.titleKey)}
+                  <Chip
+                    size="small"
+                    variant="outlined"
+                    label={t(system.label)}
+                    sx={{ ml: 1, verticalAlign: 'middle' }}
+                  />
+                </Typography>
+                <Typography variant="body2" gutterBottom>
+                  {t(goal.descKey)}
+                </Typography>
+                <Typography variant="body2" sx={{ fontStyle: 'italic' }} gutterBottom>
+                  {t(goal.exampleKey)}
+                </Typography>
+                {goal.noteKey && (
+                  <Typography variant="body2" color="text.secondary">
+                    {t(goal.noteKey)}
+                  </Typography>
+                )}
+              </Box>
+            );
+          })}
         </Box>
       </Paper>
 

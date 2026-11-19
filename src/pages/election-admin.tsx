@@ -17,14 +17,19 @@ import VisibilityIcon from '@mui/icons-material/Visibility';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 
 import { getElectionByAdmin, updateElectionByAdmin, createElection } from '../data/api';
-import { CreateElectionRequest, ElectionResponse, ElectionType, isGroupedElectionResponse } from '../data/types';
+import {
+  CreateElectionRequest,
+  ElectionResponse,
+  ElectionType,
+  isGroupedElectionResponse,
+} from '../data/types';
 import { BallotTokensList } from '../components/BallotTokensList';
 import { ElectionBasicInfo } from '../components/ElectionBasicInfo';
 import { ElectionSeatsConfig } from '../components/ElectionSeatsConfig';
 import { CandidatesList } from '../components/CandidatesList';
 import { ElectionTimeConfig } from '../components/ElectionTimeConfig';
 import { GroupConfig } from '../data/types';
-import { getSystem } from '../systems';
+import { getSystem, getGoal } from '../systems';
 
 interface ElectionAdminProps {
   path?: string;
@@ -73,9 +78,21 @@ export default function ElectionAdmin({ electionId, adminUuid }: ElectionAdminPr
     if (electionId && adminUuid) {
       loadElection();
     } else if (isCreateMode) {
-      // In create mode, we're already "ready" with empty form
+      // In create mode, we're already "ready" with empty form.
+      // A ?goal=... query param (coming from the home page goal cards)
+      // preselects the matching counting method.
+      const goal = getGoal(new URLSearchParams(window.location.search).get('goal'));
+      if (goal) {
+        const sys = getSystem(goal.systemId);
+        setEditElectionType(goal.systemId);
+        const extras = sys.defaultExtras(editCandidates);
+        setEditGroups(extras.groups);
+        setEditCandidateGroups(extras.candidateGroups);
+        if (sys.fixedSeats != null) setEditNumSeats(sys.fixedSeats);
+      }
       setLoading(false);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [electionId, adminUuid]);
 
   const loadElection = async () => {
@@ -450,7 +467,7 @@ export default function ElectionAdmin({ electionId, adminUuid }: ElectionAdminPr
 
           <Paper elevation={3} sx={{ p: 3 }}>
             <Typography variant="h5" gutterBottom>
-              {t('Number of seats to elect')}
+              {t('What do you want to elect?')}
             </Typography>
             <ElectionSeatsConfig
               numSeats={editNumSeats}

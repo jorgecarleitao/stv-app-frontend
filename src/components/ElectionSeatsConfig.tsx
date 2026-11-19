@@ -3,11 +3,12 @@ import Stack from '@mui/material/Stack';
 import TextField from '@mui/material/TextField';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
+import FormHelperText from '@mui/material/FormHelperText';
 import InputLabel from '@mui/material/InputLabel';
 import Select from '@mui/material/Select';
-import Tooltip from '@mui/material/Tooltip';
+import ListItemText from '@mui/material/ListItemText';
 import { ElectionType } from '../data/types';
-import { systems } from '../systems';
+import { getSystem, getGoalBySystemId, goals } from '../systems';
 
 interface ElectionSeatsConfigProps {
   numSeats: number;
@@ -29,10 +30,30 @@ export function ElectionSeatsConfig({
   seatsError = null,
 }: ElectionSeatsConfigProps) {
   const { t } = useTranslation();
-  const fixedSeats = systems[electionType].fixedSeats;
+  const fixedSeats = getSystem(electionType).fixedSeats;
+  const goal = getGoalBySystemId(electionType);
 
   return (
     <Stack spacing={2}>
+      <FormControl fullWidth disabled={disabled}>
+        <InputLabel id="election-goal-label">{t('What do you want to elect?')}</InputLabel>
+        <Select
+          labelId="election-goal-label"
+          value={electionType}
+          label={t('What do you want to elect?')}
+          onChange={e =>
+            onElectionTypeChange((e.target as HTMLSelectElement).value as ElectionType)
+          }
+        >
+          {goals.map(g => (
+            <MenuItem key={g.id} value={g.systemId}>
+              <ListItemText primary={t(g.titleKey)} secondary={t(getSystem(g.systemId).label)} />
+            </MenuItem>
+          ))}
+        </Select>
+        <FormHelperText>{t(goal.descKey)}</FormHelperText>
+      </FormControl>
+
       {fixedSeats != null ? (
         <TextField
           label={t('Number of Seats')}
@@ -56,32 +77,6 @@ export function ElectionSeatsConfig({
           helperText={seatsError}
         />
       )}
-
-      <Tooltip
-        title={t(
-          'STV-MD: Winners are identified without ranking. STV-MD Copeland: Winners are ranked by position using pairwise comparison. STV-MD Grouped: Candidates are split into groups and STV is run independently per group. Schulze: A single winner is elected by beatpath (Condorcet); ties are broken by a seeded random lot.'
-        )}
-        placement="right"
-        arrow
-      >
-        <FormControl fullWidth disabled={disabled}>
-          <InputLabel id="election-type-label">{t('Election Type')}</InputLabel>
-          <Select
-            labelId="election-type-label"
-            value={electionType}
-            label={t('Election Type')}
-            onChange={e =>
-              onElectionTypeChange((e.target as HTMLSelectElement).value as ElectionType)
-            }
-          >
-            {Object.values(systems).map(s => (
-              <MenuItem key={s.id} value={s.id}>
-                {t(s.label)}
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
-      </Tooltip>
     </Stack>
   );
 }

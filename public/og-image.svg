@@ -16,12 +16,12 @@
   
   <!-- Title -->
   <text x="500" y="280" font-family="Arial, sans-serif" font-size="72" font-weight="bold" fill="#ffffff">
-    STVote
+    Open Vote
   </text>
   
   <!-- Subtitle -->
   <text x="500" y="350" font-family="Arial, sans-serif" font-size="36" fill="#ffffff" opacity="0.9">
-    Single Transferable Vote Elections
+    Ranked-Ballot Elections
   </text>
   
   <!-- Description -->

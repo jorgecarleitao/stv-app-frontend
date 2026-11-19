@@ -14,6 +14,7 @@ import ScienceIcon from '@mui/icons-material/Science';
 import TrendingUpIcon from '@mui/icons-material/TrendingUp';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import MenuBookIcon from '@mui/icons-material/MenuBook';
+import { systems } from '../systems';
 
 interface HomeProps {
   path?: string;
@@ -122,23 +123,44 @@ export default function Home({}: HomeProps = {}) {
         </Grid>
       </Grid>
       <Divider sx={{ my: 6 }} />
-      {/* What is STV Section */}
+      {/* Voting Systems Section */}
       <Paper elevation={2} sx={{ p: 4, my: 4 }}>
         <Box sx={{ display: 'flex', alignItems: 'center', mb: 3 }}>
           <TrendingUpIcon sx={{ fontSize: 36, mr: 2, color: 'primary.main' }} />
           <Typography variant="h4" component="h2">
-            {t('whatIsSTVTitle')}
+            {t('Voting systems')}
           </Typography>
         </Box>
         <Typography variant="body1" gutterBottom>
-          {t('whatIsSTVPara1')}
+          {t('systemsSectionIntro')}
         </Typography>
-        <Typography variant="body1" gutterBottom>
-          {t('whatIsSTVPara2')}
-        </Typography>
+        <Grid container spacing={2} sx={{ mt: 1 }}>
+          {Object.values(systems).map(s => (
+            <Grid key={s.id} size={{ xs: 12, sm: 6 }}>
+              <Card elevation={2} sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
+                <CardContent sx={{ flexGrow: 1 }}>
+                  <Typography variant="h6" component="h3" gutterBottom>
+                    {t(s.label)}
+                  </Typography>
+                  <Typography variant="body2" color="text.secondary">
+                    {t(`systemsCard.${s.id}`)}
+                  </Typography>
+                </CardContent>
+                <CardActions sx={{ p: 2, pt: 0 }}>
+                  <Button size="small" component="a" href="/systems">
+                    {t('Learn more')}
+                  </Button>
+                </CardActions>
+              </Card>
+            </Grid>
+          ))}
+        </Grid>
         <Box sx={{ display: 'flex', gap: 2, mt: 3, flexWrap: 'wrap' }}>
           <Button variant="outlined" component="a" href="/simulate">
             {t('Try it yourself')}
+          </Button>
+          <Button variant="outlined" component="a" href="/systems">
+            {t('Voting systems')}
           </Button>
         </Box>
       </Paper>

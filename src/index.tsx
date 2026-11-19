@@ -16,7 +16,7 @@ import './i18n';
 import Home from './pages/home';
 import Simulate from './pages/simulate';
 import Footer from './footer';
-import StvExplainer from './pages/stv-explainer';
+import SystemsPage from './pages/systems';
 import ElectionDetail from './pages/election-detail';
 import ElectionAdmin from './pages/election-admin';
 import BallotPage from './pages/ballot';
@@ -61,7 +61,8 @@ export default function App() {
               <TokenRedeem path="/elections/:electionId/tokens/:tokenId" />
               <BallotPage path="/elections/:electionId/ballot/:ballotUuid" />
               <AdminUserGuide path="/admin-guide" />
-              <StvExplainer path="/stv-explainer" />
+              <SystemsPage path="/systems" />
+              <SystemsPage path="/stv-explainer" />
               <RiskAssessment path="/risk-assessment" />
             </Router>
           </Stack>

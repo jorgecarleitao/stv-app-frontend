@@ -1,6 +1,6 @@
-# STV election app
+# Open Vote — ranked-ballot election app (frontend)
 
-This repository contains the source code of the frontend of [SVT app](https://github.com/jorgecarleitao/stv-app).
+This repository contains the source code of the frontend of [Open Vote](https://open-vote.eu) (formerly STVote at stvote.eu), a secure, transparent, and auditable election platform supporting multiple ranked-ballot voting systems: STV (Meek/Droop), Copeland-ordered STV, grouped STV, and Schulze for single-winner elections.
 
 The source code of the application is at:
 

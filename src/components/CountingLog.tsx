@@ -47,6 +47,8 @@ function formatActionType(
     return `${t('Defeat')}: ${actionType.defeat.candidate} (${actionType.defeat.reason})`;
   if ('break_tie' in actionType)
     return `${t('Break tie')}: ${actionType.break_tie.defeated} ${t('defeated from')} [${actionType.break_tie.candidates.join(', ')}]`;
+  if ('lot' in actionType)
+    return `${t('Lot (tie-break)')}: ${actionType.lot.winner} ${t('wins the lot from')} [${actionType.lot.candidates.join(', ')}]`;
   return '';
 }
 
@@ -64,7 +66,9 @@ function HeaderSection({ log }: { log: CountingLog }) {
         <Chip label={`${t('Arithmetic')}: ${header.arithmetic}`} size="small" />
         <Chip label={`${t('Seats')}: ${header.seats}`} size="small" />
         <Chip label={`${t('Ballots')}: ${header.ballots}`} size="small" />
-        <Chip label={`${header.ballots} / (${header.seats} + 1)`} size="small" />
+        {header.quota !== '' && (
+          <Chip label={`${header.ballots} / (${header.seats} + 1)`} size="small" />
+        )}
       </Stack>
     </Paper>
   );

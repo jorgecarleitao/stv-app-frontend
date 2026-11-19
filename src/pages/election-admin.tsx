@@ -465,6 +465,8 @@ export default function ElectionAdmin({ electionId, adminUuid }: ElectionAdminPr
                 const extras = getSystem(value).defaultExtras(editCandidates);
                 setEditGroups(extras.groups);
                 setEditCandidateGroups(extras.candidateGroups);
+                const fixedSeats = getSystem(value).fixedSeats;
+                if (fixedSeats != null) setEditNumSeats(fixedSeats);
               }}
               disabled={saving}
               seatsError={seatsError}

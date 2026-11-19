@@ -3,6 +3,7 @@ import type { ElectionSystemUI } from './types';
 import StvMd from './stvMd';
 import StvMdCoperland from './stvMdCoperland';
 import StvMdGrouped from './stvMdGrouped';
+import Schulze from './schulze';
 
 /**
  * Registry of all supported election systems. Adding a new system means
@@ -12,6 +13,7 @@ export const systems: Record<ElectionType, ElectionSystemUI> = {
   'stv-md': StvMd,
   'stv-md-coperland': StvMdCoperland,
   'stv-md-grouped': StvMdGrouped,
+  schulze: Schulze,
 };
 
 export function getSystem(type: ElectionType): ElectionSystemUI {

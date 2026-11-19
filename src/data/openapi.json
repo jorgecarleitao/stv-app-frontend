@@ -1089,6 +1089,27 @@
                 }
               }
             ]
+          },
+          {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/RankedBallot"
+              },
+              {
+                "type": "object",
+                "required": [
+                  "election_type"
+                ],
+                "properties": {
+                  "election_type": {
+                    "type": "string",
+                    "enum": [
+                      "schulze"
+                    ]
+                  }
+                }
+              }
+            ]
           }
         ]
       },
@@ -1254,14 +1275,14 @@
           },
           {
             "type": "object",
-            "description": "A tie between candidates was broken by random selection",
+            "description": "A tie between candidates was broken by the tie-break order.\nstv-rs defaults the tie order to candidate list order (the app does\nnot override it), so the earliest-listed tied candidate is defeated.",
             "required": [
               "break_tie"
             ],
             "properties": {
               "break_tie": {
                 "type": "object",
-                "description": "A tie between candidates was broken by random selection",
+                "description": "A tie between candidates was broken by the tie-break order.\nstv-rs defaults the tie order to candidate list order (the app does\nnot override it), so the earliest-listed tied candidate is defeated.",
                 "required": [
                   "candidates",
                   "defeated"
@@ -1274,6 +1295,34 @@
                     }
                   },
                   "defeated": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          },
+          {
+            "type": "object",
+            "description": "A tie between candidates was broken by a seeded random lot\n(Schulze), selecting the winner. The seed is the election's\n`tie_break_seed`, stored in the election config, so the draw\nis reproducible and auditable.",
+            "required": [
+              "lot"
+            ],
+            "properties": {
+              "lot": {
+                "type": "object",
+                "description": "A tie between candidates was broken by a seeded random lot\n(Schulze), selecting the winner. The seed is the election's\n`tie_break_seed`, stored in the election config, so the draw\nis reproducible and auditable.",
+                "required": [
+                  "candidates",
+                  "winner"
+                ],
+                "properties": {
+                  "candidates": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "winner": {
                     "type": "string"
                   }
                 }
@@ -1606,6 +1655,68 @@
                 "type": "string"
               }
             }
+          },
+          {
+            "type": "object",
+            "required": [
+              "title",
+              "candidates",
+              "num_seats",
+              "start_time",
+              "end_time",
+              "election_type"
+            ],
+            "properties": {
+              "candidates": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "example": [
+                  "Alice",
+                  "Bob",
+                  "Charlie"
+                ]
+              },
+              "description": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "election_type": {
+                "type": "string",
+                "enum": [
+                  "schulze"
+                ]
+              },
+              "end_time": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "num_seats": {
+                "type": "integer",
+                "format": "int32",
+                "example": 1,
+                "minimum": 0
+              },
+              "start_time": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "tie_break_seed": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "format": "int64",
+                "description": "Seed for the random tie-break lot. If omitted, the server\ngenerates one at creation time and persists it.",
+                "minimum": 0
+              },
+              "title": {
+                "type": "string"
+              }
+            }
           }
         ]
       },
@@ -1725,6 +1836,27 @@
                     "type": "string",
                     "enum": [
                       "stv-md-grouped"
+                    ]
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/SchulzeElection"
+              },
+              {
+                "type": "object",
+                "required": [
+                  "election_type"
+                ],
+                "properties": {
+                  "election_type": {
+                    "type": "string",
+                    "enum": [
+                      "schulze"
                     ]
                   }
                 }
@@ -1943,6 +2075,71 @@
                 "type": "string"
               }
             }
+          },
+          {
+            "type": "object",
+            "required": [
+              "id",
+              "title",
+              "candidates",
+              "seats",
+              "start_time",
+              "end_time",
+              "number_of_ballots",
+              "election_type"
+            ],
+            "properties": {
+              "ballots": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "items": {
+                  "type": "string"
+                }
+              },
+              "candidates": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "description": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "election_type": {
+                "type": "string",
+                "enum": [
+                  "schulze"
+                ]
+              },
+              "end_time": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "id": {
+                "type": "string"
+              },
+              "number_of_ballots": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "seats": {
+                "type": "integer",
+                "format": "int32",
+                "minimum": 0
+              },
+              "start_time": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "title": {
+                "type": "string"
+              }
+            }
           }
         ],
         "description": "ElectionConfig - what gets sent to the API (no sensitive info)"
@@ -2139,6 +2336,71 @@
                 "type": "string"
               }
             }
+          },
+          {
+            "type": "object",
+            "required": [
+              "uuid",
+              "admin_uuid",
+              "title",
+              "candidates",
+              "num_seats",
+              "start_time",
+              "end_time",
+              "is_locked",
+              "tie_break_seed",
+              "election_type"
+            ],
+            "properties": {
+              "admin_uuid": {
+                "type": "string"
+              },
+              "candidates": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "description": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "election_type": {
+                "type": "string",
+                "enum": [
+                  "schulze"
+                ]
+              },
+              "end_time": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "is_locked": {
+                "type": "boolean"
+              },
+              "num_seats": {
+                "type": "integer",
+                "format": "int32",
+                "minimum": 0
+              },
+              "start_time": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "tie_break_seed": {
+                "type": "integer",
+                "format": "int64",
+                "minimum": 0
+              },
+              "title": {
+                "type": "string"
+              },
+              "uuid": {
+                "type": "string"
+              }
+            }
           }
         ]
       },
@@ -2206,6 +2468,27 @@
                 }
               }
             ]
+          },
+          {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/SchulzeResult"
+              },
+              {
+                "type": "object",
+                "required": [
+                  "type"
+                ],
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "enum": [
+                      "schulze"
+                    ]
+                  }
+                }
+              }
+            ]
           }
         ]
       },
@@ -2249,7 +2532,8 @@
         "enum": [
           "stv-md",
           "stv-md-coperland",
-          "stv-md-grouped"
+          "stv-md-grouped",
+          "schulze"
         ]
       },
       "EmailConfigResponse": {
@@ -2426,6 +2710,74 @@
           "seats": {
             "type": "integer",
             "minimum": 0
+          }
+        }
+      },
+      "SchulzeElection": {
+        "type": "object",
+        "description": "A single-winner Schulze election (`schulze`).\n\nSame ranked-ballot invariants as [`RankedElection`], plus `seats` must be\nexactly 1 and a `tie_break_seed` (used for the random lot on beatpath\nties). Invariants are enforced at parse time — by\n[`SchulzeElection::try_new`] and by deserialization (which goes through\n`try_new` via `try_from`) — so a value of this type is always well-formed.",
+        "required": [
+          "candidates",
+          "seats",
+          "ballots",
+          "tie_break_seed"
+        ],
+        "properties": {
+          "ballots": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CombinedBallot"
+            }
+          },
+          "candidates": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "seats": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "tie_break_seed": {
+            "type": "integer",
+            "format": "int64",
+            "minimum": 0
+          }
+        }
+      },
+      "SchulzeResult": {
+        "type": "object",
+        "required": [
+          "election",
+          "log",
+          "elected",
+          "pairwise_matrix"
+        ],
+        "properties": {
+          "elected": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Elected"
+            },
+            "description": "Exactly one entry: the Schulze winner"
+          },
+          "election": {
+            "$ref": "#/components/schemas/Election"
+          },
+          "log": {
+            "$ref": "#/components/schemas/CountingLog"
+          },
+          "pairwise_matrix": {
+            "type": "array",
+            "items": {
+              "type": "array",
+              "items": {
+                "type": "integer",
+                "minimum": 0
+              }
+            },
+            "description": "Head-to-head comparison matrix `m[i][j]` = ballots preferring i over j"
           }
         }
       },
@@ -2652,6 +3004,27 @@
                 }
               }
             ]
+          },
+          {
+            "type": "object",
+            "description": "Single-winner Schulze election. `tie_break_seed` is generated by the\nserver at creation time (if not supplied) and persisted here, so the\nrandom tie-break lot is fixed before any ballot is cast and the result\nis reproducible on recomputation.",
+            "required": [
+              "tie_break_seed",
+              "election_type"
+            ],
+            "properties": {
+              "election_type": {
+                "type": "string",
+                "enum": [
+                  "schulze"
+                ]
+              },
+              "tie_break_seed": {
+                "type": "integer",
+                "format": "int64",
+                "minimum": 0
+              }
+            }
           }
         ],
         "description": "System-specific election configuration, stored as JSON in the\n`elections.config` column. Adding a new election system means adding\none variant here."

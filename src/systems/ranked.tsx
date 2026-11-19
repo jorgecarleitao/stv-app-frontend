@@ -15,6 +15,7 @@ export function rankedBallotPayload(
     case 'stv-md':
     case 'stv-md-coperland':
     case 'stv-md-grouped':
+    case 'schulze':
       return { election_type: electionType, ranks };
     default:
       throw new Error(`Unsupported election type: ${electionType}`);

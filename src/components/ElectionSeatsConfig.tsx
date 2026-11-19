@@ -29,25 +29,37 @@ export function ElectionSeatsConfig({
   seatsError = null,
 }: ElectionSeatsConfigProps) {
   const { t } = useTranslation();
+  const fixedSeats = systems[electionType].fixedSeats;
 
   return (
     <Stack spacing={2}>
-      <TextField
-        label={t('Number of Seats')}
-        type="number"
-        value={numSeats}
-        onChange={e => onNumSeatsChange(parseInt((e.target as HTMLInputElement).value) || 1)}
-        fullWidth
-        required
-        slotProps={{ htmlInput: { min: 1, max: maxSeats } }}
-        disabled={disabled}
-        error={!!seatsError}
-        helperText={seatsError}
-      />
+      {fixedSeats != null ? (
+        <TextField
+          label={t('Number of Seats')}
+          type="number"
+          value={fixedSeats}
+          fullWidth
+          disabled
+          helperText={t('Single-winner election: exactly one winner is elected')}
+        />
+      ) : (
+        <TextField
+          label={t('Number of Seats')}
+          type="number"
+          value={numSeats}
+          onChange={e => onNumSeatsChange(parseInt((e.target as HTMLInputElement).value) || 1)}
+          fullWidth
+          required
+          slotProps={{ htmlInput: { min: 1, max: maxSeats } }}
+          disabled={disabled}
+          error={!!seatsError}
+          helperText={seatsError}
+        />
+      )}
 
       <Tooltip
         title={t(
-          'STV-MD: Winners are identified without ranking. STV-MD Copeland: Winners are ranked by position using pairwise comparison. STV-MD Grouped: Candidates are split into groups and STV is run independently per group.'
+          'STV-MD: Winners are identified without ranking. STV-MD Copeland: Winners are ranked by position using pairwise comparison. STV-MD Grouped: Candidates are split into groups and STV is run independently per group. Schulze: A single winner is elected by beatpath (Condorcet); ties are broken by a seeded random lot.'
         )}
         placement="right"
         arrow

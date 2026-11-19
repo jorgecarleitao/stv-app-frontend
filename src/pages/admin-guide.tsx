@@ -139,6 +139,21 @@ export default function AdminUserGuide({ path }: Props = {}) {
               )}
             </Typography>
           </Box>
+          <Box>
+            <Typography variant="subtitle2" gutterBottom sx={{ fontWeight: 'bold' }}>
+              {t('Schulze (single winner)')}
+            </Typography>
+            <Typography variant="body2" gutterBottom>
+              {t(
+                'A single best option is elected, not a list of winners. Use this when the election must pick one winner - for example, choosing between proposals or candidates for a single role.'
+              )}
+            </Typography>
+            <Typography variant="body2" color="text.secondary">
+              {t(
+                "Technical note: Schulze's beatpath method elects the candidate who beats every other candidate in pairwise comparison (Condorcet winner). If several candidates are tied on the strongest paths, the winner is drawn by a random lot whose seed is fixed when the election is created, so the result is reproducible and auditable. The number of seats is fixed to 1."
+              )}
+            </Typography>
+          </Box>
         </Box>
       </Paper>
 

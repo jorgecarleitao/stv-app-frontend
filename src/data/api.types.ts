@@ -95,6 +95,9 @@ export interface components {
     }, components["schemas"]["RankedBallot"] & {
       /** @enum {string} */
       election_type: "stv-md-grouped";
+    }, components["schemas"]["RankedBallot"] & {
+      /** @enum {string} */
+      election_type: "schulze";
     }]>;
     CombinedBallot: {
       /** @description Ranked preferences as indices into the candidates list */
@@ -148,10 +151,25 @@ export interface components {
         reason: string;
       };
     } | {
-      /** @description A tie between candidates was broken by random selection */
+      /**
+       * @description A tie between candidates was broken by the tie-break order.
+       * stv-rs defaults the tie order to candidate list order (the app does
+       * not override it), so the earliest-listed tied candidate is defeated.
+       */
       break_tie: {
         candidates: string[];
         defeated: string;
+      };
+    } | {
+      /**
+       * @description A tie between candidates was broken by a seeded random lot
+       * (Schulze), selecting the winner. The seed is the election's
+       * `tie_break_seed`, stored in the election config, so the draw
+       * is reproducible and auditable.
+       */
+      lot: {
+        candidates: string[];
+        winner: string;
       };
     } | "count_complete";
     /** @description A candidate in the election */
@@ -281,6 +299,34 @@ export interface components {
       /** Format: date-time */
       start_time: string;
       title: string;
+    }, {
+      /**
+       * @example [
+       *   "Alice",
+       *   "Bob",
+       *   "Charlie"
+       * ]
+       */
+      candidates: string[];
+      description?: string | null;
+      /** @enum {string} */
+      election_type: "schulze";
+      /** Format: date-time */
+      end_time: string;
+      /**
+       * Format: int32
+       * @example 1
+       */
+      num_seats: number;
+      /** Format: date-time */
+      start_time: string;
+      /**
+       * Format: int64
+       * @description Seed for the random tie-break lot. If omitted, the server
+       * generates one at creation time and persists it.
+       */
+      tie_break_seed?: number | null;
+      title: string;
     }]>;
     CreateTokenResult: {
       email?: string | null;
@@ -306,6 +352,9 @@ export interface components {
     }, components["schemas"]["StvMdGroupedElection"] & {
       /** @enum {string} */
       election_type: "stv-md-grouped";
+    }, components["schemas"]["SchulzeElection"] & {
+      /** @enum {string} */
+      election_type: "schulze";
     }]>;
     /** @description ElectionConfig - what gets sent to the API (no sensitive info) */
     ElectionConfig: OneOf<[{
@@ -348,6 +397,21 @@ export interface components {
       /** Format: date-time */
       end_time: string;
       groups: components["schemas"]["GroupConfig"][];
+      id: string;
+      number_of_ballots: number;
+      /** Format: int32 */
+      seats: number;
+      /** Format: date-time */
+      start_time: string;
+      title: string;
+    }, {
+      ballots?: string[] | null;
+      candidates: string[];
+      description?: string | null;
+      /** @enum {string} */
+      election_type: "schulze";
+      /** Format: date-time */
+      end_time: string;
       id: string;
       number_of_ballots: number;
       /** Format: int32 */
@@ -403,6 +467,23 @@ export interface components {
       start_time: string;
       title: string;
       uuid: string;
+    }, {
+      admin_uuid: string;
+      candidates: string[];
+      description?: string | null;
+      /** @enum {string} */
+      election_type: "schulze";
+      /** Format: date-time */
+      end_time: string;
+      is_locked: boolean;
+      /** Format: int32 */
+      num_seats: number;
+      /** Format: date-time */
+      start_time: string;
+      /** Format: int64 */
+      tie_break_seed: number;
+      title: string;
+      uuid: string;
     }]>;
     ElectionResult: OneOf<[components["schemas"]["StvMdResult"] & {
       /** @enum {string} */
@@ -413,6 +494,9 @@ export interface components {
     }, components["schemas"]["StvMdGroupedResult"] & {
       /** @enum {string} */
       type: "stv-md-grouped";
+    }, components["schemas"]["SchulzeResult"] & {
+      /** @enum {string} */
+      type: "schulze";
     }]>;
     ElectionState: {
       /** @description Number of ballots that have been cast */
@@ -424,7 +508,7 @@ export interface components {
       results?: components["schemas"]["ElectionResult"] | null;
     };
     /** @enum {string} */
-    ElectionType: "stv-md" | "stv-md-coperland" | "stv-md-grouped";
+    ElectionType: "stv-md" | "stv-md-coperland" | "stv-md-grouped" | "schulze";
     EmailConfigResponse: {
       from_email: string;
       from_name: string;
@@ -497,6 +581,30 @@ export interface components {
       candidates: string[];
       seats: number;
     };
+    /**
+     * @description A single-winner Schulze election (`schulze`).
+     *
+     * Same ranked-ballot invariants as [`RankedElection`], plus `seats` must be
+     * exactly 1 and a `tie_break_seed` (used for the random lot on beatpath
+     * ties). Invariants are enforced at parse time — by
+     * [`SchulzeElection::try_new`] and by deserialization (which goes through
+     * `try_new` via `try_from`) — so a value of this type is always well-formed.
+     */
+    SchulzeElection: {
+      ballots: components["schemas"]["CombinedBallot"][];
+      candidates: string[];
+      seats: number;
+      /** Format: int64 */
+      tie_break_seed: number;
+    };
+    SchulzeResult: {
+      /** @description Exactly one entry: the Schulze winner */
+      elected: components["schemas"]["Elected"][];
+      election: components["schemas"]["Election"];
+      log: components["schemas"]["CountingLog"];
+      /** @description Head-to-head comparison matrix `m[i][j]` = ballots preferring i over j */
+      pairwise_matrix: number[][];
+    };
     SendEmailResult: {
       error?: string | null;
       token_id: string;
@@ -554,6 +662,11 @@ export interface components {
     }, components["schemas"]["GroupedConfig"] & {
       /** @enum {string} */
       election_type: "stv-md-grouped";
+    }, {
+      /** @enum {string} */
+      election_type: "schulze";
+      /** Format: int64 */
+      tie_break_seed: number;
     }]>;
     TestEmailRequest: {
       to_email: string;

@@ -58,6 +58,11 @@ export interface ElectionSystemUI {
   id: ElectionType;
   /** i18n key shown in the election-type picker */
   label: string;
+  /**
+   * If set, the system has a fixed number of seats (e.g. 1 for single-winner
+   * systems like Schulze); the seats input is locked to this value.
+   */
+  fixedSeats?: number;
   /** whether this system has extra config beyond the common fields */
   hasExtras: boolean;
   /** extra fields to initialize when the user switches to this type */

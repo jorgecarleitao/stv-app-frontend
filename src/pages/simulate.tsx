@@ -296,9 +296,13 @@ export default function Simulate({ path }: SimulateProps = {}) {
           onElectionTypeChange={val => {
             setElection(el => {
               const extras = getSystem(val).defaultExtras(el.candidates);
+              const fixedSeats = getSystem(val).fixedSeats;
               return {
                 ...el,
                 election_type: val,
+                seats: fixedSeats ?? el.seats,
+                // Fixed seed so repeated simulations of a tie are reproducible
+                tie_break_seed: val === 'schulze' ? (el.tie_break_seed ?? 42) : undefined,
                 groups: extras.groups,
                 candidate_groups: extras.candidateGroups,
               };

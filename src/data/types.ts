@@ -60,6 +60,8 @@ export interface Election {
   ballots: Ballot[];
   groups?: GroupConfig[];
   candidate_groups?: string[];
+  /** Schulze only: seed for the tie-break lot (omitted = server picks one) */
+  tie_break_seed?: number;
 }
 
 export interface BallotToken {

@@ -31,9 +31,9 @@ import Stack from '@mui/material/Stack';
 import { simulateElection } from '../data/api';
 import { isGroupedResult } from '../data/types';
 import { DEFAULT_ELECTION } from '../data/defaults';
+import { getSystem } from '../systems';
 import { ElectionResults } from '../components/ElectionResults';
 import { CountingWalkthrough } from '../components/CountingWalkthrough';
-import { ResultsSummary } from '../components/ResultsSummary';
 
 const REFS = [
   {
@@ -218,35 +218,19 @@ function OutcomeSection({
   }
   if (error) return <Alert severity="error">{error}</Alert>;
   if (!result) return null;
+  const SystemResultSections = getSystem(DEFAULT_ELECTION.election_type).ResultSections;
   return (
     <Card elevation={3} sx={{ my: 3 }}>
       <CardContent>
         <Typography variant="h5" gutterBottom>
           {t('stvMd.outcomeTitle')}
         </Typography>
-        <ElectionResults
-          elected={result.elected}
-          electionType={DEFAULT_ELECTION.election_type}
-          groups={isGroupedResult(result) ? result.groups : undefined}
-          groupResults={isGroupedResult(result) ? result.group_results : undefined}
+        <ElectionResults result={result} electionType={DEFAULT_ELECTION.election_type} />
+        <SystemResultSections
+          result={result}
+          candidates={DEFAULT_ELECTION.candidates}
+          seats={DEFAULT_ELECTION.seats}
         />
-        {isGroupedResult(result) ? (
-          result.group_results.map((gr: any) => (
-            <ResultsSummary
-              key={gr.group}
-              log={gr.log}
-              seats={gr.seats}
-              numElected={gr.elected.length}
-              groupName={gr.group}
-            />
-          ))
-        ) : (
-          <ResultsSummary
-            log={result.log}
-            seats={DEFAULT_ELECTION.seats}
-            numElected={result.elected.length}
-          />
-        )}
       </CardContent>
     </Card>
   );

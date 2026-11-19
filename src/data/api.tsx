@@ -1,6 +1,7 @@
 import type {
   Ballot,
   BallotToken,
+  CastBallotRequest,
   CreateElectionRequest,
   CreateTokenResult,
   Election,
@@ -9,6 +10,7 @@ import type {
   ElectionState,
   EmailConfig,
   SendEmailResult,
+  StoredBallot,
   UpsertEmailConfigRequest,
 } from './types';
 
@@ -375,7 +377,7 @@ export async function getTokenInfo(electionId: string, tokenId: string): Promise
 /**
  * Fetch a specific ballot by UUID
  */
-export async function getBallot(electionId: string, ballotUuid: string): Promise<Ballot | null> {
+export async function getBallot(electionId: string, ballotUuid: string): Promise<StoredBallot | null> {
   const response = await fetch(`${BASE_URL}/elections/${electionId}/ballot/${ballotUuid}`, {
     method: 'GET',
     mode: 'cors',
@@ -394,7 +396,7 @@ export async function getBallot(electionId: string, ballotUuid: string): Promise
 export async function putBallot(
   electionId: string,
   ballotUuid: string,
-  ballot: Ballot
+  ballot: CastBallotRequest
 ): Promise<void> {
   const response = await fetch(`${BASE_URL}/elections/${electionId}/ballot/${ballotUuid}`, {
     method: 'PUT',

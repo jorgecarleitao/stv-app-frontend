@@ -754,7 +754,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/Ballot"
+                "$ref": "#/components/schemas/CastBallotRequest"
               }
             }
           },
@@ -1024,6 +1024,73 @@
             "uniqueItems": true
           }
         }
+      },
+      "CastBallotRequest": {
+        "oneOf": [
+          {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/RankedBallot"
+              },
+              {
+                "type": "object",
+                "required": [
+                  "election_type"
+                ],
+                "properties": {
+                  "election_type": {
+                    "type": "string",
+                    "enum": [
+                      "stv-md"
+                    ]
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/RankedBallot"
+              },
+              {
+                "type": "object",
+                "required": [
+                  "election_type"
+                ],
+                "properties": {
+                  "election_type": {
+                    "type": "string",
+                    "enum": [
+                      "stv-md-coperland"
+                    ]
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/RankedBallot"
+              },
+              {
+                "type": "object",
+                "required": [
+                  "election_type"
+                ],
+                "properties": {
+                  "election_type": {
+                    "type": "string",
+                    "enum": [
+                      "stv-md-grouped"
+                    ]
+                  }
+                }
+              }
+            ]
+          }
+        ]
       },
       "CombinedBallot": {
         "type": "object",
@@ -1602,117 +1669,67 @@
       "Election": {
         "oneOf": [
           {
-            "type": "object",
-            "required": [
-              "candidates",
-              "seats",
-              "ballots",
-              "election_type"
-            ],
-            "properties": {
-              "ballots": {
-                "type": "array",
-                "items": {
-                  "$ref": "#/components/schemas/CombinedBallot"
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/RankedElection"
+              },
+              {
+                "type": "object",
+                "required": [
+                  "election_type"
+                ],
+                "properties": {
+                  "election_type": {
+                    "type": "string",
+                    "enum": [
+                      "stv-md"
+                    ]
+                  }
                 }
-              },
-              "candidates": {
-                "type": "array",
-                "items": {
-                  "type": "string"
-                }
-              },
-              "election_type": {
-                "type": "string",
-                "enum": [
-                  "stv-md"
-                ]
-              },
-              "seats": {
-                "type": "integer",
-                "minimum": 0
               }
-            }
+            ]
           },
           {
-            "type": "object",
-            "required": [
-              "candidates",
-              "seats",
-              "ballots",
-              "election_type"
-            ],
-            "properties": {
-              "ballots": {
-                "type": "array",
-                "items": {
-                  "$ref": "#/components/schemas/CombinedBallot"
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/RankedElection"
+              },
+              {
+                "type": "object",
+                "required": [
+                  "election_type"
+                ],
+                "properties": {
+                  "election_type": {
+                    "type": "string",
+                    "enum": [
+                      "stv-md-coperland"
+                    ]
+                  }
                 }
-              },
-              "candidates": {
-                "type": "array",
-                "items": {
-                  "type": "string"
-                }
-              },
-              "election_type": {
-                "type": "string",
-                "enum": [
-                  "stv-md-coperland"
-                ]
-              },
-              "seats": {
-                "type": "integer",
-                "minimum": 0
               }
-            }
+            ]
           },
           {
-            "type": "object",
-            "required": [
-              "candidates",
-              "seats",
-              "ballots",
-              "groups",
-              "candidate_groups",
-              "election_type"
-            ],
-            "properties": {
-              "ballots": {
-                "type": "array",
-                "items": {
-                  "$ref": "#/components/schemas/CombinedBallot"
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/StvMdGroupedElection"
+              },
+              {
+                "type": "object",
+                "required": [
+                  "election_type"
+                ],
+                "properties": {
+                  "election_type": {
+                    "type": "string",
+                    "enum": [
+                      "stv-md-grouped"
+                    ]
+                  }
                 }
-              },
-              "candidate_groups": {
-                "type": "array",
-                "items": {
-                  "type": "string"
-                }
-              },
-              "candidates": {
-                "type": "array",
-                "items": {
-                  "type": "string"
-                }
-              },
-              "election_type": {
-                "type": "string",
-                "enum": [
-                  "stv-md-grouped"
-                ]
-              },
-              "groups": {
-                "type": "array",
-                "items": {
-                  "$ref": "#/components/schemas/GroupConfig"
-                }
-              },
-              "seats": {
-                "type": "integer",
-                "minimum": 0
               }
-            }
+            ]
           }
         ]
       },
@@ -2128,123 +2145,67 @@
       "ElectionResult": {
         "oneOf": [
           {
-            "type": "object",
-            "required": [
-              "election",
-              "log",
-              "elected",
-              "type"
-            ],
-            "properties": {
-              "elected": {
-                "type": "array",
-                "items": {
-                  "$ref": "#/components/schemas/Elected"
-                }
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/StvMdResult"
               },
-              "election": {
-                "$ref": "#/components/schemas/Election"
-              },
-              "log": {
-                "$ref": "#/components/schemas/CountingLog"
-              },
-              "type": {
-                "type": "string",
-                "enum": [
-                  "stv-md"
-                ]
-              }
-            }
-          },
-          {
-            "type": "object",
-            "required": [
-              "election",
-              "log",
-              "elected",
-              "order",
-              "pairwise_matrix",
-              "type"
-            ],
-            "properties": {
-              "elected": {
-                "type": "array",
-                "items": {
-                  "$ref": "#/components/schemas/Elected"
-                }
-              },
-              "election": {
-                "$ref": "#/components/schemas/Election"
-              },
-              "log": {
-                "$ref": "#/components/schemas/CountingLog"
-              },
-              "order": {
+              {
                 "type": "object",
-                "additionalProperties": {
-                  "type": "integer",
-                  "minimum": 0
-                },
-                "propertyNames": {
-                  "type": "string"
-                }
-              },
-              "pairwise_matrix": {
-                "type": "array",
-                "items": {
-                  "type": "array",
-                  "items": {
-                    "type": "integer",
-                    "minimum": 0
+                "required": [
+                  "type"
+                ],
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "enum": [
+                      "stv-md"
+                    ]
                   }
                 }
-              },
-              "type": {
-                "type": "string",
-                "enum": [
-                  "stv-md-coperland"
-                ]
               }
-            }
+            ]
           },
           {
-            "type": "object",
-            "required": [
-              "election",
-              "groups",
-              "group_results",
-              "elected",
-              "type"
-            ],
-            "properties": {
-              "elected": {
-                "type": "array",
-                "items": {
-                  "$ref": "#/components/schemas/Elected"
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/StvMdCoperlandResult"
+              },
+              {
+                "type": "object",
+                "required": [
+                  "type"
+                ],
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "enum": [
+                      "stv-md-coperland"
+                    ]
+                  }
                 }
-              },
-              "election": {
-                "$ref": "#/components/schemas/Election"
-              },
-              "group_results": {
-                "type": "array",
-                "items": {
-                  "$ref": "#/components/schemas/GroupResult"
-                }
-              },
-              "groups": {
-                "type": "array",
-                "items": {
-                  "$ref": "#/components/schemas/GroupConfig"
-                }
-              },
-              "type": {
-                "type": "string",
-                "enum": [
-                  "stv-md-grouped"
-                ]
               }
-            }
+            ]
+          },
+          {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/StvMdGroupedResult"
+              },
+              {
+                "type": "object",
+                "required": [
+                  "type"
+                ],
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "enum": [
+                      "stv-md-grouped"
+                    ]
+                  }
+                }
+              }
+            ]
           }
         ]
       },
@@ -2316,6 +2277,7 @@
       },
       "GroupConfig": {
         "type": "object",
+        "description": "A single group definition. Invariants (non-empty name, at least one seat)\nare enforced at parse time by [`GroupConfig::try_new`] and deserialization.",
         "required": [
           "name",
           "seats"
@@ -2367,6 +2329,28 @@
           }
         }
       },
+      "GroupedConfig": {
+        "type": "object",
+        "description": "Group definitions for a grouped election (`stv-md-grouped`).\n\nInvariants (non-empty groups, unique group names, assignments referencing\ndefined groups, every group having at least one candidate) are enforced at\nparse time by [`GroupedConfig::try_new`] and deserialization. Alignment of\n`candidate_groups` with `candidates` and the group-seats sum are enforced\nby [`StvMdGroupedElection::try_new`], which sees `candidates` and `seats`.",
+        "required": [
+          "groups",
+          "candidate_groups"
+        ],
+        "properties": {
+          "candidate_groups": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "groups": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/GroupConfig"
+            }
+          }
+        }
+      },
       "MarkSentBody": {
         "type": "object",
         "required": [
@@ -2392,6 +2376,56 @@
           },
           "token_id": {
             "type": "string"
+          }
+        }
+      },
+      "RankedBallot": {
+        "type": "object",
+        "required": [
+          "ranks"
+        ],
+        "properties": {
+          "ranks": {
+            "type": "array",
+            "items": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "minimum": 0
+            },
+            "example": [
+              0,
+              2,
+              1
+            ]
+          }
+        }
+      },
+      "RankedElection": {
+        "type": "object",
+        "description": "A ranked-ballot election (`stv-md`, `stv-md-coperland`).\n\nInvariants are enforced at parse time — by [`RankedElection::try_new`] and\nby deserialization (which goes through `try_new` via `try_from`) — so a\nvalue of this type is always well-formed. `try_new` checks the raw fields\nbefore constructing; there is no `validate` on a constructed value.",
+        "required": [
+          "candidates",
+          "seats",
+          "ballots"
+        ],
+        "properties": {
+          "ballots": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CombinedBallot"
+            }
+          },
+          "candidates": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "seats": {
+            "type": "integer",
+            "minimum": 0
           }
         }
       },
@@ -2428,6 +2462,199 @@
             }
           }
         }
+      },
+      "StvMdCoperlandResult": {
+        "type": "object",
+        "required": [
+          "election",
+          "log",
+          "elected",
+          "order",
+          "pairwise_matrix"
+        ],
+        "properties": {
+          "elected": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Elected"
+            }
+          },
+          "election": {
+            "$ref": "#/components/schemas/Election"
+          },
+          "log": {
+            "$ref": "#/components/schemas/CountingLog"
+          },
+          "order": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "propertyNames": {
+              "type": "string"
+            }
+          },
+          "pairwise_matrix": {
+            "type": "array",
+            "items": {
+              "type": "array",
+              "items": {
+                "type": "integer",
+                "minimum": 0
+              }
+            }
+          }
+        }
+      },
+      "StvMdGroupedElection": {
+        "type": "object",
+        "description": "A grouped STV election (`stv-md-grouped`).\n\nIn addition to the ranked-election invariants, the grouped invariants\n(candidate_groups aligned with candidates, group seats summing to total\nseats, every group having candidates) are enforced at parse time — by\n[`StvMdGroupedElection::try_new`] and by deserialization.",
+        "required": [
+          "candidates",
+          "seats",
+          "ballots",
+          "groups",
+          "candidate_groups"
+        ],
+        "properties": {
+          "ballots": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CombinedBallot"
+            }
+          },
+          "candidate_groups": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "candidates": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "groups": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/GroupConfig"
+            }
+          },
+          "seats": {
+            "type": "integer",
+            "minimum": 0
+          }
+        }
+      },
+      "StvMdGroupedResult": {
+        "type": "object",
+        "required": [
+          "election",
+          "groups",
+          "group_results",
+          "elected"
+        ],
+        "properties": {
+          "elected": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Elected"
+            }
+          },
+          "election": {
+            "$ref": "#/components/schemas/Election"
+          },
+          "group_results": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/GroupResult"
+            }
+          },
+          "groups": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/GroupConfig"
+            }
+          }
+        }
+      },
+      "StvMdResult": {
+        "type": "object",
+        "required": [
+          "election",
+          "log",
+          "elected"
+        ],
+        "properties": {
+          "elected": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Elected"
+            }
+          },
+          "election": {
+            "$ref": "#/components/schemas/Election"
+          },
+          "log": {
+            "$ref": "#/components/schemas/CountingLog"
+          }
+        }
+      },
+      "SystemConfig": {
+        "oneOf": [
+          {
+            "type": "object",
+            "required": [
+              "election_type"
+            ],
+            "properties": {
+              "election_type": {
+                "type": "string",
+                "enum": [
+                  "stv-md"
+                ]
+              }
+            }
+          },
+          {
+            "type": "object",
+            "required": [
+              "election_type"
+            ],
+            "properties": {
+              "election_type": {
+                "type": "string",
+                "enum": [
+                  "stv-md-coperland"
+                ]
+              }
+            }
+          },
+          {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/GroupedConfig"
+              },
+              {
+                "type": "object",
+                "required": [
+                  "election_type"
+                ],
+                "properties": {
+                  "election_type": {
+                    "type": "string",
+                    "enum": [
+                      "stv-md-grouped"
+                    ]
+                  }
+                }
+              }
+            ]
+          }
+        ],
+        "description": "System-specific election configuration, stored as JSON in the\n`elections.config` column. Adding a new election system means adding\none variant here."
       },
       "TestEmailRequest": {
         "type": "object",

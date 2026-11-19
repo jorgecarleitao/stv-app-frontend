@@ -7,6 +7,7 @@ import InputLabel from '@mui/material/InputLabel';
 import Select from '@mui/material/Select';
 import Tooltip from '@mui/material/Tooltip';
 import { ElectionType } from '../data/types';
+import { systems } from '../systems';
 
 interface ElectionSeatsConfigProps {
   numSeats: number;
@@ -61,9 +62,11 @@ export function ElectionSeatsConfig({
               onElectionTypeChange((e.target as HTMLSelectElement).value as ElectionType)
             }
           >
-            <MenuItem value="stv-md">{t('STV-MD (unordered)')}</MenuItem>
-            <MenuItem value="stv-md-coperland">{t('STV-MD Copeland (ordered)')}</MenuItem>
-            <MenuItem value="stv-md-grouped">{t('STV-MD Grouped (by groups)')}</MenuItem>
+            {Object.values(systems).map(s => (
+              <MenuItem key={s.id} value={s.id}>
+                {t(s.label)}
+              </MenuItem>
+            ))}
           </Select>
         </FormControl>
       </Tooltip>

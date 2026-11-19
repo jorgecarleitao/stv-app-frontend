@@ -13,6 +13,7 @@ import SaveIcon from '@mui/icons-material/Save';
 
 import { getBallot, putBallot, getElection } from '../data/api';
 import { Ballot as ApiBallot, ElectionState } from '../data/types';
+import { getSystem } from '../systems';
 import { CandidateRankSelector } from '../components/CandidateRankSelector';
 
 interface BallotPageProps {
@@ -54,13 +55,12 @@ export default function BallotPage({ electionId, ballotUuid }: BallotPageProps) 
       setElectionData(electionDataResp);
 
       // Try to load existing ballot
+      const system = getSystem(electionDataResp.election.election_type);
       const ballotData = await getBallot(electionId, ballotUuid);
-      if (ballotData) {
-        // If ranks is null, initialize it with empty array
-        if (ballotData.ranks === null) {
-          ballotData.ranks = Array(electionDataResp.election.candidates.length).fill(null);
-        }
-        setBallot(ballotData);
+      if (ballotData && ballotData.data) {
+        // Stored payload is a tagged CastBallotRequest; the system reads it
+        const ranks = system.readBallotRanks(ballotData.data);
+        setBallot({ votes: 1, ranks });
       } else {
         // Initialize empty ballot
         setBallot({
@@ -88,7 +88,13 @@ export default function BallotPage({ electionId, ballotUuid }: BallotPageProps) 
       setSaving(true);
       setError(null);
 
-      await putBallot(electionId, ballotUuid, ballot);
+      if (!electionData) return;
+      const system = getSystem(electionData.election.election_type);
+      await putBallot(
+        electionId,
+        ballotUuid,
+        system.ballotPayload(electionData.election.election_type, ballot.ranks ?? [])
+      );
       setSuccess(true); // Mark as saved
     } catch (err) {
       setError(err instanceof Error ? err.message : String(err));

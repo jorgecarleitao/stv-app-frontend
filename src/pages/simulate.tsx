@@ -23,23 +23,12 @@ import LZString from 'lz-string';
 import * as yaml from 'js-yaml';
 
 import { simulateElection } from '../data/api';
-import {
-  Election,
-  ElectionResult,
-  ElectionType,
-  isCopelandResult,
-  isGroupedResult,
-  GroupConfig,
-} from '../data/types';
+import { Election, ElectionResult, ElectionType } from '../data/types';
 import { DEFAULT_ELECTION } from '../data/defaults';
-import { BallotsEditor } from '../ballot';
 import { ElectionResults } from '../components/ElectionResults';
-import { PairwiseMatrix } from '../components/PairwiseMatrix';
-import { CountingLog } from '../components/CountingLog';
 import { ElectionSeatsConfig } from '../components/ElectionSeatsConfig';
 import { CandidatesList } from '../components/CandidatesList';
-import { GroupConfigList } from '../components/GroupConfigList';
-import { ResultsSummary } from '../components/ResultsSummary';
+import { getSystem } from '../systems';
 
 // Convert UI ranks (1-based) to API ranks (0-based)
 function toApiRanks(ranks: (number | null)[]): (number | null)[] {
@@ -182,10 +171,6 @@ export default function Simulate({ path }: SimulateProps = {}) {
     });
   };
 
-  const handleGroupsChange = (groups: GroupConfig[]) => {
-    setElection(e => ({ ...e, groups }));
-  };
-
   const handleAddBallot = () => {
     setElection(e => ({
       ...e,
@@ -254,6 +239,11 @@ export default function Simulate({ path }: SimulateProps = {}) {
     }
   };
 
+  const system = getSystem(election.election_type);
+  const SystemConfigSection = system.ConfigSection;
+  const SystemBallotEditor = system.BallotEditor;
+  const SystemResultSections = system.ResultSections;
+
   const canRun =
     election.candidates.length >= 2 && election.seats > 0 && election.ballots.length > 0;
   const totalVotes = election.ballots.reduce((sum, b) => sum + b.votes, 0);
@@ -305,34 +295,29 @@ export default function Simulate({ path }: SimulateProps = {}) {
           onNumSeatsChange={val => setElection(el => ({ ...el, seats: val }))}
           onElectionTypeChange={val => {
             setElection(el => {
-              const isGrouped = val === 'stv-md-grouped';
+              const extras = getSystem(val).defaultExtras(el.candidates);
               return {
                 ...el,
                 election_type: val,
-                groups:
-                  isGrouped && el.groups?.length === 0
-                    ? [
-                        { name: 'Group A', seats: 1 },
-                        { name: 'Group B', seats: 1 },
-                      ]
-                    : (el.groups ?? []),
-                candidate_groups:
-                  isGrouped && el.candidate_groups?.length === 0
-                    ? el.candidates.map(() => '')
-                    : (el.candidate_groups ?? []),
+                groups: extras.groups,
+                candidate_groups: extras.candidateGroups,
               };
             });
           }}
         />
       </Paper>
 
-      {election.election_type === 'stv-md-grouped' && (
-        <Paper elevation={4} sx={{ p: 3 }}>
-          <Typography variant={HEADER} gutterBottom>
-            {t('Groups')}
-          </Typography>
-          <GroupConfigList groups={election.groups ?? []} onGroupsChange={handleGroupsChange} />
-        </Paper>
+      {SystemConfigSection && (
+        <SystemConfigSection
+          extras={{ groups: election.groups ?? [], candidateGroups: election.candidate_groups ?? [] }}
+          onExtrasChange={extras =>
+            setElection(el => ({
+              ...el,
+              groups: extras.groups,
+              candidate_groups: extras.candidateGroups,
+            }))
+          }
+        />
       )}
 
       <Paper elevation={4} sx={{ p: 3 }}>
@@ -342,12 +327,11 @@ export default function Simulate({ path }: SimulateProps = {}) {
         <CandidatesList
           candidates={election.candidates}
           electionType={election.election_type}
-          groups={election.election_type === 'stv-md-grouped' ? election.groups : undefined}
-          candidateGroups={election.candidate_groups}
+          {...system.candidatesExtras(
+            { groups: election.groups ?? [], candidateGroups: election.candidate_groups ?? [] },
+            handleCandidateGroupChange
+          )}
           onCandidateChange={handleRenameCandidate}
-          onCandidateGroupChange={
-            election.election_type === 'stv-md-grouped' ? handleCandidateGroupChange : undefined
-          }
           onAddCandidate={handleAddCandidate}
           onRemoveCandidate={handleRemoveCandidate}
         />
@@ -374,7 +358,7 @@ export default function Simulate({ path }: SimulateProps = {}) {
             </Button>
           </Paper>
         ) : (
-          <BallotsEditor
+          <SystemBallotEditor
             candidates={election.candidates}
             ballots={election.ballots.map(b => ({ ...b, ranks: fromApiRanks(b.ranks ?? []) }))}
             onChangeBallotVotes={handleChangeBallotVotes}
@@ -413,50 +397,16 @@ export default function Simulate({ path }: SimulateProps = {}) {
 
       {/* Results */}
       {result && (
-        <ElectionResults
-          elected={result.elected}
-          electionType={election.election_type}
-          groups={isGroupedResult(result) ? result.groups : undefined}
-          groupResults={isGroupedResult(result) ? result.group_results : undefined}
-        />
+        <ElectionResults result={result} electionType={election.election_type} />
       )}
 
-      {/* Results Summary */}
-      {result && isGroupedResult(result) ? (
-        result.group_results.map(gr => (
-          <ResultsSummary
-            key={gr.group}
-            log={gr.log}
-            seats={gr.seats}
-            numElected={gr.elected.length}
-            groupName={gr.group}
-          />
-        ))
-      ) : result ? (
-        <ResultsSummary
-          log={result.log}
+      {result && (
+        <SystemResultSections
+          result={result}
+          candidates={election.candidates}
           seats={election.seats}
-          numElected={result.elected.length}
-        />
-      ) : null}
-
-      {/* Pairwise Comparison Matrix */}
-      {result && isCopelandResult(result) && (
-        <PairwiseMatrix
-          candidates={result.election.candidates}
-          pairwiseMatrix={result.pairwise_matrix}
-          order={result.order}
         />
       )}
-
-      {/* Detailed Counting Log (per group for grouped results) */}
-      {result && isGroupedResult(result) ? (
-        result.group_results.map(gr => (
-          <CountingLog key={gr.group} log={gr.log} groupName={gr.group} />
-        ))
-      ) : result ? (
-        <CountingLog log={result.log} />
-      ) : null}
     </Page>
   );
 }

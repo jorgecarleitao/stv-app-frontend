@@ -86,6 +86,16 @@ export interface components {
       sent_at: string;
       token_ids: string[];
     };
+    CastBallotRequest: OneOf<[components["schemas"]["RankedBallot"] & {
+      /** @enum {string} */
+      election_type: "stv-md";
+    }, components["schemas"]["RankedBallot"] & {
+      /** @enum {string} */
+      election_type: "stv-md-coperland";
+    }, components["schemas"]["RankedBallot"] & {
+      /** @enum {string} */
+      election_type: "stv-md-grouped";
+    }]>;
     CombinedBallot: {
       /** @description Ranked preferences as indices into the candidates list */
       ranks: (number | null)[];
@@ -287,26 +297,15 @@ export interface components {
       /** @description Index/ID of the candidate in the candidates list */
       id: number;
     };
-    Election: OneOf<[{
-      ballots: components["schemas"]["CombinedBallot"][];
-      candidates: string[];
+    Election: OneOf<[components["schemas"]["RankedElection"] & {
       /** @enum {string} */
       election_type: "stv-md";
-      seats: number;
-    }, {
-      ballots: components["schemas"]["CombinedBallot"][];
-      candidates: string[];
+    }, components["schemas"]["RankedElection"] & {
       /** @enum {string} */
       election_type: "stv-md-coperland";
-      seats: number;
-    }, {
-      ballots: components["schemas"]["CombinedBallot"][];
-      candidate_groups: string[];
-      candidates: string[];
+    }, components["schemas"]["StvMdGroupedElection"] & {
       /** @enum {string} */
       election_type: "stv-md-grouped";
-      groups: components["schemas"]["GroupConfig"][];
-      seats: number;
     }]>;
     /** @description ElectionConfig - what gets sent to the API (no sensitive info) */
     ElectionConfig: OneOf<[{
@@ -405,27 +404,13 @@ export interface components {
       title: string;
       uuid: string;
     }]>;
-    ElectionResult: OneOf<[{
-      elected: components["schemas"]["Elected"][];
-      election: components["schemas"]["Election"];
-      log: components["schemas"]["CountingLog"];
+    ElectionResult: OneOf<[components["schemas"]["StvMdResult"] & {
       /** @enum {string} */
       type: "stv-md";
-    }, {
-      elected: components["schemas"]["Elected"][];
-      election: components["schemas"]["Election"];
-      log: components["schemas"]["CountingLog"];
-      order: {
-        [key: string]: number;
-      };
-      pairwise_matrix: number[][];
+    }, components["schemas"]["StvMdCoperlandResult"] & {
       /** @enum {string} */
       type: "stv-md-coperland";
-    }, {
-      elected: components["schemas"]["Elected"][];
-      election: components["schemas"]["Election"];
-      group_results: components["schemas"]["GroupResult"][];
-      groups: components["schemas"]["GroupConfig"][];
+    }, components["schemas"]["StvMdGroupedResult"] & {
       /** @enum {string} */
       type: "stv-md-grouped";
     }]>;
@@ -446,6 +431,10 @@ export interface components {
       smtp_host: string;
       smtp_username: string;
     };
+    /**
+     * @description A single group definition. Invariants (non-empty name, at least one seat)
+     * are enforced at parse time by [`GroupConfig::try_new`] and deserialization.
+     */
     GroupConfig: {
       name: string;
       /** Format: int32 */
@@ -463,6 +452,19 @@ export interface components {
       /** @description Number of seats allocated to this group */
       seats: number;
     };
+    /**
+     * @description Group definitions for a grouped election (`stv-md-grouped`).
+     *
+     * Invariants (non-empty groups, unique group names, assignments referencing
+     * defined groups, every group having at least one candidate) are enforced at
+     * parse time by [`GroupedConfig::try_new`] and deserialization. Alignment of
+     * `candidate_groups` with `candidates` and the group-seats sum are enforced
+     * by [`StvMdGroupedElection::try_new`], which sees `candidates` and `seats`.
+     */
+    GroupedConfig: {
+      candidate_groups: string[];
+      groups: components["schemas"]["GroupConfig"][];
+    };
     MarkSentBody: {
       /** Format: date-time */
       sent_at: string;
@@ -472,6 +474,29 @@ export interface components {
       sent_at: string;
       token_id: string;
     };
+    RankedBallot: {
+      /**
+       * @example [
+       *   0,
+       *   2,
+       *   1
+       * ]
+       */
+      ranks: (number | null)[];
+    };
+    /**
+     * @description A ranked-ballot election (`stv-md`, `stv-md-coperland`).
+     *
+     * Invariants are enforced at parse time — by [`RankedElection::try_new`] and
+     * by deserialization (which goes through `try_new` via `try_from`) — so a
+     * value of this type is always well-formed. `try_new` checks the raw fields
+     * before constructing; there is no `validate` on a constructed value.
+     */
+    RankedElection: {
+      ballots: components["schemas"]["CombinedBallot"][];
+      candidates: string[];
+      seats: number;
+    };
     SendEmailResult: {
       error?: string | null;
       token_id: string;
@@ -480,6 +505,56 @@ export interface components {
       base_url: string;
       token_ids?: string[];
     };
+    StvMdCoperlandResult: {
+      elected: components["schemas"]["Elected"][];
+      election: components["schemas"]["Election"];
+      log: components["schemas"]["CountingLog"];
+      order: {
+        [key: string]: number;
+      };
+      pairwise_matrix: number[][];
+    };
+    /**
+     * @description A grouped STV election (`stv-md-grouped`).
+     *
+     * In addition to the ranked-election invariants, the grouped invariants
+     * (candidate_groups aligned with candidates, group seats summing to total
+     * seats, every group having candidates) are enforced at parse time — by
+     * [`StvMdGroupedElection::try_new`] and by deserialization.
+     */
+    StvMdGroupedElection: {
+      ballots: components["schemas"]["CombinedBallot"][];
+      candidate_groups: string[];
+      candidates: string[];
+      groups: components["schemas"]["GroupConfig"][];
+      seats: number;
+    };
+    StvMdGroupedResult: {
+      elected: components["schemas"]["Elected"][];
+      election: components["schemas"]["Election"];
+      group_results: components["schemas"]["GroupResult"][];
+      groups: components["schemas"]["GroupConfig"][];
+    };
+    StvMdResult: {
+      elected: components["schemas"]["Elected"][];
+      election: components["schemas"]["Election"];
+      log: components["schemas"]["CountingLog"];
+    };
+    /**
+     * @description System-specific election configuration, stored as JSON in the
+     * `elections.config` column. Adding a new election system means adding
+     * one variant here.
+     */
+    SystemConfig: OneOf<[{
+      /** @enum {string} */
+      election_type: "stv-md";
+    }, {
+      /** @enum {string} */
+      election_type: "stv-md-coperland";
+    }, components["schemas"]["GroupedConfig"] & {
+      /** @enum {string} */
+      election_type: "stv-md-grouped";
+    }]>;
     TestEmailRequest: {
       to_email: string;
     };
@@ -928,7 +1003,7 @@ export interface operations {
     };
     requestBody: {
       content: {
-        "application/json": components["schemas"]["Ballot"];
+        "application/json": components["schemas"]["CastBallotRequest"];
       };
     };
     responses: {

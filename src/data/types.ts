@@ -6,6 +6,9 @@ type Schemas = components['schemas'];
 
 export type ElectionType = Schemas['ElectionType'];
 export type GroupConfig = Schemas['GroupConfig'];
+export type SystemConfig = Schemas['SystemConfig'];
+export type RankedBallot = Schemas['RankedBallot'];
+export type CastBallotRequest = Schemas['CastBallotRequest'];
 export type Elected = Schemas['Elected'];
 export type GroupResult = Schemas['GroupResult'];
 export type ElectionResult = Schemas['ElectionResult'];
@@ -35,10 +38,18 @@ export type TestEmailRequest = Schemas['TestEmailRequest'];
 
 // ===== Local types (not part of the API spec) =====
 
-// Ballot group in the simulator (a CombinedBallot); with nullable ranks, also the stored ballot row
+// Ballot group in the simulator (a CombinedBallot)
 export interface Ballot {
   votes: number;
   ranks: (number | null)[] | null;
+}
+
+// A stored ballot row as returned by GET /elections/{id}/ballot(s):
+// data is the tagged CastBallotRequest payload, null = abstained
+export interface StoredBallot {
+  election_id: string;
+  id: string;
+  data: CastBallotRequest | null;
 }
 
 // Flattened election model used by the simulator; wire-compatible with the tagged Election union

@@ -10,7 +10,8 @@ import Button from '@mui/material/Button';
 import Divider from '@mui/material/Divider';
 import Chip from '@mui/material/Chip';
 import ScienceIcon from '@mui/icons-material/Science';
-import { ElectionType, GroupConfig, GroupResult } from '../data/types';
+import { ElectionType, ElectionResult, isGroupedResult } from '../data/types';
+import { getSystem } from '../systems';
 
 interface Elected {
   id: number;
@@ -18,12 +19,10 @@ interface Elected {
 }
 
 interface ElectionResultsProps {
-  elected: Elected[];
+  result: ElectionResult;
   electionType: ElectionType;
   onSimulate?: () => void;
   showSimulateButton?: boolean;
-  groups?: GroupConfig[];
-  groupResults?: GroupResult[];
 }
 
 function ECard({ name, idx, isOrdered }: { name: string; idx: number; isOrdered: boolean }) {
@@ -59,16 +58,17 @@ function ECard({ name, idx, isOrdered }: { name: string; idx: number; isOrdered:
 }
 
 export function ElectionResults({
-  elected,
+  result,
   electionType,
   onSimulate,
   showSimulateButton = false,
-  groups,
-  groupResults,
 }: ElectionResultsProps) {
   const { t } = useTranslation();
-  const isOrdered = electionType === 'stv-md-coperland';
-  const isGrouped = electionType === 'stv-md-grouped';
+  const system = getSystem(electionType);
+  const isOrdered = system.resultsMode === 'ordered';
+  const isGrouped = system.resultsMode === 'grouped' && isGroupedResult(result);
+
+  const elected: Elected[] = result.elected;
 
   return (
     <Paper elevation={3}>
@@ -77,10 +77,10 @@ export function ElectionResults({
           {t('Results')}
         </Typography>
 
-        {isGrouped && groupResults && groups ? (
+        {isGrouped && isGroupedResult(result) ? (
           // Grouped display
           <Stack spacing={3}>
-            {groupResults.map(gr => (
+            {result.group_results.map(gr => (
               <Paper key={gr.group} elevation={1} sx={{ p: 2 }}>
                 <Stack
                   direction="row"

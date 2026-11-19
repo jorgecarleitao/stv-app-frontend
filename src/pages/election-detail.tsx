@@ -23,12 +23,10 @@ import * as yaml from 'js-yaml';
 import { ElectionChips } from '../components/ElectionChips';
 import { ElectionResults } from '../components/ElectionResults';
 import { IndividualBallotsList } from '../components/IndividualBallotsList';
-import { PairwiseMatrix } from '../components/PairwiseMatrix';
-import { ResultsSummary } from '../components/ResultsSummary';
-import { CountingLog } from '../components/CountingLog';
 
 import { getElection, getExportUrl } from '../data/api';
-import { ElectionState, isCopelandResult, isGroupedResult, ElectionResult } from '../data/types';
+import { ElectionState } from '../data/types';
+import { getSystem } from '../systems';
 
 interface ElectionDetailProps {
   path?: string;
@@ -128,6 +126,7 @@ export default function ElectionDetail({ electionId }: ElectionDetailProps) {
   }
 
   const { election, potential_voters, casted, results } = electionState;
+  const SystemResultSections = getSystem(election.election_type).ResultSections;
   const start = new Date(election.start_time);
   const end = new Date(election.end_time);
   const now = new Date();
@@ -197,30 +196,16 @@ export default function ElectionDetail({ electionId }: ElectionDetailProps) {
       {votingClosed && results && (
         <>
           <ElectionResults
-            elected={results.elected}
+            result={results}
             electionType={election.election_type}
             onSimulate={handleSimulate}
             showSimulateButton={results.election.ballots.length > 0}
-            groups={isGroupedResult(results) ? results.groups : undefined}
-            groupResults={isGroupedResult(results) ? results.group_results : undefined}
           />
-          {isGroupedResult(results) ? (
-            results.group_results.map(gr => (
-              <ResultsSummary
-                key={gr.group}
-                log={gr.log}
-                seats={gr.seats}
-                numElected={gr.elected.length}
-                groupName={gr.group}
-              />
-            ))
-          ) : (
-            <ResultsSummary
-              log={results.log}
-              seats={election.seats}
-              numElected={results.elected.length}
-            />
-          )}
+          <SystemResultSections
+            result={results}
+            candidates={election.candidates}
+            seats={election.seats}
+          />
         </>
       )}
       {/* Candidates List */}
@@ -261,17 +246,7 @@ export default function ElectionDetail({ electionId }: ElectionDetailProps) {
           ))}
         </Grid>
       </Paper>
-      {/* Pairwise Comparison Matrix */}
-      {votingClosed && results && isCopelandResult(results) && (
-        <PairwiseMatrix
-          candidates={election.candidates}
-          pairwiseMatrix={results.pairwise_matrix}
-          order={results.order}
-        />
-      )}
       <IndividualBallotsList electionId={election.id} ballots={election.ballots ?? []} />
-      {/* Election Log (Accordion) - collapsed by default */}
-      {results && <CountingLogSection results={results} />}
       {!results && votingClosed && casted === 0 && (
         <Alert severity="info">{t('Election closed without any vote')}</Alert>
       )}
@@ -280,17 +255,4 @@ export default function ElectionDetail({ electionId }: ElectionDetailProps) {
       )}
     </Page>
   );
-}
-
-function CountingLogSection({ results }: { results: ElectionResult }) {
-  if (isGroupedResult(results)) {
-    return (
-      <>
-        {results.group_results.map(gr => (
-          <CountingLog key={gr.group} log={gr.log} groupName={gr.group} />
-        ))}
-      </>
-    );
-  }
-  return <CountingLog log={results.log} />;
 }

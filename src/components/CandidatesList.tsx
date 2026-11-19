@@ -11,6 +11,7 @@ import AddIcon from '@mui/icons-material/Add';
 import DeleteIcon from '@mui/icons-material/Delete';
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 import { ElectionType, GroupConfig } from '../data/types';
+import { getSystem } from '../systems';
 
 interface CandidatesListProps {
   candidates: string[];
@@ -38,7 +39,7 @@ export function CandidatesList({
   candidatesError = null,
 }: CandidatesListProps) {
   const { t } = useTranslation();
-  const isGrouped = electionType === 'stv-md-grouped';
+  const isGrouped = getSystem(electionType).hasExtras;
 
   return (
     <Stack spacing={2}>

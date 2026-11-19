@@ -598,6 +598,11 @@ export interface components {
       tie_break_seed: number;
     };
     SchulzeResult: {
+      /**
+       * @description Strongest-path (beatpath) strengths `p[i][j]`; `i` beats `j` iff
+       * `p[i][j] > p[j][i]`
+       */
+      beatpaths: number[][];
       /** @description Exactly one entry: the Schulze winner */
       elected: components["schemas"]["Elected"][];
       election: components["schemas"]["Election"];

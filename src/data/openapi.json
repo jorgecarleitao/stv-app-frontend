@@ -2752,9 +2752,21 @@
           "election",
           "log",
           "elected",
-          "pairwise_matrix"
+          "pairwise_matrix",
+          "beatpaths"
         ],
         "properties": {
+          "beatpaths": {
+            "type": "array",
+            "items": {
+              "type": "array",
+              "items": {
+                "type": "integer",
+                "minimum": 0
+              }
+            },
+            "description": "Strongest-path (beatpath) strengths `p[i][j]`; `i` beats `j` iff\n`p[i][j] > p[j][i]`"
+          },
           "elected": {
             "type": "array",
             "items": {

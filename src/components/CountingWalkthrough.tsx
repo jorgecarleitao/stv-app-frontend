@@ -37,6 +37,18 @@ function describeAction(
         detailed: t('walkthrough.electRemainingDetail', { candidate: c }),
       };
     }
+    if (reason === 'beatpath') {
+      return {
+        short: `${t('walkthrough.electBeatpath')}: ${c}`,
+        detailed: t('walkthrough.electBeatpathDetail', { candidate: c }),
+      };
+    }
+    if (reason === 'lot') {
+      return {
+        short: `${t('walkthrough.electLot')}: ${c}`,
+        detailed: t('walkthrough.electLotDetail', { candidate: c }),
+      };
+    }
     return {
       short: `${t('walkthrough.elect')}: ${c}`,
       detailed: t('walkthrough.electDetail', { candidate: c, quota }),
@@ -75,6 +87,16 @@ function describeAction(
       detailed: t('walkthrough.breakTieDetail', {
         defeated: d,
         candidates: actionType.break_tie.candidates.join(', '),
+      }),
+    };
+  }
+  if ('lot' in actionType) {
+    const w = actionType.lot.winner;
+    return {
+      short: `${t('walkthrough.lot')}: ${w}`,
+      detailed: t('walkthrough.lotDetail', {
+        winner: w,
+        candidates: actionType.lot.candidates.join(', '),
       }),
     };
   }

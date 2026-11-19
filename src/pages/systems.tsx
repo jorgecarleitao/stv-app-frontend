@@ -29,11 +29,18 @@ import MenuBookIcon from '@mui/icons-material/MenuBook';
 import Stack from '@mui/material/Stack';
 
 import { simulateElection } from '../data/api';
-import { Election, ElectionResult, ElectionType, isGroupedResult } from '../data/types';
+import {
+  Election,
+  ElectionResult,
+  ElectionType,
+  isGroupedResult,
+  isSchulzeResult,
+} from '../data/types';
 import { EXAMPLE_ELECTIONS } from '../data/defaults';
 import { getSystem, systems } from '../systems';
 import { ElectionResults } from '../components/ElectionResults';
 import { CountingWalkthrough } from '../components/CountingWalkthrough';
+import { BeatpathTable } from '../components/BeatpathTable';
 
 interface Ref {
   url: string;
@@ -297,6 +304,29 @@ function SystemSection({ systemId }: { systemId: ElectionType }) {
               <CountingWalkthrough log={result.log} />
             )}
           </Box>
+
+          {systemId === 'schulze' && isSchulzeResult(result) && (
+            <Box sx={{ my: 3 }}>
+              <Card elevation={3} sx={{ mb: 3 }}>
+                <CardContent>
+                  <Typography variant="h5" gutterBottom>
+                    {t('sys.schulze.exampleWalkTitle')}
+                  </Typography>
+                  {[1, 2, 3, 4].map(step => (
+                    <Typography key={step} variant="body2" gutterBottom sx={{ pl: 2 }}>
+                      <strong>{step}.</strong> {t(`sys.schulze.exampleStep${step}`)}
+                    </Typography>
+                  ))}
+                </CardContent>
+              </Card>
+              <BeatpathTable
+                candidates={example.candidates}
+                pairwiseMatrix={result.pairwise_matrix}
+                beatpaths={result.beatpaths}
+                winnerId={result.elected[0].id}
+              />
+            </Box>
+          )}
           <Card elevation={3} sx={{ my: 3 }}>
             <CardContent>
               <Typography variant="h5" gutterBottom>

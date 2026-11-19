@@ -111,3 +111,9 @@ export function isGroupedResult(
 ): r is Extract<ElectionResult, { type: 'stv-md-grouped' }> {
   return r.type === 'stv-md-grouped';
 }
+
+export function isSchulzeResult(
+  r: ElectionResult
+): r is Extract<ElectionResult, { type: 'schulze' }> {
+  return r.type === 'schulze';
+}

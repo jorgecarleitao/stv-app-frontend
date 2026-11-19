@@ -40,7 +40,7 @@ import { EXAMPLE_ELECTIONS } from '../data/defaults';
 import { getSystem, systems } from '../systems';
 import { ElectionResults } from '../components/ElectionResults';
 import { CountingWalkthrough } from '../components/CountingWalkthrough';
-import { BeatpathTable } from '../components/BeatpathTable';
+import { SchulzeWalkthrough } from '../components/SchulzeWalkthrough';
 
 interface Ref {
   url: string;
@@ -293,8 +293,19 @@ function SystemSection({ systemId }: { systemId: ElectionType }) {
       )}
       {error && <Alert severity="error">{error}</Alert>}
 
-      {result && (
-        <>
+      {result &&
+        (systemId === 'schulze' && isSchulzeResult(result) ? (
+          // Schulze: visual step-by-step walkthrough instead of the
+          // single-round counting log (which carries no information here)
+          <Box sx={{ my: 3 }}>
+            <SchulzeWalkthrough
+              candidates={example.candidates}
+              pairwiseMatrix={result.pairwise_matrix}
+              beatpaths={result.beatpaths}
+              winnerId={result.elected[0].id}
+            />
+          </Box>
+        ) : (
           <Box sx={{ my: 3 }}>
             {isGroupedResult(result) ? (
               result.group_results.map((gr: any) => (
@@ -304,43 +315,22 @@ function SystemSection({ systemId }: { systemId: ElectionType }) {
               <CountingWalkthrough log={result.log} />
             )}
           </Box>
+        ))}
 
-          {systemId === 'schulze' && isSchulzeResult(result) && (
-            <Box sx={{ my: 3 }}>
-              <Card elevation={3} sx={{ mb: 3 }}>
-                <CardContent>
-                  <Typography variant="h5" gutterBottom>
-                    {t('sys.schulze.exampleWalkTitle')}
-                  </Typography>
-                  {[1, 2, 3, 4].map(step => (
-                    <Typography key={step} variant="body2" gutterBottom sx={{ pl: 2 }}>
-                      <strong>{step}.</strong> {t(`sys.schulze.exampleStep${step}`)}
-                    </Typography>
-                  ))}
-                </CardContent>
-              </Card>
-              <BeatpathTable
-                candidates={example.candidates}
-                pairwiseMatrix={result.pairwise_matrix}
-                beatpaths={result.beatpaths}
-                winnerId={result.elected[0].id}
-              />
-            </Box>
-          )}
-          <Card elevation={3} sx={{ my: 3 }}>
-            <CardContent>
-              <Typography variant="h5" gutterBottom>
-                {t('stvMd.outcomeTitle')}
-              </Typography>
-              <ElectionResults result={result} electionType={systemId} />
-              <SystemResultSections
-                result={result}
-                candidates={example.candidates}
-                seats={example.seats}
-              />
-            </CardContent>
-          </Card>
-        </>
+      {result && (
+        <Card elevation={3} sx={{ my: 3 }}>
+          <CardContent>
+            <Typography variant="h5" gutterBottom>
+              {t('stvMd.outcomeTitle')}
+            </Typography>
+            <ElectionResults result={result} electionType={systemId} />
+            <SystemResultSections
+              result={result}
+              candidates={example.candidates}
+              seats={example.seats}
+            />
+          </CardContent>
+        </Card>
       )}
 
       <Card elevation={3} sx={{ my: 3 }}>

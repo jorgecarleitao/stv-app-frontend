@@ -9,24 +9,90 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 
-interface BeatpathTableProps {
+/**
+ * Beatpath strength matrix: cell (row i, column j) shows the strength of the
+ * strongest chain of pairwise victories from i to j. Green when i beats j
+ * (p[i][j] > p[j][i]), red when j beats i.
+ */
+export function BeatpathMatrix({
+  candidates,
+  beatpaths,
+  winnerId,
+}: {
   candidates: string[];
-  pairwiseMatrix: number[][];
   beatpaths: number[][];
   winnerId: number;
+}) {
+  const { t } = useTranslation();
+
+  return (
+    <TableContainer component={Paper} variant="outlined">
+      <Table
+        size="small"
+        sx={{
+          '& th, & td': {
+            border: '1px solid',
+            borderColor: 'divider',
+            textAlign: 'center',
+            p: 1.5,
+          },
+        }}
+      >
+        <TableHead>
+          <TableRow>
+            <TableCell sx={{ fontWeight: 'bold', bgcolor: 'action.hover' }} />
+            {candidates.map((c, idx) => (
+              <TableCell
+                key={idx}
+                sx={{ fontWeight: 'bold', bgcolor: 'action.hover', minWidth: 100 }}
+              >
+                {c}
+                {idx === winnerId && ` (${t('Winner')})`}
+              </TableCell>
+            ))}
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          {candidates.map((c, i) => (
+            <TableRow key={i}>
+              <TableCell sx={{ fontWeight: 'bold', bgcolor: 'action.hover' }}>
+                {c}
+                {i === winnerId && ` (${t('Winner')})`}
+              </TableCell>
+              {candidates.map((_, j) => {
+                const v = beatpaths[i][j];
+                const sx =
+                  i === j
+                    ? { bgcolor: 'action.hover' }
+                    : v > beatpaths[j][i]
+                      ? { bgcolor: 'success.light', fontWeight: 'bold' }
+                      : v < beatpaths[j][i]
+                        ? { bgcolor: 'error.light' }
+                        : {};
+                return (
+                  <TableCell key={j} sx={sx}>
+                    {i === j ? '—' : v}
+                  </TableCell>
+                );
+              })}
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+    </TableContainer>
+  );
 }
 
-/**
- * Explains a Schulze result: the pairwise vote counts, the strongest-path
- * (beatpath) strengths derived from them, and which candidate beats which.
- * Cell (row i, column j) shows p[i][j]; green when i beats j (p[i][j] > p[j][i]).
- */
-export function BeatpathTable({
+/** Textual list of pairwise outcomes by beatpath strength: who beats whom. */
+export function PairwiseOutcomes({
   candidates,
   pairwiseMatrix,
   beatpaths,
-  winnerId,
-}: BeatpathTableProps) {
+}: {
+  candidates: string[];
+  pairwiseMatrix: number[][];
+  beatpaths: number[][];
+}) {
   const { t } = useTranslation();
   const n = candidates.length;
 
@@ -52,6 +118,48 @@ export function BeatpathTable({
   }
 
   return (
+    <Stack spacing={0.5}>
+      {pairs.map(({ a, b, votesA, votesB, pathA, pathB }) => {
+        const winner = pathA > pathB ? a : pathB > pathA ? b : null;
+        const label =
+          winner === null
+            ? t('sys.pairTie', {
+                a: candidates[a],
+                b: candidates[b],
+                votes: `${votesA}–${votesB}`,
+                paths: `${pathA} vs ${pathB}`,
+              })
+            : t('sys.pairWin', {
+                winner: candidates[winner],
+                loser: candidates[winner === a ? b : a],
+                votes: winner === a ? `${votesA}–${votesB}` : `${votesB}–${votesA}`,
+                paths: winner === a ? `${pathA} vs ${pathB}` : `${pathB} vs ${pathA}`,
+              });
+        return (
+          <Typography key={`${a}-${b}`} variant="body2">
+            {label}
+          </Typography>
+        );
+      })}
+    </Stack>
+  );
+}
+
+/** Both combined: beatpath matrix + pairwise outcomes list. */
+export function BeatpathTable({
+  candidates,
+  pairwiseMatrix,
+  beatpaths,
+  winnerId,
+}: {
+  candidates: string[];
+  pairwiseMatrix: number[][];
+  beatpaths: number[][];
+  winnerId: number;
+}) {
+  const { t } = useTranslation();
+
+  return (
     <Paper elevation={2}>
       <Stack spacing={2} sx={{ p: 3 }}>
         <Typography variant="h5" gutterBottom>
@@ -60,89 +168,15 @@ export function BeatpathTable({
         <Typography variant="body2" color="text.secondary" gutterBottom>
           {t('sys.beatpathDesc')}
         </Typography>
-
-        <TableContainer>
-          <Table
-            size="small"
-            sx={{
-              '& th, & td': {
-                border: '1px solid',
-                borderColor: 'divider',
-                textAlign: 'center',
-                p: 1.5,
-              },
-            }}
-          >
-            <TableHead>
-              <TableRow>
-                <TableCell sx={{ fontWeight: 'bold', bgcolor: 'action.hover' }} />
-                {candidates.map((c, idx) => (
-                  <TableCell
-                    key={idx}
-                    sx={{ fontWeight: 'bold', bgcolor: 'action.hover', minWidth: 100 }}
-                  >
-                    {c}
-                    {idx === winnerId && ` (${t('Winner')})`}
-                  </TableCell>
-                ))}
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {candidates.map((c, i) => (
-                <TableRow key={i}>
-                  <TableCell sx={{ fontWeight: 'bold', bgcolor: 'action.hover' }}>
-                    {c}
-                    {i === winnerId && ` (${t('Winner')})`}
-                  </TableCell>
-                  {candidates.map((_, j) => {
-                    const v = beatpaths[i][j];
-                    const cls =
-                      i === j
-                        ? { bgcolor: 'action.hover' }
-                        : v > beatpaths[j][i]
-                          ? { bgcolor: 'success.light', fontWeight: 'bold' }
-                          : v < beatpaths[j][i]
-                            ? { bgcolor: 'error.light' }
-                            : {};
-                    return (
-                      <TableCell key={j} sx={cls}>
-                        {i === j ? '—' : v}
-                      </TableCell>
-                    );
-                  })}
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
-
+        <BeatpathMatrix candidates={candidates} beatpaths={beatpaths} winnerId={winnerId} />
         <Typography variant="subtitle1" sx={{ fontWeight: 'bold', mt: 1 }}>
           {t('sys.pairwiseOutcomes')}
         </Typography>
-        <Stack spacing={0.5}>
-          {pairs.map(({ a, b, votesA, votesB, pathA, pathB }) => {
-            const winner = pathA > pathB ? a : pathB > pathA ? b : null;
-            const label =
-              winner === null
-                ? t('sys.pairTie', {
-                    a: candidates[a],
-                    b: candidates[b],
-                    votes: `${votesA}–${votesB}`,
-                    paths: `${pathA} vs ${pathB}`,
-                  })
-                : t('sys.pairWin', {
-                    winner: candidates[winner],
-                    loser: candidates[winner === a ? b : a],
-                    votes: winner === a ? `${votesA}–${votesB}` : `${votesB}–${votesA}`,
-                    paths: winner === a ? `${pathA} vs ${pathB}` : `${pathB} vs ${pathA}`,
-                  });
-            return (
-              <Typography key={`${a}-${b}`} variant="body2">
-                {label}
-              </Typography>
-            );
-          })}
-        </Stack>
+        <PairwiseOutcomes
+          candidates={candidates}
+          pairwiseMatrix={pairwiseMatrix}
+          beatpaths={beatpaths}
+        />
       </Stack>
     </Paper>
   );

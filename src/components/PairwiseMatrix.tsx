@@ -20,6 +20,8 @@ interface PairwiseMatrixProps {
   candidates: string[];
   pairwiseMatrix: number[][];
   order: Record<string, number>;
+  /** Override the caption below the matrix (defaults to the Copeland wording) */
+  captionKey?: string;
 }
 
 interface Comparison {
@@ -34,7 +36,12 @@ interface Comparison {
   result: 'win' | 'tie' | 'loss';
 }
 
-export function PairwiseMatrix({ candidates, pairwiseMatrix, order }: PairwiseMatrixProps) {
+export function PairwiseMatrix({
+  candidates,
+  pairwiseMatrix,
+  order,
+  captionKey,
+}: PairwiseMatrixProps) {
   const { t } = useTranslation();
   const [candidateFilter, setCandidateFilter] = useState('');
   const [opponentFilter, setOpponentFilter] = useState('');
@@ -212,7 +219,8 @@ export function PairwiseMatrix({ candidates, pairwiseMatrix, order }: PairwiseMa
           </TableContainer>
           <Typography variant="caption" color="text.secondary">
             {t(
-              'Candidates are ordered by their final ranking (Copeland method). Green cells indicate wins, yellow indicates ties.'
+              captionKey ??
+                'Candidates are ordered by their final ranking (Copeland method). Green cells indicate wins, yellow indicates ties.'
             )}
           </Typography>
         </Stack>

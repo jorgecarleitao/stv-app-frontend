@@ -3,12 +3,7 @@ import Paper from '@mui/material/Paper';
 import Typography from '@mui/material/Typography';
 
 import type { ElectionSystemUI, ElectionExtras } from './types';
-import {
-  LogDetails,
-  LogSummary,
-  rankedBallotPayload,
-  rankedBallotRanks,
-} from './ranked';
+import { LogDetails, LogSummary, rankedBallotPayload, rankedBallotRanks } from './ranked';
 import { BallotsEditor } from '../ballot';
 import { GroupConfigList } from '../components/GroupConfigList';
 import type { CreateElectionRequest, GroupConfig } from '../data/types';
@@ -56,7 +51,10 @@ const StvMdGrouped: ElectionSystemUI = {
   validateExtras: (t, extras, candidates, numSeats) => {
     const { groups, candidateGroups } = extras;
     if (groups.length < 2) {
-      return { field: 'general', message: t('At least 2 groups are required for grouped elections') };
+      return {
+        field: 'general',
+        message: t('At least 2 groups are required for grouped elections'),
+      };
     }
     const names = groups.map(g => g.name.trim());
     if (names.some(n => !n)) {

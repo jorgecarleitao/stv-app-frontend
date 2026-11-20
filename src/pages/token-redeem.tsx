@@ -104,9 +104,13 @@ export default function TokenRedeem({ electionId, tokenId }: TokenRedeemProps) {
       <Paper elevation={3} sx={{ p: 4 }}>
         <Box sx={{ textAlign: 'center', mb: 3 }}>
           {alreadyRedeemed ? (
-            <CheckCircleIcon sx={{ fontSize: 64, color: 'success.main', mb: 2 }} />
+            <CheckCircleIcon
+              sx={{ fontSize: (theme: any) => theme.spacing(8), color: 'success.main', mb: 2 }}
+            />
           ) : (
-            <HowToVoteIcon sx={{ fontSize: 64, color: 'primary.main', mb: 2 }} />
+            <HowToVoteIcon
+              sx={{ fontSize: (theme: any) => theme.spacing(8), color: 'primary.main', mb: 2 }}
+            />
           )}
         </Box>
 

@@ -382,9 +382,9 @@ export default function ElectionAdmin({ electionId, adminUuid }: ElectionAdminPr
                   bgcolor: 'background.paper',
                   borderRadius: 1,
                   fontFamily: 'monospace',
-                  fontSize: '0.75rem',
+                  typography: 'caption',
                   wordBreak: 'break-all',
-                  border: '1px solid',
+                  border: 'thin solid',
                   borderColor: 'divider',
                 }}
               >

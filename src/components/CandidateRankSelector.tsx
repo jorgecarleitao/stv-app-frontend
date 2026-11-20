@@ -47,7 +47,7 @@ export const CandidateRankSelector = memo(function CandidateRankSelector({
           alignItems: 'center',
           gap: 2,
           p: 1,
-          border: '1px solid',
+          border: 'thin solid',
           borderColor: 'divider',
           borderRadius: 1,
         }}
@@ -55,7 +55,11 @@ export const CandidateRankSelector = memo(function CandidateRankSelector({
         <Typography noWrap sx={{ fontWeight: 'medium', flexGrow: 1 }}>
           {candidate}
         </Typography>
-        <FormControl size="small" sx={{ minWidth: 130 }} disabled={readOnly}>
+        <FormControl
+          size="small"
+          sx={{ minWidth: (theme: any) => theme.spacing(16.25) }}
+          disabled={readOnly}
+        >
           <InputLabel id={`${selectId}-label`}>{t('Rank')}</InputLabel>
           <Select
             labelId={`${selectId}-label`}
@@ -82,7 +86,7 @@ export const CandidateRankSelector = memo(function CandidateRankSelector({
     <Box
       sx={{
         p: 2,
-        border: '1px solid',
+        border: 'thin solid',
         borderColor: 'divider',
         borderRadius: 1,
       }}

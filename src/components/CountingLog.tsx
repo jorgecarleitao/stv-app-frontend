@@ -143,7 +143,14 @@ export function StatsRow({ stats }: { stats: CountingLog['rounds'][0]['actions']
         <TableBody>
           {rows.map(row => (
             <TableRow key={row.label}>
-              <TableCell sx={{ width: 24, pr: 0, borderBottom: 'none', py: 0 }}>
+              <TableCell
+                sx={{
+                  width: (theme: any) => theme.spacing(3),
+                  pr: 0,
+                  borderBottom: 'none',
+                  py: 0,
+                }}
+              >
                 {row.prefix || ''}
               </TableCell>
               <Tooltip title={row.tooltip} arrow placement="left">
@@ -177,15 +184,14 @@ export function CandidateStatusIcon({
 }: {
   status: CountingLogAction['candidate_counts'][0]['status'];
 }) {
-  if (status === 'elected')
-    return (
-      <ElectedIcon sx={{ fontSize: 18, color: '#2e7d32', verticalAlign: 'middle', mr: 0.5 }} />
-    );
-  if (status === 'defeated')
-    return (
-      <DefeatedIcon sx={{ fontSize: 18, color: '#d32f2f', verticalAlign: 'middle', mr: 0.5 }} />
-    );
-  return <HopefulIcon sx={{ fontSize: 18, color: '#0288d1', verticalAlign: 'middle', mr: 0.5 }} />;
+  const iconSx = {
+    fontSize: (theme: any) => theme.spacing(2.25),
+    verticalAlign: 'middle',
+    mr: 0.5,
+  } as const;
+  if (status === 'elected') return <ElectedIcon sx={{ ...iconSx, color: 'success.main' }} />;
+  if (status === 'defeated') return <DefeatedIcon sx={{ ...iconSx, color: 'error.main' }} />;
+  return <HopefulIcon sx={{ ...iconSx, color: 'info.main' }} />;
 }
 
 export function CandidateCountsBarChart({
@@ -232,7 +238,7 @@ export function CandidateCountsBarChart({
               <Tooltip title={c.votes}>
                 <Box
                   sx={{
-                    height: 22,
+                    height: (theme: any) => theme.spacing(2.75),
                     bgcolor: 'action.hover',
                     borderRadius: 1,
                     position: 'relative',
@@ -270,7 +276,7 @@ export function CandidateCountsBarChart({
                         left: `${quotaPct}%`,
                         top: 0,
                         bottom: 0,
-                        width: 2,
+                        width: (theme: any) => theme.spacing(0.25),
                         bgcolor: 'warning.main',
                         zIndex: 1,
                       }}
@@ -278,7 +284,10 @@ export function CandidateCountsBarChart({
                   )}
                 </Box>
               </Tooltip>
-              <Typography variant="body2" sx={{ fontFamily: 'monospace', fontSize: 13, pl: 1 }}>
+              <Typography
+                variant="body2"
+                sx={{ fontFamily: 'monospace', typography: 'caption', pl: 1 }}
+              >
                 {c.votes}
               </Typography>
             </Fragment>

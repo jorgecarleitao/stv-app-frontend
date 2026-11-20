@@ -27,15 +27,15 @@ interface ElectionResultsProps {
 
 function ECard({ name, idx, isOrdered }: { name: string; idx: number; isOrdered: boolean }) {
   return (
-    <Card elevation={2}>
+    <Card elevation={2} sx={{ height: '100%' }}>
       <CardContent>
         <Stack direction="row" spacing={2} sx={{ alignItems: 'center' }}>
           <Avatar
             sx={{
               bgcolor: 'success.main',
-              width: 56,
-              height: 56,
-              fontSize: '1.5rem',
+              width: (theme: any) => theme.spacing(7),
+              height: (theme: any) => theme.spacing(7),
+              typography: 'h6',
               fontWeight: 'bold',
             }}
           >

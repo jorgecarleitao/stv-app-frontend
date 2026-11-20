@@ -58,7 +58,7 @@ export const BallotGroupDisplay = memo(function BallotGroupDisplay({
               label={t('Votes')}
               size="small"
               type="number"
-              sx={{ width: 90 }}
+              sx={{ width: (theme: any) => theme.spacing(11.25) }}
               slotProps={{ htmlInput: { min: 1 } }}
               value={ballot.votes}
               onChange={e => onChangeVotes?.(Number((e.target as HTMLInputElement).value))}

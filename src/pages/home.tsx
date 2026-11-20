@@ -88,7 +88,7 @@ export default function Home({}: HomeProps = {}) {
           variant="body1"
           color="text.secondary"
           align="center"
-          sx={{ mb: 4, maxWidth: 720, mx: 'auto' }}
+          sx={{ mb: 4, maxWidth: (theme: any) => theme.spacing(90), mx: 'auto' }}
         >
           {t('goalSectionIntro')}
         </Typography>
@@ -104,7 +104,13 @@ export default function Home({}: HomeProps = {}) {
                 >
                   <CardContent sx={{ flexGrow: 1 }}>
                     <Box sx={{ display: 'flex', alignItems: 'center', mb: 1.5 }}>
-                      <Icon sx={{ fontSize: 36, mr: 1.5, color: 'primary.main' }} />
+                      <Icon
+                        sx={{
+                          fontSize: (theme: any) => theme.spacing(4.5),
+                          mr: 1.5,
+                          color: 'primary.main',
+                        }}
+                      />
                       <Typography variant="h6" component="h3">
                         {t(goal.titleKey)}
                       </Typography>

@@ -114,7 +114,7 @@ export function PairwiseMatrix({
               size="small"
               sx={{
                 '& th, & td': {
-                  border: '1px solid',
+                  border: 'thin solid',
                   borderColor: 'divider',
                   textAlign: 'center',
                   p: 1.5,
@@ -125,7 +125,7 @@ export function PairwiseMatrix({
                 <TableRow>
                   <TableCell
                     sx={{
-                      minWidth: 120,
+                      minWidth: (theme: any) => theme.spacing(15),
                       fontWeight: 'bold',
                       bgcolor: 'action.hover',
                       position: 'sticky',
@@ -142,15 +142,15 @@ export function PairwiseMatrix({
                         position: 'sticky',
                         top: 0,
                         zIndex: 1,
-                        minWidth: 100,
+                        minWidth: (theme: any) => theme.spacing(12.5),
                       }}
                     >
                       <Stack spacing={0.5} sx={{ alignItems: 'center' }}>
                         <Avatar
                           sx={{
-                            width: 24,
-                            height: 24,
-                            fontSize: '0.75rem',
+                            width: (theme: any) => theme.spacing(3),
+                            height: (theme: any) => theme.spacing(3),
+                            typography: 'caption',
                             bgcolor: 'primary.main',
                           }}
                         >
@@ -177,9 +177,9 @@ export function PairwiseMatrix({
                       <Stack direction="row" spacing={1} sx={{ alignItems: 'center' }}>
                         <Avatar
                           sx={{
-                            width: 24,
-                            height: 24,
-                            fontSize: '0.75rem',
+                            width: (theme: any) => theme.spacing(3),
+                            height: (theme: any) => theme.spacing(3),
+                            typography: 'caption',
                             bgcolor: 'primary.main',
                           }}
                         >
@@ -257,7 +257,7 @@ export function PairwiseMatrix({
                 ),
               },
             }}
-            sx={{ minWidth: 200 }}
+            sx={{ minWidth: (theme: any) => theme.spacing(25) }}
           />
           <TextField
             size="small"
@@ -276,7 +276,7 @@ export function PairwiseMatrix({
                 ),
               },
             }}
-            sx={{ minWidth: 200 }}
+            sx={{ minWidth: (theme: any) => theme.spacing(25) }}
           />
         </Stack>
         {filtered.length === 0 ? (

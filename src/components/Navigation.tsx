@@ -20,8 +20,6 @@ import Brightness4Icon from '@mui/icons-material/Brightness4';
 import Brightness7Icon from '@mui/icons-material/Brightness7';
 import MenuIcon from '@mui/icons-material/Menu';
 
-const drawerWidth = 240;
-
 interface NavigationProps {
   mode: 'light' | 'dark';
   toggleTheme: () => void;
@@ -130,7 +128,10 @@ export default function Navigation({ mode, toggleTheme }: NavigationProps) {
           }}
           sx={{
             display: { xs: 'block', sm: 'none' },
-            '& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth },
+            '& .MuiDrawer-paper': {
+              boxSizing: 'border-box',
+              width: (theme: any) => theme.spacing(30),
+            },
           }}
         >
           {drawerContent}

@@ -534,7 +534,7 @@ export function BallotTokensList({ electionId, adminUuid }: BallotTokensListProp
                   size="small"
                   slotProps={{ htmlInput: { min: 1 } }}
                   disabled={creating}
-                  sx={{ width: 150 }}
+                  sx={{ width: (theme: any) => theme.spacing(18.75) }}
                 />
                 <Button
                   variant="contained"
@@ -577,7 +577,10 @@ export function BallotTokensList({ electionId, adminUuid }: BallotTokensListProp
         ) : tokens.length === 0 ? (
           <Alert severity="info">{t('No ballot tokens have been created yet.')}</Alert>
         ) : (
-          <Paper variant="outlined" sx={{ maxHeight: 500, overflow: 'auto' }}>
+          <Paper
+            variant="outlined"
+            sx={{ maxHeight: (theme: any) => theme.spacing(62.5), overflow: 'auto' }}
+          >
             <List dense>
               {tokens.map((token, i) => (
                 <div key={token.id}>
@@ -621,7 +624,7 @@ export function BallotTokensList({ electionId, adminUuid }: BallotTokensListProp
                       primary={
                         <Typography
                           variant="body2"
-                          sx={{ fontFamily: 'monospace', fontSize: '0.9rem' }}
+                          sx={{ fontFamily: 'monospace', typography: 'body2' }}
                         >
                           {token.id}
                         </Typography>

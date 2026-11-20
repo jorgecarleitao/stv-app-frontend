@@ -377,7 +377,10 @@ export async function getTokenInfo(electionId: string, tokenId: string): Promise
 /**
  * Fetch a specific ballot by UUID
  */
-export async function getBallot(electionId: string, ballotUuid: string): Promise<StoredBallot | null> {
+export async function getBallot(
+  electionId: string,
+  ballotUuid: string
+): Promise<StoredBallot | null> {
   const response = await fetch(`${BASE_URL}/elections/${electionId}/ballot/${ballotUuid}`, {
     method: 'GET',
     mode: 'cors',

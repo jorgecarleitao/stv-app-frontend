@@ -24,15 +24,14 @@ function CandidateStatusIcon({
 }: {
   status: CountingLogAction['candidate_counts'][0]['status'];
 }) {
-  if (status === 'elected')
-    return (
-      <CheckCircleIcon sx={{ fontSize: 18, color: '#2e7d32', verticalAlign: 'middle', mr: 0.5 }} />
-    );
-  if (status === 'defeated')
-    return <CancelIcon sx={{ fontSize: 18, color: '#d32f2f', verticalAlign: 'middle', mr: 0.5 }} />;
-  return (
-    <HourglassEmptyIcon sx={{ fontSize: 18, color: '#0288d1', verticalAlign: 'middle', mr: 0.5 }} />
-  );
+  const iconSx = {
+    fontSize: (theme: any) => theme.spacing(2.25),
+    verticalAlign: 'middle',
+    mr: 0.5,
+  } as const;
+  if (status === 'elected') return <CheckCircleIcon sx={{ ...iconSx, color: 'success.main' }} />;
+  if (status === 'defeated') return <CancelIcon sx={{ ...iconSx, color: 'error.main' }} />;
+  return <HourglassEmptyIcon sx={{ ...iconSx, color: 'info.main' }} />;
 }
 
 function FirstPreferenceVotes({ log }: { log: CountingLog }) {
@@ -75,7 +74,7 @@ function FirstPreferenceVotes({ log }: { log: CountingLog }) {
                 <Tooltip title={c.votes}>
                   <Box
                     sx={{
-                      height: 22,
+                      height: (theme: any) => theme.spacing(2.75),
                       bgcolor: 'action.hover',
                       borderRadius: 1,
                       position: 'relative',
@@ -96,7 +95,10 @@ function FirstPreferenceVotes({ log }: { log: CountingLog }) {
                     )}
                   </Box>
                 </Tooltip>
-                <Typography variant="body2" sx={{ fontFamily: 'monospace', fontSize: 13, pl: 1 }}>
+                <Typography
+                  variant="body2"
+                  sx={{ fontFamily: 'monospace', typography: 'caption', pl: 1 }}
+                >
                   {c.votes}
                 </Typography>
               </Fragment>

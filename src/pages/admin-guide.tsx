@@ -144,10 +144,8 @@ export default function AdminUserGuide({ path }: Props = {}) {
                   label={index + 1}
                   color="primary"
                   sx={{
-                    width: 36,
-                    height: 36,
-                    fontSize: '1.1rem',
                     fontWeight: 'bold',
+                    minWidth: (theme: any) => theme.spacing(4.5),
                   }}
                 />
                 <Box sx={{ flex: 1 }}>

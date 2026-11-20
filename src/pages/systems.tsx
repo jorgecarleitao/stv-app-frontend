@@ -153,7 +153,11 @@ function BallotTable({ example }: { example: Election }) {
       <Typography variant="body2" color="text.secondary" gutterBottom>
         {t('ballotExplanation')}
       </Typography>
-      <TableContainer component={Paper} variant="outlined" sx={{ maxHeight: 400 }}>
+      <TableContainer
+        component={Paper}
+        variant="outlined"
+        sx={{ maxHeight: (theme: any) => theme.spacing(50) }}
+      >
         <Table size="small" stickyHeader>
           <TableHead>
             <TableRow>
@@ -168,7 +172,9 @@ function BallotTable({ example }: { example: Election }) {
           <TableBody>
             {individualBallots.map((ranks, i) => (
               <TableRow key={i}>
-                <TableCell sx={{ color: 'text.secondary', fontSize: 13 }}>#{i + 1}</TableCell>
+                <TableCell sx={{ color: 'text.secondary', typography: 'caption' }}>
+                  #{i + 1}
+                </TableCell>
                 {(ranks ?? []).map((r, ci) => (
                   <TableCell key={ci} align="center">
                     {r !== null ? (
@@ -261,8 +267,10 @@ function SystemSection({ goalId }: { goalId: GoalId }) {
           {section.features.map((key, i) => {
             const Icon = FEATURE_ICONS[i % FEATURE_ICONS.length];
             return (
-              <Paper key={key} elevation={2} sx={{ p: 2.5, textAlign: 'center' }}>
-                <Icon sx={{ fontSize: 40, color: 'primary.main', mb: 1 }} />
+              <Paper key={key} elevation={2} sx={{ p: 2.5, textAlign: 'center', height: '100%' }}>
+                <Icon
+                  sx={{ fontSize: (theme: any) => theme.spacing(5), color: 'primary.main', mb: 1 }}
+                />
                 <Typography variant="body2">{t(key)}</Typography>
               </Paper>
             );

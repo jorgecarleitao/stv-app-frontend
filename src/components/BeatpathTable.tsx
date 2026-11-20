@@ -31,7 +31,7 @@ export function BeatpathMatrix({
         size="small"
         sx={{
           '& th, & td': {
-            border: '1px solid',
+            border: 'thin solid',
             borderColor: 'divider',
             textAlign: 'center',
             p: 1.5,
@@ -44,7 +44,11 @@ export function BeatpathMatrix({
             {candidates.map((c, idx) => (
               <TableCell
                 key={idx}
-                sx={{ fontWeight: 'bold', bgcolor: 'action.hover', minWidth: 100 }}
+                sx={{
+                  fontWeight: 'bold',
+                  bgcolor: 'action.hover',
+                  minWidth: (theme: any) => theme.spacing(12.5),
+                }}
               >
                 {c}
                 {idx === winnerId && ` (${t('Winner')})`}

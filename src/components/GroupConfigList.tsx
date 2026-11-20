@@ -66,7 +66,7 @@ export function GroupConfigList({
             size="small"
             disabled={disabled}
             slotProps={{ htmlInput: { min: 1 } }}
-            sx={{ width: 100 }}
+            sx={{ width: (theme: any) => theme.spacing(12.5) }}
           />
           <IconButton
             onClick={() => handleRemove(idx)}

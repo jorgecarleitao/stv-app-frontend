@@ -1,4 +1,5 @@
 import { useTranslation } from 'react-i18next';
+import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 import Select from '@mui/material/Select';
@@ -45,7 +46,11 @@ export function CandidatesList({
     <Stack spacing={2}>
       <Stack direction="row" sx={{ justifyContent: 'space-between', alignItems: 'center' }}>
         <Tooltip
-          title={<span style={{ whiteSpace: 'pre-line' }}>{t('addCandidatesInstructions')}</span>}
+          title={
+            <Box component="span" sx={{ whiteSpace: 'pre-line' }}>
+              {t('addCandidatesInstructions')}
+            </Box>
+          }
           arrow
           placement="right"
         >
@@ -85,9 +90,14 @@ export function CandidatesList({
                   displayEmpty
                   size="small"
                   disabled={disabled}
-                  sx={{ minWidth: 120 }}
+                  sx={{ minWidth: (theme: any) => theme.spacing(15) }}
                   renderValue={selected => {
-                    if (!selected) return <em style={{ color: '#999' }}>{t('Group')}</em>;
+                    if (!selected)
+                      return (
+                        <Box component="em" sx={{ color: 'text.secondary' }}>
+                          {t('Group')}
+                        </Box>
+                      );
                     return selected;
                   }}
                 >

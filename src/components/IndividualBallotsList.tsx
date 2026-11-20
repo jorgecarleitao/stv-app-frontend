@@ -33,6 +33,9 @@ export function IndividualBallotsList({ electionId, ballots }: IndividualBallots
         </Typography>
       </AccordionSummary>
       <AccordionDetails>
+        <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+          {t('Ballots are published anonymously - they cannot be linked to individual voters.')}
+        </Typography>
         <TableContainer>
           <Table size="small">
             <TableHead>

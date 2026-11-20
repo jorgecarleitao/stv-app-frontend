@@ -180,6 +180,12 @@ export default function BallotPage({ electionId, ballotUuid }: BallotPageProps) 
         </Alert>
       )}
 
+      <Alert severity="info">
+        {t(
+          'Secret vote: this election is open and transparent - anyone can audit the process and the results - but your individual ballot is anonymous and can never be linked back to you.'
+        )}
+      </Alert>
+
       {success && <Alert severity="success">{t('Ballot saved successfully!')}</Alert>}
 
       {error && (

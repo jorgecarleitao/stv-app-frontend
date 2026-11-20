@@ -1,6 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import Chip from '@mui/material/Chip';
 import Stack from '@mui/material/Stack';
+import Tooltip from '@mui/material/Tooltip';
 import HowToVoteIcon from '@mui/icons-material/HowToVote';
 import PeopleIcon from '@mui/icons-material/People';
 import WeekendIcon from '@mui/icons-material/Weekend';
@@ -76,12 +77,20 @@ export function ElectionChips({
           size={size}
         />
       )}
-      <Chip
-        label={isOpen ? t('Voting is open') : t('Voting is closed')}
-        color={isOpen ? 'success' : 'default'}
-        variant={isOpen ? 'filled' : 'outlined'}
-        size={size}
-      />
+      <Tooltip
+        title={
+          isOpen
+            ? t('The election is open for voting - each individual vote is secret')
+            : t('Voting is closed - results are public, but individual votes stay secret')
+        }
+      >
+        <Chip
+          label={isOpen ? t('Voting is open') : t('Voting is closed')}
+          color={isOpen ? 'success' : 'default'}
+          variant={isOpen ? 'filled' : 'outlined'}
+          size={size}
+        />
+      </Tooltip>
     </Stack>
   );
 }

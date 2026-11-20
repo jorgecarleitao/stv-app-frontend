@@ -159,6 +159,13 @@ export default function ElectionDetail({ electionId }: ElectionDetailProps) {
           {!votingClosed && ` • ${votingProgress.toFixed(0)}% ${t('turnout')}`}
         </Typography>
       </Alert>
+      <Alert severity="info">
+        <Typography variant="body2">
+          {t(
+            'Transparent process, secret vote: results, anonymized ballots and counting logs are published and auditable - but no ballot can ever be linked to a voter.'
+          )}
+        </Typography>
+      </Alert>
       {/* Export Button */}
       <Box
         sx={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', gap: 2, mb: 2 }}

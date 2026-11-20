@@ -128,6 +128,12 @@ export default function TokenRedeem({ electionId, tokenId }: TokenRedeemProps) {
               )}
             </Alert>
 
+            <Alert severity="info" sx={{ mt: 2 }}>
+              {t(
+                'Your vote is secret: the election process is open and auditable, but your ballot is anonymous and cannot be linked back to you.'
+              )}
+            </Alert>
+
             {electionData && (
               <Paper variant="outlined" sx={{ p: 3, mb: 3 }}>
                 <Typography variant="h5" gutterBottom>

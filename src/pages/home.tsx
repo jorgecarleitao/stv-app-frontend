@@ -131,6 +131,7 @@ export default function Home({}: HomeProps = {}) {
                     />
                   </CardContent>
                   <CardActions
+                    disableSpacing
                     sx={{ p: 2, pt: 0, flexDirection: 'column', alignItems: 'stretch', gap: 1 }}
                   >
                     <Button
